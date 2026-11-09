@@ -35,6 +35,18 @@ input,select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8p
 .dias{display:flex;flex-wrap:wrap;gap:10px}.dias label{display:flex;gap:4px;align-items:center;margin:0;font-weight:400}.dias input{width:auto}
 .steps{display:flex;gap:4px;margin-bottom:12px}.steps i{flex:1;height:4px;background:var(--bd);border-radius:2px}.steps i.on{background:var(--c)}
 .ok{text-align:center}.ok .big{font-size:3rem}
+html{scroll-behavior:smooth}#wiz,#servicos,#agendamento{scroll-margin-top:70px}
+.hero{padding:70px 16px;color:#fff;text-align:center}.hero h1{font-size:2rem}.hero p{font-size:1.05rem;margin:8px 0 18px}
+.hero .lg{height:64px;margin-bottom:10px}
+.cta{display:inline-block;background:var(--c);color:#fff;text-decoration:none;padding:12px 30px;border-radius:25px;border:2px solid rgba(255,255,255,.75)}
+.hd{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:10px 5%;box-shadow:0 2px 5px rgba(0,0,0,.06);position:sticky;top:0;z-index:5}
+.hd b{color:var(--c);font-size:1.25rem}.hd img{height:42px}.hd a{margin-left:18px;text-decoration:none;color:#555;font-weight:500}
+.sec{max-width:1000px;margin:0 auto;padding:0 16px}
+.sv{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.sv .card{margin:0;text-align:center}.sv h3{margin-bottom:6px}.pr{font-weight:700;color:var(--c);margin-top:10px}
+.pfs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.pfs button{border:2px solid var(--bd);background:#fff;border-radius:12px;padding:10px 4px;cursor:pointer;font-size:.85rem}.pfs .on{border-color:var(--c);background:#f3f4f6}
+.av{width:64px;height:64px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 6px;background:var(--c);color:#fff;font-weight:700;font-size:1.5rem;line-height:64px;text-align:center}
+footer{text-align:center;padding:22px;background:#222;color:#fff;margin-top:40px;font-size:.9rem}
 </style>
 </head>
 <body>
@@ -65,9 +77,24 @@ const wa=(t,msg='')=>'https://wa.me/'+(t.replace(/\D/g,'').length<=11?'55':'')+t
 const price=(s,P)=>{const pct=(P||[]).filter(p=>!p.servId||p.servId===s.id).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
 const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
+const DEF='https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80';
+const cover=u=>`linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("${u||DEF}") center/cover`;
+const av=p=>p.foto?`<img class=av src="${p.foto}" alt="">`:`<div class=av>${esc((p.nome||'?')[0])}</div>`;
+const img=(f,max,q,type='image/jpeg')=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL(type,q))};i.onerror=no;i.src=r.result};r.onerror=no;r.readAsDataURL(f)});
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
+document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;if(!u||!t.files[0])return;
+  try{
+    if(u=='foto'){TMP.foto=await img(t.files[0],160,.8);const f=$('#fp');f.src=TMP.foto;f.style.display='block'}
+    else{
+      if($('#p1')){S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6')}
+      if(u=='logo')S.logo=await img(t.files[0],240,0,'image/png');
+      if(u=='capa'){let d=await img(t.files[0],1400,.72);if(d.length>650000)d=await img(t.files[0],1000,.55);S.capa=d}
+      await save();toast('Imagem salva ✔');draw();
+    }
+  }catch(x){alert('Não foi possível usar essa imagem.')}
+});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let U=null,S=null,TAB='serv',AG=[],busy=false,EDIT=null;
+let U=null,S=null,TAB='serv',AG=[],busy=false,EDIT=null,TMP={};
 const E=l=>EDIT&&EDIT.l==l?S[l][EDIT.i]:null;
 const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:24px;z-index:9;font-size:.95rem';document.body.append(d);setTimeout(()=>d.remove(),2200)};
 
@@ -79,8 +106,8 @@ else onAuthStateChanged(auth,u=>{U=u;if(busy)return;u?panel():landing()});
 /* ============ LANDING / LOGIN / CADASTRO ============ */
 function landing(mode='login'){
   theme();
-  A.innerHTML=`<div class=top><h1>Horário Salão</h1><p>Seu salão com agenda online. Cadastre-se e envie o link aos clientes.</p></div>
-  <div class=wrap><div class=card><div class=tabs>
+  A.innerHTML=`<div class="top hero" style="background:${cover()}"><h1>Horário Salão</h1><p>Seu salão com agenda online. Cadastre-se e envie o link aos seus clientes.</p><a class=cta href="#acesso">Cadastrar meu salão</a></div>
+  <div class=wrap><div class=card id=acesso><div class=tabs>
   <button class="${mode=='login'?'on':''}" data-a=lg>Entrar</button><button class="${mode=='cad'?'on':''}" data-a=cd>Cadastrar salão</button></div>
   ${mode=='cad'?`<label>Nome do salão</label><input id=nm placeholder="Ex.: Beleza & Estilo">
   <label>Endereço do link</label><input id=sg placeholder="beleza-estilo"><p class=mu id=pv></p>`:''}
@@ -125,14 +152,14 @@ const sopts=sel=>S.servicos.map(s=>`<option value="${s.id}" ${sel==s.id?'selecte
 async function draw(){
   let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Adicionar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar</button>':''}`;
   if(TAB=='serv')c=`<h2>Serviços e valores</h2>`+S.servicos.map((s,i)=>row('servicos',i,`<b>${esc(s.nome)}</b> · ${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome do serviço" value="${esc(es?.nome)}"><input id=a2 type=number step=.01 placeholder="Valor (R$)" value="${es?.preco??''}"><input id=a3 type=number step=30 min=30 placeholder="Duração (min)" value="${es?.min||30}"><input id=a4 placeholder="Categoria (opcional)" value="${esc(es?.cat)}">${bt(es,'addserv')}</div>`;
-  if(TAB=='prof')c=`<h2>Profissionais</h2>`+S.profissionais.map((p,i)=>row('profissionais',i,`<b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome" value="${esc(ep?.nome)}"><input id=a2 placeholder="Função (ex.: Barbeiro)" value="${esc(ep?.funcao)}">${bt(ep,'addprof')}</div>`;
-  if(TAB=='hor')c=`<h2>Horário de funcionamento</h2><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}">
+   `<div class=add><input id=a1 placeholder="Nome do serviço" value="${esc(es?.nome)}"><input id=a2 type=number step=.01 placeholder="Valor (R$)" value="${es?.preco??''}"><input id=a3 type=number step=30 min=30 placeholder="Duração (min)" value="${es?.min||30}"><input id=a4 placeholder="Categoria (opcional)" value="${esc(es?.cat)}"><input id=a5 placeholder="Descrição (opcional)" value="${esc(es?.desc)}">${bt(es,'addserv')}</div>`;
+  if(TAB=='prof')c=`<h2>Profissionais</h2>`+S.profissionais.map((p,i)=>row('profissionais',i,`${p.foto?`<img src="${p.foto}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px">`:''}<b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}</span>`)).join('')+
+   `<div class=add><input id=a1 placeholder="Nome" value="${esc(ep?.nome)}"><input id=a2 placeholder="Função (ex.: Barbeiro)" value="${esc(ep?.funcao)}"><label>Foto (opcional)</label><input type=file accept="image/*" data-up=foto><img id=fp src="${ep?.foto||''}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:${ep?.foto?'block':'none'}"><label>Serviços que realiza <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.servicos.map(x=>`<label><input type=checkbox class=ps value="${x.id}" ${ep?.servs?.includes(x.id)?'checked':''}>${esc(x.nome)}</label>`).join('')||'<span class=mu>Cadastre serviços primeiro.</span>'}</div>${bt(ep,'addprof')}</div>`;
+  if(TAB=='hor')c=`<h2>Horário de funcionamento</h2><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}"><label>Pausa de almoço <span class=mu>(opcional — sem atendimento neste intervalo)</span></label><div style="display:flex;gap:8px"><input id=h3 type=time value="${S.almI||''}"><input id=h4 type=time value="${S.almF||''}"></div>
    <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários</button>`;
   if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
    `<div class=add><input id=a1 placeholder="Título (ex.: Terça do Corte)" value="${esc(eo?.titulo)}"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)" value="${eo?.pct??''}"><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}</div>`;
-  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
+  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Título da capa</label><input id=p5 value="${esc(S.titulo)}" placeholder="Ex.: Estilo e tradição"><label>Subtítulo da capa</label><input id=p6 value="${esc(S.sub)}" placeholder="Ex.: Agende seu horário em poucos cliques."><label>Logo</label>${S.logo?`<img src="${S.logo}" style="height:50px;display:block;margin-bottom:6px;background:#ddd;padding:4px;border-radius:6px">`:''}<input type=file accept="image/*" data-up=logo>${S.logo?'<button class="btn s o" style="margin-top:6px" data-a=dlogo>Remover logo</button>':''}<label>Imagem da capa</label><input type=file accept="image/*" data-up=capa>${S.capa?'<button class="btn s o" style="margin-top:6px" data-a=dcapa>Voltar à capa padrão</button>':''}<label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
   if(TAB=='cli'){
     const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos')),M={};
     q.docs.map(d=>d.data()).forEach(a=>{const k=a.tel.replace(/\D/g,'');const m=M[k]=M[k]||{nome:a.nome,tel:a.tel,n:0,tot:0,ult:''};m.n++;m.tot+=a.valor||0;if(a.data>m.ult){m.ult=a.data;m.nome=a.nome}});
@@ -145,24 +172,25 @@ async function draw(){
     c=`<h2>Próximos agendamentos</h2>`+(AG.length?AG.map((a,i)=>`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${esc(a.nome)} · <a href="${wa(a.tel)}" target=_blank>${esc(a.tel)}</a> · ${brl(a.valor)}</span></span><button class=x data-a=cancel data-i=${i} title=Cancelar>✕</button></div>`).join(''):'<p class=mu>Nenhum agendamento futuro.</p>');
   }
   const T=[['ag','Agenda'],['cli','Clientes'],['serv','Serviços'],['prof','Profissionais'],['hor','Horários'],['promo','Promoções'],['perfil','Perfil']];
-  A.innerHTML=`<div class=top><h1>${esc(S.nome)}</h1><p>Painel do salão</p></div><div class=wrap>
+  A.innerHTML=`<div class="top hero" style="background:${cover(S.capa)};padding:36px 16px">${S.logo?`<img class=lg src="${S.logo}">`:''}<h1>${esc(S.nome)}</h1><p style="margin:6px 0 0">Painel do salão</p></div><div class=wrap>
   <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><a class="btn s o" style="text-decoration:none" href="${link()}" target=_blank>Ver página do cliente</a><button class="btn s o" data-a=sair>Sair</button></div></div>
   <div class=tabs>${T.map(t=>`<button class="${TAB==t[0]?'on':''}" data-a=tab data-t=${t[0]}>${t[1]}</button>`).join('')}</div><div class=card>${c}</div></div>`;
 }
 acts.preset=b=>{$('#p4').value=b.dataset.c;document.querySelectorAll('[data-a=preset]').forEach(x=>x.style.borderColor=x==b?'#000':'#fff');theme(b.dataset.c)};
-acts.tab=b=>{TAB=b.dataset.t;EDIT=null;draw()};
+acts.dlogo=async()=>{S.logo='';await save();draw()};acts.dcapa=async()=>{S.capa='';await save();draw()};
+acts.tab=b=>{TAB=b.dataset.t;EDIT=null;TMP={};draw()};
 acts.sair=()=>signOut(auth);
 acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>alert('Link copiado!'));
 acts.zap=e=>{open('https://wa.me/?text='+encodeURIComponent('Agende seu horário no '+S.nome+': '+link()),'_blank')};
 acts.del=async b=>{if(!confirm('Excluir este item?'))return;EDIT=null;S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
 const put=(l,o)=>{if(EDIT&&EDIT.l==l){S[l][EDIT.i]={...S[l][EDIT.i],...o};EDIT=null}else S[l].push({id:rid(),...o})};
-acts.ed=b=>{EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,document.body.scrollHeight)};
-acts.noed=()=>{EDIT=null;draw()};
-acts.addserv=async()=>{if(!v('a1')||v('a2')==='')return alert('Informe nome e valor.');put('servicos',{nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4')});await save();toast('Salvo ✔');draw()};
-acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');put('profissionais',{nome:v('a1'),funcao:v('a2')});await save();toast('Salvo ✔');draw()};
+acts.ed=b=>{TMP={};EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,document.body.scrollHeight)};
+acts.noed=()=>{TMP={};EDIT=null;draw()};
+acts.addserv=async()=>{if(!v('a1')||v('a2')==='')return alert('Informe nome e valor.');put('servicos',{nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4'),desc:v('a5')});await save();toast('Salvo ✔');draw()};
+acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');const o={nome:v('a1'),funcao:v('a2'),servs:[...document.querySelectorAll('.ps:checked')].map(x=>x.value)};if(TMP.foto)o.foto=TMP.foto;put('profissionais',o);TMP={};await save();toast('Salvo ✔');draw()};
 acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');put('promocoes',{titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();toast('Salvo ✔');draw()};
-acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
-acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.cor=v('p4');await save();theme(S.cor);draw();toast('Perfil salvo ✔')};
+acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.almI=v('h3');S.almF=v('h4');if(!S.almI||!S.almF)S.almI=S.almF='';S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
+acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6');S.cor=v('p4');await save();theme(S.cor);draw();toast('Perfil salvo ✔')};
 acts.cancel=async b=>{const a=AG[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',U.uid,'agendamentos',a.id));await w.commit();draw()};
 
 /* ============ PÁGINA PÚBLICA DO CLIENTE ============ */
@@ -170,18 +198,24 @@ let B={},ouid='',step=1;
 async function booking(sg){
   const sl=await getDoc(doc(db,'slugs',sg));
   if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
-  ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();theme(S.cor);document.title=S.nome+' | Agendamento';B={};step=1;bk();
+  ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();theme(S.cor);document.title=S.nome+' | Agendamento';B={};step=1;
+  const cards=S.servicos.map(x=>{const p=price(x,S.promocoes);return`<div class=card><h3>${esc(x.nome)}</h3>${x.desc?`<p class=mu>${esc(x.desc)}</p>`:''}<div class=pr>${p.pct?`<span class=old>${brl(x.preco)}</span>`:''}${brl(p.final)} · ${x.min}min</div></div>`}).join('')||'<p class=mu style="text-align:center">Em breve.</p>';
+  A.innerHTML=`<div class=hd>${S.logo?`<img src="${S.logo}" alt="${esc(S.nome)}">`:`<b>${esc(S.nome)}</b>`}<nav><a href="#servicos">Serviços</a><a href="#agendamento">Agendar</a></nav></div>
+  <div class=hero style="background:${cover(S.capa)}"><h1>${esc(S.titulo||S.nome)}</h1><p>${esc(S.sub||'Agende seu horário em poucos cliques.')}</p><a class=cta href="#agendamento">Agendar agora</a></div>
+  ${S.promocoes.length?`<div class=sec>${S.promocoes.map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}</div>`:''}
+  <div class=sec id=servicos><h2 style="text-align:center;margin:30px 0 16px">Nossos serviços</h2><div class=sv>${cards}</div></div>
+  <div class=wrap id=agendamento><h2 style="text-align:center;margin:30px 0 0">Faça seu agendamento</h2><div class=card id=wiz></div></div>
+  <footer>© ${new Date().getFullYear()} ${esc(S.nome)}${S.end?' · '+esc(S.end):''}</footer>`;
+  bk();
 }
 const bsv=()=>S.servicos.find(s=>s.id==B.serv),bpf=()=>S.profissionais.find(p=>p.id==B.prof);
 function bk(){
-  const head=`<div class=top><h1>${esc(S.nome)}</h1>${S.end?`<p>${esc(S.end)}</p>`:''}</div>`;
   const bar=`<div class=steps>${[1,2,3].map(i=>`<i class="${step>=i?'on':''}"></i>`).join('')}</div>`;
   let c='';
   if(step==1){
-    const cats=[...new Set(S.servicos.map(s=>s.cat||'Serviços'))];
-    c=`${bar}<h2>Escolha o serviço</h2>${S.promocoes.map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}
-    <label>Profissional</label><select id=sp><option value="">Selecione</option>${S.profissionais.map(p=>`<option value="${p.id}" ${B.prof==p.id?'selected':''}>${esc(p.nome)}${p.funcao?' — '+esc(p.funcao):''}</option>`).join('')}</select>
-    <label>Serviço</label><select id=ss><option value="">Selecione</option>${cats.map(k=>`<optgroup label="${esc(k)}">${S.servicos.filter(s=>(s.cat||'Serviços')==k).map(s=>{const p=price(s,S.promocoes);return`<option value="${s.id}" ${B.serv==s.id?'selected':''}>${esc(s.nome)} — ${brl(p.final)} (${s.min}min)</option>`}).join('')}</optgroup>`).join('')}</select>
+    const sel=bpf(),L=S.servicos.filter(x=>!sel||!(sel.servs&&sel.servs.length)||sel.servs.includes(x.id)),cats=[...new Set(L.map(x=>x.cat||'Serviços'))];
+    c=`${bar}<h2>Escolha o profissional</h2><div class=pfs>${S.profissionais.map(p=>`<button data-a=pickprof data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span></button>`).join('')||'<p class=mu>Nenhum profissional cadastrado.</p>'}</div>
+    <label>Serviço</label><select id=ss ${sel?'':'disabled'}><option value="">${sel?'Selecione':'Escolha o profissional primeiro'}</option>${cats.map(k=>`<optgroup label="${esc(k)}">${L.filter(x=>(x.cat||'Serviços')==k).map(x=>{const p=price(x,S.promocoes);return`<option value="${x.id}" ${B.serv==x.id?'selected':''}>${esc(x.nome)} — ${brl(p.final)} (${x.min}min)</option>`}).join('')}</optgroup>`).join('')}</select>
     <button class=btn data-a=n1>Continuar</button>`;
   }
   if(step==2){
@@ -198,11 +232,12 @@ function bk(){
     c=`<div class=ok><div class=big>✅</div><h2>Agendamento confirmado!</h2><p>${esc(bsv().nome)} com ${esc(bpf().nome)}<br><b>${B.data.split('-').reverse().join('/')} às ${B.hora}</b></p>
     ${S.whats?`<a class=btn style="display:block;text-decoration:none" target=_blank href="${wa(S.whats,'Olá! Agendei '+bsv().nome+' em '+B.data.split('-').reverse().join('/')+' às '+B.hora+' (nome: '+B.nome+').')}">Avisar no WhatsApp do salão</a>`:''}</div>`;
   }
-  A.innerHTML=head+`<div class=wrap><div class=card>${c}</div></div>`;
+  $('#wiz').innerHTML=c;if(step>1)$('#wiz').scrollIntoView();
   if(step==2){$('#dt').onchange=loadSlots;if(B.data)loadSlots()}
 }
 acts.back=()=>{step--;bk()};
-acts.n1=()=>{B.prof=v('sp');B.serv=v('ss');if(!B.prof||!B.serv)return alert('Escolha o profissional e o serviço.');step=2;bk()};
+acts.pickprof=b=>{const x=$('#ss');if(x)B.serv=x.value;B.prof=b.dataset.p;const pf=bpf();if(pf.servs&&pf.servs.length&&!pf.servs.includes(B.serv))B.serv='';bk()};
+acts.n1=()=>{B.serv=$('#ss').value;if(!B.prof||!B.serv)return alert('Escolha o profissional e o serviço.');step=2;bk()};
 acts.n2=()=>{step=3;bk()};
 async function loadSlots(){
   B.data=v('dt');B.hora='';$('#nx').disabled=true;const box=$('#sl');
@@ -212,7 +247,7 @@ async function loadSlots(){
   const busy=new Set(q.docs.map(d=>d.data().prof+'_'+d.data().hora)),n=bsv().min/30,now=new Date(),hoje=B.data==iso(now),out=[];
   for(let t=tm(S.abre);t+n*30<=tm(S.fecha);t+=30){
     if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
-    let ok=true;for(let k=0;k<n;k++)if(busy.has(B.prof+'_'+hm(t+k*30)))ok=false;
+    let ok=true;for(let k=0;k<n;k++){const bt=t+k*30;if(busy.has(B.prof+'_'+hm(bt))||(S.almI&&S.almF&&bt>=tm(S.almI)&&bt<tm(S.almF)))ok=false}
     if(ok)out.push(hm(t));
   }
   box.innerHTML=out.length?out.map(h=>`<button data-a=pick data-h=${h}>${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres nesta data.</p>';
