@@ -42,7 +42,7 @@ input,select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8p
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch,runTransaction} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const cfg={
   apiKey:"AIzaSyCiuo1YI9kfo7gm3ilovXDlN0gYQxq8Hns",
@@ -67,12 +67,12 @@ const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let U=null,S=null,TAB='serv',AG=[];
+let U=null,S=null,TAB='serv',AG=[],busy=false;
 
 /* ============ ROTEAMENTO ============ */
 const slug=new URLSearchParams(location.search).get('s');
 if(slug)booking(slug);
-else onAuthStateChanged(auth,u=>{U=u;u?panel():landing()});
+else onAuthStateChanged(auth,u=>{U=u;if(busy)return;u?panel():landing()});
 
 /* ============ LANDING / LOGIN / CADASTRO ============ */
 function landing(mode='login'){
@@ -89,22 +89,32 @@ function landing(mode='login'){
 }
 acts.lg=()=>landing('login');acts.cd=()=>landing('cad');
 acts.login=async()=>{try{await signInWithEmailAndPassword(auth,v('em'),v('pw'))}catch(e){alert('E-mail ou senha inválidos.')}};
+const mk=async(nome,sg)=>{
+  const d={nome,slug:sg,cor:'#1f2a37',whats:'',end:'',abre:'09:00',fecha:'18:00',dias:[1,2,3,4,5,6],servicos:[],profissionais:[],promocoes:[]},w=writeBatch(db);
+  w.set(doc(db,'slugs',sg),{uid:U.uid});w.set(doc(db,'saloes',U.uid),d);await w.commit();S=d;
+};
 acts.signup=async()=>{
   const nome=v('nm'),sg=slugify(v('sg'));if(!nome||!sg||!v('em')||v('pw').length<6)return alert('Preencha todos os campos (senha com 6+ caracteres).');
-  if((await getDoc(doc(db,'slugs',sg))).exists())return alert('Esse endereço já está em uso. Escolha outro.');
+  busy=true;
   try{
-    const c=await createUserWithEmailAndPassword(auth,v('em'),v('pw'));
-    S={nome,slug:sg,cor:'#1f2a37',whats:'',end:'',abre:'09:00',fecha:'18:00',dias:[1,2,3,4,5,6],servicos:[],profissionais:[],promocoes:[]};
-    await runTransaction(db,async t=>{const r=doc(db,'slugs',sg);if((await t.get(r)).exists())throw 0;t.set(r,{uid:c.user.uid});t.set(doc(db,'saloes',c.user.uid),S)});
-    U=c.user;panel();
-  }catch(e){alert('Não foi possível cadastrar: '+(e.code||'tente outro endereço.'))}
+    if((await getDoc(doc(db,'slugs',sg))).exists())throw{code:'slug',message:'Esse endereço já está em uso. Escolha outro.'};
+    try{U=(await createUserWithEmailAndPassword(auth,v('em'),v('pw'))).user}
+    catch(e){if(e.code=='auth/email-already-in-use')U=(await signInWithEmailAndPassword(auth,v('em'),v('pw'))).user;else throw e}
+    await mk(nome,sg);
+  }catch(e){busy=false;alert('Erro ao cadastrar: '+(e.code||'')+' — '+(e.message||''));if(U)panel();return}
+  busy=false;panel();
+};
+acts.criar=async()=>{
+  const nome=v('nm'),sg=slugify(v('sg')||nome);if(!nome||!sg)return alert('Informe o nome do salão.');
+  try{if((await getDoc(doc(db,'slugs',sg))).exists())return alert('Esse endereço já está em uso. Escolha outro.');await mk(nome,sg);panel()}
+  catch(e){alert('Erro: '+(e.code||'')+' — '+(e.message||''))}
 };
 
 /* ============ PAINEL DO SALÃO ============ */
 const save=()=>setDoc(doc(db,'saloes',U.uid),S);
 async function panel(){
   S=(await getDoc(doc(db,'saloes',U.uid))).data();
-  if(!S){A.innerHTML='<div class=wrap><div class=card>Salão não encontrado para esta conta. <button class="btn" data-a=sair>Sair</button></div></div>';return}
+  if(!S){theme();A.innerHTML=`<div class=top><h1>Quase lá!</h1><p>Finalize o cadastro do seu salão</p></div><div class=wrap><div class=card><label>Nome do salão</label><input id=nm><label>Endereço do link</label><input id=sg placeholder="ex.: barbearia-martins"><button class=btn data-a=criar>Criar meu salão</button><button class="btn o" data-a=sair>Sair</button></div></div>`;return}
   theme(S.cor);draw();
 }
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
