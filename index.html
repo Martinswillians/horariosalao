@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#d47a8d">
+<meta name="theme-color" content="#1f2a37">
 <title>Horário Salão | Agendamento Online</title>
 <style>
-:root{--c:#d47a8d;--bg:#f6f5f4;--tx:#222;--mu:#777;--bd:#e2e2e2}
+:root{--c:#1f2a37;--bg:#f3f4f6;--tx:#222;--mu:#777;--bd:#e2e2e2}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
 body{background:var(--bg);color:var(--tx);min-height:100vh}
 .wrap{max-width:640px;margin:0 auto;padding:16px}
@@ -44,7 +44,6 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch,runTransaction} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// >>> Cole aqui o apiKey do seu Firebase (Configurações do projeto > Seus apps) <<<
 const cfg={
   apiKey:"AIzaSyCiuo1YI9kfo7gm3ilovXDlN0gYQxq8Hns",
   authDomain:"horariosalao-ce269.firebaseapp.com",
@@ -64,8 +63,9 @@ const tm=h=>{const [a,b]=h.split(':');return a*60+ +b},hm=m=>String(m/60|0).padS
 const iso=d=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const wa=(t,msg='')=>'https://wa.me/'+(t.replace(/\D/g,'').length<=11?'55':'')+t.replace(/\D/g,'')+(msg?'?text='+encodeURIComponent(msg):'');
 const price=(s,P)=>{const pct=(P||[]).filter(p=>!p.servId||p.servId===s.id).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
-const theme=c=>document.documentElement.style.setProperty('--c',c||'#d47a8d');
+const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
+const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
 let U=null,S=null,TAB='serv',AG=[];
 
@@ -94,7 +94,7 @@ acts.signup=async()=>{
   if((await getDoc(doc(db,'slugs',sg))).exists())return alert('Esse endereço já está em uso. Escolha outro.');
   try{
     const c=await createUserWithEmailAndPassword(auth,v('em'),v('pw'));
-    S={nome,slug:sg,cor:'#d47a8d',whats:'',end:'',abre:'09:00',fecha:'18:00',dias:[1,2,3,4,5,6],servicos:[],profissionais:[],promocoes:[]};
+    S={nome,slug:sg,cor:'#1f2a37',whats:'',end:'',abre:'09:00',fecha:'18:00',dias:[1,2,3,4,5,6],servicos:[],profissionais:[],promocoes:[]};
     await runTransaction(db,async t=>{const r=doc(db,'slugs',sg);if((await t.get(r)).exists())throw 0;t.set(r,{uid:c.user.uid});t.set(doc(db,'saloes',c.user.uid),S)});
     U=c.user;panel();
   }catch(e){alert('Não foi possível cadastrar: '+(e.code||'tente outro endereço.'))}
@@ -120,7 +120,7 @@ async function draw(){
    <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários</button>`;
   if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
    `<div class=add><input id=a1 placeholder="Título (ex.: Terça da Beleza)"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)"><select id=a3><option value="">Todos os serviços</option>${sopts()}</select><button class="btn s" data-a=addpromo>Adicionar</button></div>`;
-  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Cor do app</label><input id=p4 type=color value="${S.cor}"><button class=btn data-a=salperfil>Salvar</button>`;
+  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
   if(TAB=='ag'){
     const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos'));const hoje=iso(new Date());
     AG=q.docs.map(d=>({id:d.id,...d.data()})).filter(a=>a.data>=hoje).sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
@@ -131,6 +131,7 @@ async function draw(){
   <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><button class="btn s o" data-a=sair>Sair</button></div></div>
   <div class=tabs>${T.map(t=>`<button class="${TAB==t[0]?'on':''}" data-a=tab data-t=${t[0]}>${t[1]}</button>`).join('')}</div><div class=card>${c}</div></div>`;
 }
+acts.preset=b=>{$('#p4').value=b.dataset.c;document.querySelectorAll('[data-a=preset]').forEach(x=>x.style.borderColor=x==b?'#000':'#fff');theme(b.dataset.c)};
 acts.tab=b=>{TAB=b.dataset.t;draw()};
 acts.sair=()=>signOut(auth);
 acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>alert('Link copiado!'));
