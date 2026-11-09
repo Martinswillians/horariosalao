@@ -67,7 +67,9 @@ const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let U=null,S=null,TAB='serv',AG=[],busy=false;
+let U=null,S=null,TAB='serv',AG=[],busy=false,EDIT=null;
+const E=l=>EDIT&&EDIT.l==l?S[l][EDIT.i]:null;
+const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:24px;z-index:9;font-size:.95rem';document.body.append(d);setTimeout(()=>d.remove(),2200)};
 
 /* ============ ROTEAMENTO ============ */
 const slug=new URLSearchParams(location.search).get('s');
@@ -118,40 +120,49 @@ async function panel(){
   theme(S.cor);draw();
 }
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
-const row=(l,i,t)=>`<div class=row><span>${t}</span><button class=x data-a=del data-l=${l} data-i=${i}>✕</button></div>`;
-const sopts=()=>S.servicos.map(s=>`<option value="${s.id}">${esc(s.nome)}</option>`).join('');
+const row=(l,i,t)=>`<div class=row><span>${t}</span><span><button class=x style="color:#555" data-a=ed data-l=${l} data-i=${i} title=Editar>✎</button><button class=x data-a=del data-l=${l} data-i=${i} title=Excluir>✕</button></span></div>`;
+const sopts=sel=>S.servicos.map(s=>`<option value="${s.id}" ${sel==s.id?'selected':''}>${esc(s.nome)}</option>`).join('');
 async function draw(){
-  let c='';
+  let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Adicionar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar</button>':''}`;
   if(TAB=='serv')c=`<h2>Serviços e valores</h2>`+S.servicos.map((s,i)=>row('servicos',i,`<b>${esc(s.nome)}</b> · ${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome do serviço"><input id=a2 type=number step=.01 placeholder="Valor (R$)"><input id=a3 type=number step=30 min=30 value=30 placeholder="Duração (min)"><input id=a4 placeholder="Categoria (opcional)"><button class="btn s" data-a=addserv>Adicionar</button></div>`;
+   `<div class=add><input id=a1 placeholder="Nome do serviço" value="${esc(es?.nome)}"><input id=a2 type=number step=.01 placeholder="Valor (R$)" value="${es?.preco??''}"><input id=a3 type=number step=30 min=30 placeholder="Duração (min)" value="${es?.min||30}"><input id=a4 placeholder="Categoria (opcional)" value="${esc(es?.cat)}">${bt(es,'addserv')}</div>`;
   if(TAB=='prof')c=`<h2>Profissionais</h2>`+S.profissionais.map((p,i)=>row('profissionais',i,`<b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome"><input id=a2 placeholder="Função (ex.: Cabeleireira)"><button class="btn s" data-a=addprof>Adicionar</button></div>`;
+   `<div class=add><input id=a1 placeholder="Nome" value="${esc(ep?.nome)}"><input id=a2 placeholder="Função (ex.: Barbeiro)" value="${esc(ep?.funcao)}">${bt(ep,'addprof')}</div>`;
   if(TAB=='hor')c=`<h2>Horário de funcionamento</h2><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}">
    <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários</button>`;
   if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Título (ex.: Terça da Beleza)"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)"><select id=a3><option value="">Todos os serviços</option>${sopts()}</select><button class="btn s" data-a=addpromo>Adicionar</button></div>`;
+   `<div class=add><input id=a1 placeholder="Título (ex.: Terça do Corte)" value="${esc(eo?.titulo)}"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)" value="${eo?.pct??''}"><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}</div>`;
   if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
+  if(TAB=='cli'){
+    const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos')),M={};
+    q.docs.map(d=>d.data()).forEach(a=>{const k=a.tel.replace(/\D/g,'');const m=M[k]=M[k]||{nome:a.nome,tel:a.tel,n:0,tot:0,ult:''};m.n++;m.tot+=a.valor||0;if(a.data>m.ult){m.ult=a.data;m.nome=a.nome}});
+    const L=Object.values(M).sort((a,b)=>b.ult.localeCompare(a.ult));
+    c=`<h2>Meus clientes (${L.length})</h2>`+(L.length?L.map(m=>`<div class=row><span><b>${esc(m.nome)}</b><br><span class=mu>${m.n} agendamento(s) · ${brl(m.tot)} · último: ${m.ult.split('-').reverse().join('/')}</span></span><a class="btn s o" style="text-decoration:none" target=_blank href="${wa(m.tel)}">WhatsApp</a></div>`).join(''):'<p class=mu>Ainda não há clientes. Envie o link do seu salão!</p>');
+  }
   if(TAB=='ag'){
     const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos'));const hoje=iso(new Date());
     AG=q.docs.map(d=>({id:d.id,...d.data()})).filter(a=>a.data>=hoje).sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
     c=`<h2>Próximos agendamentos</h2>`+(AG.length?AG.map((a,i)=>`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${esc(a.nome)} · <a href="${wa(a.tel)}" target=_blank>${esc(a.tel)}</a> · ${brl(a.valor)}</span></span><button class=x data-a=cancel data-i=${i} title=Cancelar>✕</button></div>`).join(''):'<p class=mu>Nenhum agendamento futuro.</p>');
   }
-  const T=[['ag','Agenda'],['serv','Serviços'],['prof','Profissionais'],['hor','Horários'],['promo','Promoções'],['perfil','Perfil']];
+  const T=[['ag','Agenda'],['cli','Clientes'],['serv','Serviços'],['prof','Profissionais'],['hor','Horários'],['promo','Promoções'],['perfil','Perfil']];
   A.innerHTML=`<div class=top><h1>${esc(S.nome)}</h1><p>Painel do salão</p></div><div class=wrap>
-  <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><button class="btn s o" data-a=sair>Sair</button></div></div>
+  <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><a class="btn s o" style="text-decoration:none" href="${link()}" target=_blank>Ver página do cliente</a><button class="btn s o" data-a=sair>Sair</button></div></div>
   <div class=tabs>${T.map(t=>`<button class="${TAB==t[0]?'on':''}" data-a=tab data-t=${t[0]}>${t[1]}</button>`).join('')}</div><div class=card>${c}</div></div>`;
 }
 acts.preset=b=>{$('#p4').value=b.dataset.c;document.querySelectorAll('[data-a=preset]').forEach(x=>x.style.borderColor=x==b?'#000':'#fff');theme(b.dataset.c)};
-acts.tab=b=>{TAB=b.dataset.t;draw()};
+acts.tab=b=>{TAB=b.dataset.t;EDIT=null;draw()};
 acts.sair=()=>signOut(auth);
 acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>alert('Link copiado!'));
 acts.zap=e=>{open('https://wa.me/?text='+encodeURIComponent('Agende seu horário no '+S.nome+': '+link()),'_blank')};
-acts.del=async b=>{S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
-acts.addserv=async()=>{if(!v('a1')||!(+v('a2')>=0)||v('a2')==='')return alert('Informe nome e valor.');S.servicos.push({id:rid(),nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4')});await save();draw()};
-acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');S.profissionais.push({id:rid(),nome:v('a1'),funcao:v('a2')});await save();draw()};
-acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');S.promocoes.push({id:rid(),titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();draw()};
-acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();alert('Horários salvos.')};
-acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.cor=v('p4');await save();theme(S.cor);draw()};
+acts.del=async b=>{if(!confirm('Excluir este item?'))return;EDIT=null;S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
+const put=(l,o)=>{if(EDIT&&EDIT.l==l){S[l][EDIT.i]={...S[l][EDIT.i],...o};EDIT=null}else S[l].push({id:rid(),...o})};
+acts.ed=b=>{EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,document.body.scrollHeight)};
+acts.noed=()=>{EDIT=null;draw()};
+acts.addserv=async()=>{if(!v('a1')||v('a2')==='')return alert('Informe nome e valor.');put('servicos',{nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4')});await save();toast('Salvo ✔');draw()};
+acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');put('profissionais',{nome:v('a1'),funcao:v('a2')});await save();toast('Salvo ✔');draw()};
+acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');put('promocoes',{titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();toast('Salvo ✔');draw()};
+acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
+acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.cor=v('p4');await save();theme(S.cor);draw();toast('Perfil salvo ✔')};
 acts.cancel=async b=>{const a=AG[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',U.uid,'agendamentos',a.id));await w.commit();draw()};
 
 /* ============ PÁGINA PÚBLICA DO CLIENTE ============ */
