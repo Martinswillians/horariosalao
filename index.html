@@ -1,236 +1,209 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salão Beleza & Estilo | Agendamento Online</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: #f9f9f9;
-      color: #333;
-    }
-
-    header {
-      background-color: #ffffff;
-      padding: 20px 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #d47a8d;
-    }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #555;
-      font-weight: 500;
-    }
-
-    .hero {
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80') center/cover;
-      color: #fff;
-      text-align: center;
-      padding: 100px 20px;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 25px;
-    }
-
-    .btn-agendar {
-      background-color: #d47a8d;
-      color: white;
-      padding: 12px 30px;
-      border: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 0.3s;
-    }
-
-    .btn-agendar:hover {
-      background-color: #b85e71;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 50px auto;
-      padding: 0 20px;
-    }
-
-    .titulo-secao {
-      text-align: center;
-      margin-bottom: 40px;
-      font-size: 1.8rem;
-      color: #444;
-    }
-
-    .servicos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .card-servico {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      text-align: center;
-    }
-
-    .card-servico h3 {
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .card-servico p {
-      color: #666;
-      font-size: 0.95rem;
-      margin-bottom: 15px;
-    }
-
-    .card-servico .preco {
-      font-weight: bold;
-      color: #d47a8d;
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-    }
-
-    .form-agendamento {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #333;
-      color: white;
-      margin-top: 60px;
-      font-size: 0.9rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d47a8d">
+<title>Horário Salão | Agendamento Online</title>
+<style>
+:root{--c:#d47a8d;--bg:#f6f5f4;--tx:#222;--mu:#777;--bd:#e2e2e2}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:var(--bg);color:var(--tx);min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.top{background:var(--c);color:#fff;padding:22px 16px;text-align:center}
+.top h1{font-size:1.5rem}.top p{opacity:.9;font-size:.9rem;margin-top:4px}
+.card{background:#fff;border-radius:12px;padding:18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+h2{font-size:1.1rem;margin-bottom:12px}
+label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 5px}
+input,select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;font-size:1rem;background:#fff}
+.btn{background:var(--c);color:#fff;border:0;border-radius:24px;padding:12px 22px;font-size:1rem;cursor:pointer;width:100%;margin-top:16px}
+.btn.s{width:auto;padding:8px 14px;font-size:.85rem;margin:0}
+.btn.o{background:#fff;color:var(--c);border:1px solid var(--c)}
+.btn:disabled{opacity:.4}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.tabs button{border:1px solid var(--bd);background:#fff;border-radius:20px;padding:8px 14px;white-space:nowrap;cursor:pointer}
+.tabs .on{background:var(--c);color:#fff;border-color:var(--c)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
+.x{border:0;background:none;color:#c33;font-size:1.1rem;cursor:pointer}
+.add{display:grid;gap:8px;margin-top:14px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.slots button{padding:10px;border:1px solid var(--bd);border-radius:8px;background:#fff;cursor:pointer}
+.slots .on{background:var(--c);color:#fff;border-color:var(--c)}
+.promo{background:#fff4e5;border:1px dashed #f0a030;border-radius:10px;padding:10px;margin:8px 0;font-size:.9rem}
+.mu{color:var(--mu);font-size:.85rem}
+.old{text-decoration:line-through;color:var(--mu);margin-right:6px}
+.dias{display:flex;flex-wrap:wrap;gap:10px}.dias label{display:flex;gap:4px;align-items:center;margin:0;font-weight:400}.dias input{width:auto}
+.steps{display:flex;gap:4px;margin-bottom:12px}.steps i{flex:1;height:4px;background:var(--bd);border-radius:2px}.steps i.on{background:var(--c)}
+.ok{text-align:center}.ok .big{font-size:3rem}
+</style>
 </head>
 <body>
+<div id="app"><div class="wrap"><p class="mu">Carregando…</p></div></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch,runTransaction} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-  <header>
-    <div class="logo">Beleza & Estilo</div>
-    <nav>
-      <a href="#servicos">Serviços</a>
-      <a href="#agendamento">Agendar</a>
-    </nav>
-  </header>
+// >>> Cole aqui o apiKey do seu Firebase (Configurações do projeto > Seus apps) <<<
+const cfg={
+  apiKey:"COLE_SUA_API_KEY",
+  authDomain:"horariosalao-ce269.firebaseapp.com",
+  projectId:"horariosalao-ce269",
+  storageBucket:"horariosalao-ce269.firebasestorage.app",
+  messagingSenderId:"882513001742",
+  appId:"1:882513001742:web:4e3ec0bd438ef929186b5f"
+};
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const A=document.getElementById('app'),$=s=>document.querySelector(s),v=id=>$('#'+id).value.trim();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const rid=()=>Math.random().toString(36).slice(2,9);
+const slugify=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const tm=h=>{const [a,b]=h.split(':');return a*60+ +b},hm=m=>String(m/60|0).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const iso=d=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const wa=(t,msg='')=>'https://wa.me/'+(t.replace(/\D/g,'').length<=11?'55':'')+t.replace(/\D/g,'')+(msg?'?text='+encodeURIComponent(msg):'');
+const price=(s,P)=>{const pct=(P||[]).filter(p=>!p.servId||p.servId===s.id).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
+const theme=c=>document.documentElement.style.setProperty('--c',c||'#d47a8d');
+const acts={};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
+let U=null,S=null,TAB='serv',AG=[];
 
-  <section class="hero">
-    <h1>Realce sua beleza natural</h1>
-    <p>Agende seu horário com nossos especialistas em poucos cliques.</p>
-    <a href="#agendamento" class="btn-agendar">Agendar Agora</a>
-  </section>
+/* ============ ROTEAMENTO ============ */
+const slug=new URLSearchParams(location.search).get('s');
+if(slug)booking(slug);
+else onAuthStateChanged(auth,u=>{U=u;u?panel():landing()});
 
-  <section class="container" id="servicos">
-    <h2 class="titulo-secao">Nossos Serviços</h2>
-    <div class="servicos-grid">
-      <div class="card-servico">
-        <h3>Corte & Escova</h3>
-        <p>Corte personalizado com lavagem e finalização completa.</p>
-        <div class="preco">R$ 90,00</div>
-      </div>
-      <div class="card-servico">
-        <h3>Manicure & Pedicure</h3>
-        <p>Cuidado completo para suas mãos e pés com cutilagem e esmaltação.</p>
-        <div class="preco">R$ 60,00</div>
-      </div>
-      <div class="card-servico">
-        <h3>Coloração</h3>
-        <p>Coloração de raiz ou global com produtos de alta qualidade.</p>
-        <div class="preco">R$ 150,00</div>
-      </div>
-    </div>
-  </section>
+/* ============ LANDING / LOGIN / CADASTRO ============ */
+function landing(mode='login'){
+  theme();
+  A.innerHTML=`<div class=top><h1>Horário Salão</h1><p>Seu salão com agenda online. Cadastre-se e envie o link aos clientes.</p></div>
+  <div class=wrap><div class=card><div class=tabs>
+  <button class="${mode=='login'?'on':''}" data-a=lg>Entrar</button><button class="${mode=='cad'?'on':''}" data-a=cd>Cadastrar salão</button></div>
+  ${mode=='cad'?`<label>Nome do salão</label><input id=nm placeholder="Ex.: Beleza & Estilo">
+  <label>Endereço do link</label><input id=sg placeholder="beleza-estilo"><p class=mu id=pv></p>`:''}
+  <label>E-mail</label><input id=em type=email><label>Senha</label><input id=pw type=password placeholder="mínimo 6 caracteres">
+  <button class=btn data-a=${mode=='cad'?'signup':'login'}>${mode=='cad'?'Criar meu salão':'Entrar'}</button></div></div>`;
+  if(mode=='cad'){const n=$('#nm'),s=$('#sg');n.oninput=()=>{if(!s.dataset.t)s.value=slugify(n.value);pv()};s.oninput=()=>{s.dataset.t=1;s.value=slugify(s.value);pv()};
+    const pv=()=>$('#pv').textContent=s.value?location.origin+location.pathname+'?s='+s.value:''}
+}
+acts.lg=()=>landing('login');acts.cd=()=>landing('cad');
+acts.login=async()=>{try{await signInWithEmailAndPassword(auth,v('em'),v('pw'))}catch(e){alert('E-mail ou senha inválidos.')}};
+acts.signup=async()=>{
+  const nome=v('nm'),sg=slugify(v('sg'));if(!nome||!sg||!v('em')||v('pw').length<6)return alert('Preencha todos os campos (senha com 6+ caracteres).');
+  if((await getDoc(doc(db,'slugs',sg))).exists())return alert('Esse endereço já está em uso. Escolha outro.');
+  try{
+    const c=await createUserWithEmailAndPassword(auth,v('em'),v('pw'));
+    S={nome,slug:sg,cor:'#d47a8d',whats:'',end:'',abre:'09:00',fecha:'18:00',dias:[1,2,3,4,5,6],servicos:[],profissionais:[],promocoes:[]};
+    await runTransaction(db,async t=>{const r=doc(db,'slugs',sg);if((await t.get(r)).exists())throw 0;t.set(r,{uid:c.user.uid});t.set(doc(db,'saloes',c.user.uid),S)});
+    U=c.user;panel();
+  }catch(e){alert('Não foi possível cadastrar: '+(e.code||'tente outro endereço.'))}
+};
 
-  <section class="container" id="agendamento">
-    <h2 class="titulo-secao">Faça seu Agendamento</h2>
-    <form class="form-agendamento" action="#" method="POST">
-      <div class="form-group">
-        <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
-      </div>
+/* ============ PAINEL DO SALÃO ============ */
+const save=()=>setDoc(doc(db,'saloes',U.uid),S);
+async function panel(){
+  S=(await getDoc(doc(db,'saloes',U.uid))).data();
+  if(!S){A.innerHTML='<div class=wrap><div class=card>Salão não encontrado para esta conta. <button class="btn" data-a=sair>Sair</button></div></div>';return}
+  theme(S.cor);draw();
+}
+const link=()=>location.origin+location.pathname+'?s='+S.slug;
+const row=(l,i,t)=>`<div class=row><span>${t}</span><button class=x data-a=del data-l=${l} data-i=${i}>✕</button></div>`;
+const sopts=()=>S.servicos.map(s=>`<option value="${s.id}">${esc(s.nome)}</option>`).join('');
+async function draw(){
+  let c='';
+  if(TAB=='serv')c=`<h2>Serviços e valores</h2>`+S.servicos.map((s,i)=>row('servicos',i,`<b>${esc(s.nome)}</b> · ${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}`)).join('')+
+   `<div class=add><input id=a1 placeholder="Nome do serviço"><input id=a2 type=number step=.01 placeholder="Valor (R$)"><input id=a3 type=number step=30 min=30 value=30 placeholder="Duração (min)"><input id=a4 placeholder="Categoria (opcional)"><button class="btn s" data-a=addserv>Adicionar</button></div>`;
+  if(TAB=='prof')c=`<h2>Profissionais</h2>`+S.profissionais.map((p,i)=>row('profissionais',i,`<b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}`)).join('')+
+   `<div class=add><input id=a1 placeholder="Nome"><input id=a2 placeholder="Função (ex.: Cabeleireira)"><button class="btn s" data-a=addprof>Adicionar</button></div>`;
+  if(TAB=='hor')c=`<h2>Horário de funcionamento</h2><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}">
+   <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários</button>`;
+  if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
+   `<div class=add><input id=a1 placeholder="Título (ex.: Terça da Beleza)"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)"><select id=a3><option value="">Todos os serviços</option>${sopts()}</select><button class="btn s" data-a=addpromo>Adicionar</button></div>`;
+  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Cor do app</label><input id=p4 type=color value="${S.cor}"><button class=btn data-a=salperfil>Salvar</button>`;
+  if(TAB=='ag'){
+    const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos'));const hoje=iso(new Date());
+    AG=q.docs.map(d=>({id:d.id,...d.data()})).filter(a=>a.data>=hoje).sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+    c=`<h2>Próximos agendamentos</h2>`+(AG.length?AG.map((a,i)=>`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${esc(a.nome)} · <a href="${wa(a.tel)}" target=_blank>${esc(a.tel)}</a> · ${brl(a.valor)}</span></span><button class=x data-a=cancel data-i=${i} title=Cancelar>✕</button></div>`).join(''):'<p class=mu>Nenhum agendamento futuro.</p>');
+  }
+  const T=[['ag','Agenda'],['serv','Serviços'],['prof','Profissionais'],['hor','Horários'],['promo','Promoções'],['perfil','Perfil']];
+  A.innerHTML=`<div class=top><h1>${esc(S.nome)}</h1><p>Painel do salão</p></div><div class=wrap>
+  <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><button class="btn s o" data-a=sair>Sair</button></div></div>
+  <div class=tabs>${T.map(t=>`<button class="${TAB==t[0]?'on':''}" data-a=tab data-t=${t[0]}>${t[1]}</button>`).join('')}</div><div class=card>${c}</div></div>`;
+}
+acts.tab=b=>{TAB=b.dataset.t;draw()};
+acts.sair=()=>signOut(auth);
+acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>alert('Link copiado!'));
+acts.zap=e=>{open('https://wa.me/?text='+encodeURIComponent('Agende seu horário no '+S.nome+': '+link()),'_blank')};
+acts.del=async b=>{S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
+acts.addserv=async()=>{if(!v('a1')||!(+v('a2')>=0)||v('a2')==='')return alert('Informe nome e valor.');S.servicos.push({id:rid(),nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4')});await save();draw()};
+acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');S.profissionais.push({id:rid(),nome:v('a1'),funcao:v('a2')});await save();draw()};
+acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');S.promocoes.push({id:rid(),titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();draw()};
+acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();alert('Horários salvos.')};
+acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.cor=v('p4');await save();theme(S.cor);draw()};
+acts.cancel=async b=>{const a=AG[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',U.uid,'agendamentos',a.id));await w.commit();draw()};
 
-      <div class="form-group">
-        <label for="telefone">Telefone / WhatsApp</label>
-        <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
-      </div>
-
-      <div class="form-group">
-        <label for="servico">Selecione o Serviço</label>
-        <select id="servico" name="servico" required>
-          <option value="">Escolha uma opção</option>
-          <option value="corte">Corte & Escova</option>
-          <option value="manicure">Manicure & Pedicure</option>
-          <option value="coloracao">Coloração</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="data">Data</label>
-        <input type="date" id="data" name="data" required>
-      </div>
-
-      <div class="form-group">
-        <label for="hora">Horário</label>
-        <input type="time" id="hora" name="hora" required>
-      </div>
-
-      <button type="submit" class="btn-agendar" style="width: 100%;">Confirmar Agendamento</button>
-    </form>
-  </section>
-
-  <footer>
-    <p>&copy; 2026 Salão Beleza & Estilo. Todos os direitos reservados.</p>
-  </footer>
-
+/* ============ PÁGINA PÚBLICA DO CLIENTE ============ */
+let B={},ouid='',step=1;
+async function booking(sg){
+  const sl=await getDoc(doc(db,'slugs',sg));
+  if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
+  ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();theme(S.cor);document.title=S.nome+' | Agendamento';B={};step=1;bk();
+}
+const bsv=()=>S.servicos.find(s=>s.id==B.serv),bpf=()=>S.profissionais.find(p=>p.id==B.prof);
+function bk(){
+  const head=`<div class=top><h1>${esc(S.nome)}</h1>${S.end?`<p>${esc(S.end)}</p>`:''}</div>`;
+  const bar=`<div class=steps>${[1,2,3].map(i=>`<i class="${step>=i?'on':''}"></i>`).join('')}</div>`;
+  let c='';
+  if(step==1){
+    const cats=[...new Set(S.servicos.map(s=>s.cat||'Serviços'))];
+    c=`${bar}<h2>Escolha o serviço</h2>${S.promocoes.map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}
+    <label>Profissional</label><select id=sp><option value="">Selecione</option>${S.profissionais.map(p=>`<option value="${p.id}" ${B.prof==p.id?'selected':''}>${esc(p.nome)}${p.funcao?' — '+esc(p.funcao):''}</option>`).join('')}</select>
+    <label>Serviço</label><select id=ss><option value="">Selecione</option>${cats.map(k=>`<optgroup label="${esc(k)}">${S.servicos.filter(s=>(s.cat||'Serviços')==k).map(s=>{const p=price(s,S.promocoes);return`<option value="${s.id}" ${B.serv==s.id?'selected':''}>${esc(s.nome)} — ${brl(p.final)} (${s.min}min)</option>`}).join('')}</optgroup>`).join('')}</select>
+    <button class=btn data-a=n1>Continuar</button>`;
+  }
+  if(step==2){
+    c=`${bar}<h2>Data e horário</h2><label>Data</label><input id=dt type=date min="${iso(new Date())}" value="${B.data||''}"><div class=slots id=sl><p class=mu style="grid-column:1/-1">Escolha uma data.</p></div>
+    <button class=btn data-a=n2 id=nx disabled>Continuar</button><button class="btn o" data-a=back>Voltar</button>`;
+  }
+  if(step==3){
+    const s=bsv(),p=price(s,S.promocoes);
+    c=`${bar}<h2>Seus dados</h2><p class=mu>${esc(s.nome)} com ${esc(bpf().nome)}<br>${B.data.split('-').reverse().join('/')} às ${B.hora} · ${p.pct?`<span class=old>${brl(s.preco)}</span>`:''}<b>${brl(p.final)}</b> (pagamento no local)</p>
+    <label>Nome completo</label><input id=cn autocomplete=name><label>WhatsApp</label><input id=ct type=tel placeholder="(61) 99999-9999" autocomplete=tel>
+    <button class=btn data-a=conf id=cf>Confirmar agendamento</button><button class="btn o" data-a=back>Voltar</button>`;
+  }
+  if(step==4){
+    c=`<div class=ok><div class=big>✅</div><h2>Agendamento confirmado!</h2><p>${esc(bsv().nome)} com ${esc(bpf().nome)}<br><b>${B.data.split('-').reverse().join('/')} às ${B.hora}</b></p>
+    ${S.whats?`<a class=btn style="display:block;text-decoration:none" target=_blank href="${wa(S.whats,'Olá! Agendei '+bsv().nome+' em '+B.data.split('-').reverse().join('/')+' às '+B.hora+' (nome: '+B.nome+').')}">Avisar no WhatsApp do salão</a>`:''}</div>`;
+  }
+  A.innerHTML=head+`<div class=wrap><div class=card>${c}</div></div>`;
+  if(step==2){$('#dt').onchange=loadSlots;if(B.data)loadSlots()}
+}
+acts.back=()=>{step--;bk()};
+acts.n1=()=>{B.prof=v('sp');B.serv=v('ss');if(!B.prof||!B.serv)return alert('Escolha o profissional e o serviço.');step=2;bk()};
+acts.n2=()=>{step=3;bk()};
+async function loadSlots(){
+  B.data=v('dt');B.hora='';$('#nx').disabled=true;const box=$('#sl');
+  if(!S.dias.includes(new Date(B.data+'T12:00').getDay())){box.innerHTML='<p class=mu style="grid-column:1/-1">O salão não atende neste dia.</p>';return}
+  box.innerHTML='<p class=mu style="grid-column:1/-1">Carregando…</p>';
+  const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',ouid),where('data','==',B.data)));
+  const busy=new Set(q.docs.map(d=>d.data().prof+'_'+d.data().hora)),n=bsv().min/30,now=new Date(),hoje=B.data==iso(now),out=[];
+  for(let t=tm(S.abre);t+n*30<=tm(S.fecha);t+=30){
+    if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
+    let ok=true;for(let k=0;k<n;k++)if(busy.has(B.prof+'_'+hm(t+k*30)))ok=false;
+    if(ok)out.push(hm(t));
+  }
+  box.innerHTML=out.length?out.map(h=>`<button data-a=pick data-h=${h}>${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres nesta data.</p>';
+}
+acts.pick=b=>{B.hora=b.dataset.h;document.querySelectorAll('.slots button').forEach(x=>x.classList.toggle('on',x==b));$('#nx').disabled=false};
+acts.conf=async()=>{
+  const nome=v('cn'),tel=v('ct');if(nome.length<3||tel.replace(/\D/g,'').length<10)return alert('Informe seu nome e WhatsApp com DDD.');
+  $('#cf').disabled=true;const s=bsv(),p=price(s,S.promocoes),n=s.min/30,w=writeBatch(db),blocos=[];
+  for(let k=0;k<n;k++){const h=hm(tm(B.hora)+k*30),id=`${ouid}_${B.prof}_${B.data}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid:ouid,prof:B.prof,data:B.data,hora:h})}
+  w.set(doc(collection(db,'saloes',ouid,'agendamentos')),{nome,tel,servico:s.nome,servId:s.id,prof:B.prof,profNome:bpf().nome,data:B.data,hora:B.hora,valor:+p.final.toFixed(2),blocos,criado:Date.now()});
+  try{await w.commit();B.nome=nome;step=4;bk()}
+  catch(e){alert('Esse horário acabou de ser ocupado. Escolha outro.');step=2;bk()}
+};
+</script>
 </body>
 </html>
