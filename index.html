@@ -47,6 +47,25 @@ html{scroll-behavior:smooth}#wiz,#servicos,#agendamento{scroll-margin-top:70px}
 .pfs button{border:2px solid var(--bd);background:#fff;border-radius:12px;padding:10px 4px;cursor:pointer;font-size:.85rem}.pfs .on{border-color:var(--c);background:#f3f4f6}
 .av{width:64px;height:64px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 6px;background:var(--c);color:#fff;font-weight:700;font-size:1.5rem;line-height:64px;text-align:center}
 footer{text-align:center;padding:22px;background:#222;color:#fff;margin-top:40px;font-size:.9rem}
+textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;font:inherit}
+.app{display:flex;min-height:100vh}.main{flex:1;min-width:0}.pg{padding:16px;max-width:1100px;margin:0 auto}
+.ban{color:#fff;padding:20px 18px;display:flex;align-items:center;gap:12px}.ban h1{font-size:1.3rem}.ban p{opacity:.85;font-size:.9rem}
+.burger{display:none;margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:1.4rem;border-radius:8px;padding:6px 12px;cursor:pointer}
+.side{width:250px;background:#111827;color:#e5e7eb;display:flex;flex-direction:column;padding:14px 10px;position:sticky;top:0;height:100vh;overflow:auto;flex-shrink:0;text-align:right}
+.sb{font-weight:700;font-size:1.05rem;padding:8px 12px 14px;border-bottom:1px solid #374151;margin-bottom:8px}.side nav{flex:1}
+.nv{display:flex;flex-direction:row-reverse;justify-content:space-between;align-items:center;width:100%;background:none;border:0;color:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:.93rem;text-align:right;text-decoration:none;font-family:inherit}
+.nv:hover{background:#1f2937}.nv.on{background:var(--c);color:#fff}.nv.sub{padding-right:30px;font-size:.88rem;color:#cbd5e1;display:block}.nv.sub.on{color:#fff}
+.sf{border-top:1px solid #374151;padding-top:8px;margin-top:8px}.ov{display:none}
+@media(max-width:860px){.burger{display:block}.side{position:fixed;right:0;top:0;height:100%;transform:translateX(100%);transition:transform .25s;z-index:20}.side.open{transform:none}.side.open+.ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}.cal .d{min-height:52px}}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.kp>div{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.kp b{display:block;font-size:1.35rem;margin-top:2px}.kp span{color:var(--mu);font-size:.8rem}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}.g2 .card{margin:0}
+.bars{display:flex;align-items:flex-end;gap:4px;height:100px}.bars i{flex:1;background:var(--c);border-radius:4px 4px 0 0}.bl{display:flex;gap:4px;margin-top:4px}.bl span{flex:1;text-align:center;font-size:.65rem;color:var(--mu)}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.72rem;font-weight:600}.tg-n{background:#dbeafe;color:#1e40af}.tg-f{background:#dcfce7;color:#166534}.tg-i{background:#fee2e2;color:#991b1b}.tg-r{background:#f3f4f6;color:#374151}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal .h{text-align:center;font-weight:600;font-size:.8rem;color:var(--mu)}.cal .d{min-height:62px;border:1px solid var(--bd);border-radius:8px;padding:4px;font-size:.82rem;cursor:pointer;background:#fff}.cal .d.hj{background:#f3f4f6}.cal .d.on{outline:2px solid var(--c)}
+.badge{background:var(--c);color:#fff;border-radius:10px;padding:1px 7px;font-size:.72rem}
+.tl{display:grid;gap:3px;min-width:100%}.tl .t{font-size:.72rem;color:var(--mu);padding-top:4px}.tl .e{border:1px dashed var(--bd);border-radius:6px;background:#fff;cursor:pointer;color:#bbb}.tl .e:hover{background:#f3f4f6;color:var(--c)}
+.tl .ap{border-radius:8px;padding:4px 7px;font-size:.76rem;color:#fff;cursor:pointer;overflow:hidden;background:#2563eb}.ap.ok{background:#16a34a}.ap.no{background:#dc2626}.ap.ps{background:#6b7280}.tl .lun{background:#eee;border-radius:6px;font-size:.7rem;color:#888;text-align:center;padding-top:8px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;overflow:auto;padding:20px;display:flex}.md{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:560px;margin:auto}
 </style>
 </head>
 <body>
@@ -73,7 +92,7 @@ const slugify=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
 const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const tm=h=>{const [a,b]=h.split(':');return a*60+ +b},hm=m=>String(m/60|0).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 const iso=d=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
-const wa=(t,msg='')=>'https://wa.me/'+(t.replace(/\D/g,'').length<=11?'55':'')+t.replace(/\D/g,'')+(msg?'?text='+encodeURIComponent(msg):'');
+const wa=(t,msg='')=>{const n=t.replace(/\D/g,'');return 'https://api.whatsapp.com/send?phone='+(n.length<=11?'55':'')+n+(msg?'&text='+encodeURIComponent(msg):'')};
 const price=(s,P)=>{const pct=(P||[]).filter(p=>!p.servId||p.servId===s.id).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
 const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
@@ -82,7 +101,12 @@ const cover=u=>`linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url('${u||DEF}'
 const av=p=>p.foto?`<img class=av src="${p.foto}" alt="">`:`<div class=av>${esc((p.nome||'?')[0])}</div>`;
 const img=(f,max,q,type='image/jpeg')=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL(type,q))};i.onerror=no;i.src=r.result};r.onerror=no;r.readAsDataURL(f)});
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
-document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;if(!u||!t.files[0])return;
+document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;
+  if(t.id=='mn'){const c=clientes().find(x=>x.nome==t.value);if(c)$('#mt').value=c.tel}
+  if(t.id=='mp'){nvServ();nvSlots()}
+  if(t.id=='ms'){const sv=S.servicos.find(x=>x.id==t.value);$('#mv').value=sv?price(sv,S.promocoes).final.toFixed(2):'';nvSlots()}
+  if(t.id=='md'){NV.pre='';nvSlots()}
+  if(!u||!t.files[0])return;
   try{
     if(u=='foto'){TMP.foto=await img(t.files[0],160,.8);const f=$('#fp');f.src=TMP.foto;f.style.display='block'}
     else{
@@ -94,7 +118,7 @@ document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;if(
   }catch(x){alert('Não foi possível usar essa imagem.')}
 });
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='serv',AG=[],busy=false,EDIT=null,TMP={};
+let CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='dash',AG=[],busy=false,EDIT=null,TMP={};
 const E=l=>EDIT&&EDIT.l==l?S[l][EDIT.i]:null;
 const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:24px;z-index:9;font-size:.95rem';document.body.append(d);setTimeout(()=>d.remove(),2200)};
 
@@ -153,7 +177,7 @@ async function panel(){
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
 const row=(l,i,t)=>`<div class=row><span>${t}</span><span><button class=x style="color:#555" data-a=ed data-l=${l} data-i=${i} title=Editar>✎</button><button class=x data-a=del data-l=${l} data-i=${i} title=Excluir>✕</button></span></div>`;
 const sopts=sel=>S.servicos.map(s=>`<option value="${s.id}" ${sel==s.id?'selected':''}>${esc(s.nome)}</option>`).join('');
-async function draw(){
+function cadPage(){
   let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Adicionar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar</button>':''}`;
   if(TAB=='serv')c=`<h2>Serviços e valores</h2>`+S.servicos.map((s,i)=>row('servicos',i,`<b>${esc(s.nome)}</b> · ${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}`)).join('')+
    `<div class=add><input id=a1 placeholder="Nome do serviço" value="${esc(es?.nome)}"><input id=a2 type=number step=.01 placeholder="Valor (R$)" value="${es?.preco??''}"><input id=a3 type=number step=30 min=30 placeholder="Duração (min)" value="${es?.min||30}"><input id=a4 placeholder="Categoria (opcional)" value="${esc(es?.cat)}"><input id=a5 placeholder="Descrição (opcional)" value="${esc(es?.desc)}">${bt(es,'addserv')}</div>`;
@@ -164,28 +188,182 @@ async function draw(){
   if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
    `<div class=add><input id=a1 placeholder="Título (ex.: Terça do Corte)" value="${esc(eo?.titulo)}"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)" value="${eo?.pct??''}"><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}</div>`;
   if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Título da capa</label><input id=p5 value="${esc(S.titulo)}" placeholder="Ex.: Estilo e tradição"><label>Subtítulo da capa</label><input id=p6 value="${esc(S.sub)}" placeholder="Ex.: Agende seu horário em poucos cliques."><label>Logo</label>${S.logo?`<img src="${S.logo}" style="height:50px;display:block;margin-bottom:6px;background:#ddd;padding:4px;border-radius:6px">`:''}<input type=file accept="image/*" data-up=logo>${S.logo?'<button class="btn s o" style="margin-top:6px" data-a=dlogo>Remover logo</button>':''}<label>Imagem da capa</label><input type=file accept="image/*" data-up=capa>${S.capa?'<button class="btn s o" style="margin-top:6px" data-a=dcapa>Voltar à capa padrão</button>':''}<label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
-  if(TAB=='cli'){
-    const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos')),M={};
-    q.docs.map(d=>d.data()).forEach(a=>{const k=a.tel.replace(/\D/g,'');const m=M[k]=M[k]||{nome:a.nome,tel:a.tel,n:0,tot:0,ult:''};m.n++;m.tot+=a.valor||0;if(a.data>m.ult){m.ult=a.data;m.nome=a.nome}});
-    const L=Object.values(M).sort((a,b)=>b.ult.localeCompare(a.ult));
-    c=`<h2>Meus clientes (${L.length})</h2>`+(L.length?L.map(m=>`<div class=row><span><b>${esc(m.nome)}</b><br><span class=mu>${m.n} agendamento(s) · ${brl(m.tot)} · último: ${m.ult.split('-').reverse().join('/')}</span></span><a class="btn s o" style="text-decoration:none" target=_blank href="${wa(m.tel)}">WhatsApp</a></div>`).join(''):'<p class=mu>Ainda não há clientes. Envie o link do seu salão!</p>');
-  }
-  if(TAB=='ag'){
-    const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos'));const hoje=iso(new Date());
-    AG=q.docs.map(d=>({id:d.id,...d.data()})).filter(a=>a.data>=hoje).sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
-    c=`<h2>Próximos agendamentos</h2>`+(AG.length?AG.map((a,i)=>`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${esc(a.nome)} · <a href="${wa(a.tel)}" target=_blank>${esc(a.tel)}</a> · ${brl(a.valor)}</span></span><button class=x data-a=cancel data-i=${i} title=Cancelar>✕</button></div>`).join(''):'<p class=mu>Nenhum agendamento futuro.</p>');
-  }
-  const T=[['ag','Agenda'],['cli','Clientes'],['serv','Serviços'],['prof','Profissionais'],['hor','Horários'],['promo','Promoções'],['perfil','Perfil']];
-  A.innerHTML=`<div class="top hero" style="background:${cover(S.capa)};padding:36px 16px">${S.logo?`<img class=lg src="${S.logo}">`:''}<h1>${esc(S.nome)}</h1><p style="margin:6px 0 0">Painel do salão</p></div><div class=wrap>
-  <div class=card><p class=mu>Link para seus clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><a class="btn s o" style="text-decoration:none" href="${wa('', '')}" data-a=zap>Enviar no WhatsApp</a><a class="btn s o" style="text-decoration:none" href="${link()}" target=_blank>Ver página do cliente</a><button class="btn s o" data-a=sair>Sair</button></div></div>
-  <div class=tabs>${T.map(t=>`<button class="${TAB==t[0]?'on':''}" data-a=tab data-t=${t[0]}>${t[1]}</button>`).join('')}</div><div class=card>${c}</div></div>`;
+  return c}
+/* ====== PAINEL: layout, dashboard, agenda, clientes ====== */
+let AGALL=[],LOADED=false,SIDE=false,DAYSEL=iso(new Date()),CAL={y:new Date().getFullYear(),m:new Date().getMonth()},LF='prox',QS='',QC='',CL=[],NV={},AGSEL=null,OPEN={agenda:true};
+const MENU=[{k:'dash',t:'Dashboard',i:'📊'},{k:'agenda',t:'Agenda',i:'📅',sub:[['cal','Calendário'],['lista','Lista'],['novo','＋ Novo agendamento']]},{k:'cli',t:'Clientes',i:'👥'},{k:'cad',t:'Cadastros',i:'🗂️',sub:[['serv','Serviços'],['prof','Profissionais'],['promo','Promoções']]},{k:'cfg',t:'Configurações',i:'⚙️',sub:[['hor','Horários'],['perfil','Perfil e capa']]}];
+const TITLES={dash:'Dashboard',cal:'Agenda · Calendário',lista:'Agenda · Lista',cli:'Clientes',serv:'Serviços',prof:'Profissionais',promo:'Promoções',hor:'Horários',perfil:'Perfil e capa'};
+const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const fd=d=>d.split('-').reverse().join('/');
+const stOf=a=>a.status||((a.data+' '+a.hora)<(iso(new Date())+' '+hm(new Date().getHours()*60+new Date().getMinutes()))?'ps':'ag');
+const stag=a=>{const s=stOf(a);return`<span class="tag tg-${{ag:'n',concluido:'f',faltou:'i',ps:'r'}[s]}">${{ag:'Agendado',concluido:'Concluído',faltou:'Faltou',ps:'Passou'}[s]}</span>`};
+const openM=h=>{closeM();const d=document.createElement('div');d.className='mo';d.id='mo';d.innerHTML=`<div class=md>${h}</div>`;d.addEventListener('mousedown',e=>{if(e.target==d)closeM()});document.body.append(d)};
+const closeM=()=>{const m=$('#mo');if(m)m.remove()};
+async function loadAll(){if(LOADED)return;const q=await getDocs(collection(db,'saloes',U.uid,'agendamentos'));AGALL=q.docs.map(d=>({id:d.id,...d.data()}));LOADED=true}
+
+async function draw(){
+  if(['dash','cal','lista','cli'].includes(TAB)){try{await loadAll()}catch(e){alert('Não foi possível carregar a agenda: '+(e.code||e.message))}}
+  const c=TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():`<div class=card>${cadPage()}</div>`;
+  const g=MENU.find(m=>m.sub&&m.sub.some(x=>x[0]==TAB));if(g)OPEN[g.k]=true;
+  const nav=MENU.map(m=>m.sub?`<button class=nv data-a=tog data-k=${m.k}><span>${m.i} ${m.t}</span><span>${OPEN[m.k]?'▾':'◂'}</span></button>${OPEN[m.k]?m.sub.map(x=>`<button class="nv sub ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}>${x[1]}</button>`).join(''):''}`:`<button class="nv ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k}><span>${m.i} ${m.t}</span></button>`).join('');
+  A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${TITLES[TAB]}</p></div><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
+  <aside class="side ${SIDE?'open':''}" id=side><div class=sb>${esc(S.nome)}</div><nav>${nav}</nav><div class=sf><button class=nv data-a=copy><span>🔗 Copiar link</span></button><a class=nv href="${link()}" target=_blank><span>👁 Ver página do cliente</span></a><button class=nv data-a=sair><span>⎋ Sair</span></button></div></aside><div class=ov data-a=menu></div></div>`;
 }
+acts.menu=()=>{SIDE=!SIDE;$('#side').classList.toggle('open',SIDE)};
+acts.tog=b=>{OPEN[b.dataset.k]=!OPEN[b.dataset.k];draw()};
+acts.nav=async b=>{SIDE=false;const k=b.dataset.k;if(k=='novo'){await draw();openNovo({data:DAYSEL});return}TAB=k;EDIT=null;TMP={};draw();scrollTo(0,0)};
+
+/* ---- Dashboard ---- */
+function dash(){
+  const now=new Date(),hoje=iso(now),mes=hoje.slice(0,7),day=n=>iso(new Date(now.getTime()+n*864e5)),ok=a=>a.status!='faltou';
+  const dH=AGALL.filter(a=>a.data==hoje&&ok(a)).sort((a,b)=>a.hora.localeCompare(b.hora)),p7=AGALL.filter(a=>a.data>=hoje&&a.data<=day(7)&&ok(a)).length,
+  dm=AGALL.filter(a=>a.data.startsWith(mes)),dmo=dm.filter(ok),fat=dmo.reduce((t,a)=>t+(a.valor||0),0),cl=clientes(),novos=cl.filter(c=>c.desde.startsWith(mes)).length,
+  nx=[...Array(14)].map((_,i)=>({d:day(i),n:AGALL.filter(a=>a.data==day(i)&&ok(a)).length})),mx=Math.max(1,...nx.map(x=>x.n));
+  const top=f=>{const c={};AGALL.filter(ok).forEach(a=>{const k=f(a);c[k]=c[k]||{n:0,v:0};c[k].n++;c[k].v+=a.valor||0});return Object.entries(c).sort((a,b)=>b[1].n-a[1].n).slice(0,5)};
+  const hb=L=>{const m=Math.max(1,...L.map(x=>x[1].n));return L.map(x=>`<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:.88rem"><span>${esc(x[0])}</span><span class=mu>${x[1].n} · ${brl(x[1].v)}</span></div><div style="background:#eee;border-radius:6px;height:8px"><div style="background:var(--c);height:8px;border-radius:6px;width:${x[1].n/m*100}%"></div></div></div>`).join('')||'<p class=mu>Sem dados ainda.</p>'};
+  return `<div class=card style="margin-top:0"><p class=mu>Link do seu salão para os clientes:</p><input readonly value="${link()}" onclick="this.select()"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="btn s" data-a=copy>Copiar link</button><button class="btn s o" data-a=zap>Enviar por WhatsApp</button><a class="btn s o" style="text-decoration:none" href="${link()}" target=_blank>Ver página do cliente</a></div></div>
+  <div class=kp>${[['Hoje',dH.length],['Próximos 7 dias',p7],['Faturamento do mês',brl(fat)],['Ticket médio',brl(dmo.length?fat/dmo.length:0)],['Clientes',cl.length],['Novos no mês',novos],['Faltas no mês',dm.length-dmo.length]].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
+  <div class=g2><div class=card><h2>Agenda de hoje</h2>${dH.map(a=>`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} com ${esc(a.profNome)}</span></span>${stag(a)}</div>`).join('')||'<p class=mu>Nenhum agendamento hoje.</p>'}<button class="btn s" style="margin-top:12px" data-a=novoday2>＋ Novo agendamento</button></div>
+  <div class=card><h2>Próximos 14 dias</h2><div class=bars>${nx.map(x=>`<i style="height:${Math.max(3,x.n/mx*100)}%" title="${fd(x.d)}: ${x.n}"></i>`).join('')}</div><div class=bl>${nx.map(x=>`<span>${x.d.slice(8)}</span>`).join('')}</div></div>
+  <div class=card><h2>Serviços mais vendidos</h2>${hb(top(a=>a.servico))}</div><div class=card><h2>Profissionais</h2>${hb(top(a=>a.profNome))}</div></div>`;
+}
+acts.novoday2=()=>{DAYSEL=iso(new Date());openNovo({data:DAYSEL})};
+acts.zap=()=>open('https://api.whatsapp.com/send?text='+encodeURIComponent('Agende seu horário no '+S.nome+': '+link()),'_blank');
+
+/* ---- Calendário + dia ---- */
+function cal(){
+  const {y,m}=CAL,start=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),hoje=iso(new Date()),cnt={};
+  AGALL.forEach(a=>{if(a.status!='faltou')cnt[a.data]=(cnt[a.data]||0)+1});
+  let cells=DIAS.map(d=>`<div class=h>${d}</div>`).join('')+'<div></div>'.repeat(start);
+  for(let d=1;d<=dim;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;cells+=`<div class="d ${ds==DAYSEL?'on':''} ${ds==hoje?'hj':''}" data-a=pday data-d=${ds}><b>${d}</b>${cnt[ds]?`<br><span class=badge>${cnt[ds]}</span>`:''}</div>`}
+  return `<div class=card style="margin-top:0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><button class="btn s o" data-a=cprev>‹</button><b>${MES[m]} ${y}</b><button class="btn s o" data-a=cnext>›</button></div><div class=cal>${cells}</div></div>
+  <div class=card id=dayc><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2 style="margin:0">${fd(DAYSEL)} · ${DIAS[new Date(DAYSEL+'T12:00').getDay()]}</h2><button class="btn s" data-a=novoday>＋ Agendar neste dia</button></div><p class=mu style="margin:6px 0 10px">Clique em um horário vazio (＋) para agendar, ou em um agendamento para ver os detalhes.</p><div style="overflow:auto">${dayGrid(DAYSEL)}</div></div>`;
+}
+function dayGrid(d){
+  if(!S.dias.includes(new Date(d+'T12:00').getDay()))return '<p class=mu>O salão não atende neste dia (veja Configurações › Horários).</p>';
+  const P=S.profissionais.length?S.profissionais:[{id:'',nome:'Geral'}],t0=tm(S.abre),rows=Math.max(1,Math.round((tm(S.fecha)-t0)/30)),ags=AGALL.filter(a=>a.data==d);
+  let h=`<div class=tl style="grid-template-columns:52px repeat(${P.length},minmax(120px,1fr));grid-template-rows:auto repeat(${rows},38px)"><div></div>${P.map(p=>`<div style="text-align:center;font-weight:600;font-size:.85rem;padding-bottom:4px">${esc(p.nome)}</div>`).join('')}`;
+  for(let r=0;r<rows;r++)h+=`<div class=t style="grid-row:${r+2};grid-column:1">${hm(t0+r*30)}</div>`;
+  P.forEach((p,ci)=>{const cov={};
+    ags.filter(a=>a.prof==p.id).forEach(a=>{const r0=Math.round((tm(a.hora)-t0)/30),n=Math.max(1,(a.blocos||[1]).length);if(r0<0||r0>=rows)return;
+      h+=`<div class="ap ${{ag:'',concluido:'ok',faltou:'no',ps:'ps'}[stOf(a)]}" style="grid-row:${r0+2}/span ${n};grid-column:${ci+2}" data-a=agd data-id=${a.id}><b>${a.hora}</b> ${esc(a.nome)}<br>${esc(a.servico)}</div>`;for(let k=0;k<n;k++)cov[r0+k]=1});
+    for(let r=0;r<rows;r++){if(cov[r])continue;const t=t0+r*30;h+=S.almI&&S.almF&&t>=tm(S.almI)&&t<tm(S.almF)?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2}">almoço</div>`:`<button class=e style="grid-row:${r+2};grid-column:${ci+2}" data-a=slotnew data-p="${p.id}" data-h="${hm(t)}">＋</button>`}});
+  return h+'</div>';
+}
+acts.pday=async b=>{DAYSEL=b.dataset.d;await draw();$('#dayc').scrollIntoView({behavior:'smooth'})};
+acts.cprev=()=>{CAL.m--;if(CAL.m<0){CAL.m=11;CAL.y--}draw()};
+acts.cnext=()=>{CAL.m++;if(CAL.m>11){CAL.m=0;CAL.y++}draw()};
+acts.novoday=()=>openNovo({data:DAYSEL});
+acts.slotnew=b=>openNovo({data:DAYSEL,prof:b.dataset.p,hora:b.dataset.h});
+
+/* ---- Lista ---- */
+function lista(){return `<div class=card style="margin-top:0"><div class=tabs>${[['prox','Próximos'],['hoje','Hoje'],['pass','Passados'],['todos','Todos']].map(x=>`<button class="${LF==x[0]?'on':''}" data-a=lf data-f=${x[0]}>${x[1]}</button>`).join('')}</div><input id=qs placeholder="Buscar cliente, serviço ou profissional" value="${esc(QS)}" style="margin:10px 0"><div id=lst>${listaRows()}</div></div>`}
+function listaRows(){
+  const hoje=iso(new Date()),q=QS.toLowerCase();
+  let L=AGALL.filter(a=>LF=='todos'||(LF=='hoje'&&a.data==hoje)||(LF=='prox'&&a.data>=hoje)||(LF=='pass'&&a.data<hoje));
+  if(q)L=L.filter(a=>(a.nome+' '+a.servico+' '+a.profNome+' '+a.tel).toLowerCase().includes(q));
+  L.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));if(LF=='pass')L.reverse();
+  if(!L.length)return '<p class=mu>Nenhum agendamento.</p>';
+  let last='',h='';L.forEach(a=>{if(a.data!=last){last=a.data;h+=`<div style="font-weight:700;margin:14px 0 4px;color:var(--c)">${fd(a.data)} · ${DIAS[new Date(a.data+'T12:00').getDay()]}</div>`}
+    h+=`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} com ${esc(a.profNome)} · ${brl(a.valor)}</span></span>${stag(a)}</div>`});
+  return h;
+}
+acts.lf=b=>{LF=b.dataset.f;draw()};
+
+/* ---- Detalhe do agendamento ---- */
+acts.agd=b=>{const a=AGALL.find(x=>x.id==b.dataset.id);if(!a)return;AGSEL=a;const k=(a.tel||'').replace(/\D/g,'');
+  openM(`<h2>${esc(a.servico)}</h2><p><b>${fd(a.data)} às ${a.hora}</b> com ${esc(a.profNome)} ${stag(a)}</p><p style="margin-top:8px">${esc(a.nome)} · ${esc(a.tel)}<br>Valor: <b>${brl(a.valor)}</b>${a.por=='salao'?' · criado pelo salão':''}</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><button class="btn s" data-a=stset data-s=concluido>✔ Concluído</button><button class="btn s o" data-a=stset data-s=faltou>Faltou</button>${a.status?'<button class="btn s o" data-a=stset data-s="">Reabrir</button>':''}<a class="btn s o" style="text-decoration:none" target=_blank href="${wa(a.tel)}">WhatsApp</a><button class="btn s o" data-a=cperfil data-k=${k}>Ver cliente</button><button class="btn s o" style="color:#c33;border-color:#c33" data-a=acancel>Cancelar agendamento</button></div><button class="btn o" data-a=closem>Fechar</button>`)};
+acts.closem=closeM;
+acts.stset=async b=>{const a=AGSEL;try{await setDoc(doc(db,'saloes',U.uid,'agendamentos',a.id),{status:b.dataset.s},{merge:true});a.status=b.dataset.s;closeM();toast('Atualizado ✔');draw()}catch(e){alert('Erro: '+(e.code||e.message))}};
+acts.acancel=async()=>{const a=AGSEL;if(!confirm('Cancelar este agendamento? O horário será liberado.'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',U.uid,'agendamentos',a.id));try{await w.commit();LOADED=false;closeM();toast('Agendamento cancelado');draw()}catch(e){alert('Erro: '+(e.code||e.message))}};
+
+/* ---- Novo agendamento (pelo salão) ---- */
+function openNovo(pre={}){
+  if(!S.profissionais.length||!S.servicos.length)return alert('Cadastre ao menos um serviço e um profissional antes de agendar.');
+  NV={hora:'',pre:pre.hora||''};const cl=clientes();
+  openM(`<h2>Novo agendamento</h2><label>Cliente</label><input id=mn list=mcl placeholder="Nome (ou escolha um cliente)" value="${esc(pre.nome)}" autocomplete=off><datalist id=mcl>${cl.map(c=>`<option value="${esc(c.nome)}">${esc(c.tel)}</option>`).join('')}</datalist>
+  <label>WhatsApp</label><input id=mt type=tel placeholder="(61) 99999-9999" value="${esc(pre.tel)}"><label>Profissional</label><select id=mp><option value="">Selecione</option>${S.profissionais.map(p=>`<option value="${p.id}" ${pre.prof==p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
+  <label>Serviço</label><select id=ms></select><label>Data</label><input id=md type=date value="${pre.data||iso(new Date())}"><label>Horário</label><div class=slots id=msl></div><label>Valor (R$)</label><input id=mv type=number step=.01>
+  <button class=btn data-a=nvok>Agendar</button><button class="btn o" data-a=closem>Cancelar</button>`);
+  nvServ();nvSlots();
+}
+function nvServ(){const pf=S.profissionais.find(p=>p.id==$('#mp').value),cur=$('#ms').value,L=S.servicos.filter(x=>!pf||!(pf.servs&&pf.servs.length)||pf.servs.includes(x.id));
+  $('#ms').innerHTML='<option value="">Selecione</option>'+L.map(x=>`<option value="${x.id}" ${cur==x.id?'selected':''}>${esc(x.nome)} — ${brl(price(x,S.promocoes).final)} (${x.min}min)</option>`).join('')}
+async function nvSlots(){
+  const pf=$('#mp').value,sv=S.servicos.find(x=>x.id==$('#ms').value),d=$('#md').value,box=$('#msl');NV.hora='';
+  if(!pf||!sv||!d){box.innerHTML='<p class=mu style="grid-column:1/-1">Escolha profissional, serviço e data.</p>';return}
+  box.innerHTML='<p class=mu style="grid-column:1/-1">Carregando…</p>';const out=await freeSlots(U.uid,pf,sv,d);
+  if(NV.pre&&out&&out.includes(NV.pre))NV.hora=NV.pre;
+  box.innerHTML=out==null?'<p class=mu style="grid-column:1/-1">O salão não atende neste dia.</p>':out.length?out.map(h=>`<button data-a=nvpick data-h=${h} class="${h==NV.hora?'on':''}">${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres.</p>';
+}
+acts.nvpick=b=>{NV.hora=b.dataset.h;NV.pre='';document.querySelectorAll('#msl button').forEach(x=>x.classList.toggle('on',x==b))};
+acts.nvok=async()=>{
+  const nome=v('mn'),tel=v('mt'),pf=S.profissionais.find(p=>p.id==v('mp')),sv=S.servicos.find(x=>x.id==v('ms')),d=v('md');
+  if(nome.length<2||tel.replace(/\D/g,'').length<10)return alert('Informe o nome e o WhatsApp com DDD.');if(!pf||!sv||!NV.hora)return alert('Escolha profissional, serviço e horário.');
+  try{await commitAg(U.uid,pf,sv,d,NV.hora,nome,tel,'',+v('mv')||0,'','salao');LOADED=false;DAYSEL=d;CAL={y:+d.slice(0,4),m:+d.slice(5,7)-1};closeM();toast('Agendado ✔');if(!['cal','lista'].includes(TAB))TAB='cal';draw()}
+  catch(e){alert('Não foi possível agendar (horário ocupado?).')}
+};
+
+/* ---- Clientes ---- */
+function clientes(){
+  const M={},hoje=iso(new Date());
+  AGALL.forEach(a=>{const k=(a.tel||'').replace(/\D/g,'');if(!k)return;(M[k]=M[k]||{k,tel:a.tel,ag:[]}).ag.push(a)});
+  return Object.values(M).map(m=>{
+    m.ag.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+    const ok=m.ag.filter(a=>a.status!='faltou'),ps=ok.filter(a=>a.data<=hoje);
+    m.nome=m.ag[m.ag.length-1].nome;m.email=[...m.ag].reverse().map(a=>a.email).find(Boolean)||'';
+    m.n=m.ag.length;m.faltas=m.n-ok.length;m.tot=ok.reduce((t,a)=>t+(a.valor||0),0);m.tk=ok.length?m.tot/ok.length:0;
+    m.ult=ps.length?ps[ps.length-1].data:'';m.prox=m.ag.find(a=>a.data>=hoje&&!a.status);m.desde=m.ag[0].data;
+    const ds=ps.map(a=>new Date(a.data+'T12:00').getTime()),g=[];for(let i=1;i<ds.length;i++)g.push((ds[i]-ds[i-1])/864e5);m.freq=g.length?Math.round(g.reduce((a,b)=>a+b,0)/g.length):0;
+    const mode=f=>{const c={};ok.forEach(a=>c[f(a)]=(c[f(a)]||0)+1);const e=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];return e?e[0]:'—'};
+    m.fs=mode(a=>a.servico);m.fp=mode(a=>a.profNome);m.dias=m.ult?Math.round((Date.now()-new Date(m.ult+'T12:00'))/864e5):0;
+    m.tag=m.n==1?['Novo','n']:(m.ult&&m.dias>45&&!m.prox)?['Inativo','i']:ok.length>=5?['Fiel','f']:['Regular','r'];
+    return m}).sort((a,b)=>(b.ult||b.desde).localeCompare(a.ult||a.desde));
+}
+function cliPage(){CL=clientes();const mes=iso(new Date()).slice(0,7);
+  return `<div class=kp style="margin-bottom:14px">${[['Total de clientes',CL.length],['Novos no mês',CL.filter(c=>c.desde.startsWith(mes)).length],['Fiéis (5+ visitas)',CL.filter(c=>c.tag[1]=='f').length],['Inativos (45+ dias)',CL.filter(c=>c.tag[1]=='i').length]].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
+  <div class=card style="margin-top:0"><input id=qc placeholder="Buscar por nome ou telefone" value="${esc(QC)}"><div id=cl style="margin-top:8px">${cliRows()}</div></div>`}
+function cliRows(){const q=QC.toLowerCase(),L=CL.filter(c=>!q||(c.nome+' '+c.tel).toLowerCase().includes(q));
+  return L.length?L.map(c=>`<div class=row><span style="display:flex;gap:10px;align-items:center"><div class=av style="width:40px;height:40px;line-height:40px;font-size:1rem;margin:0;flex-shrink:0">${esc((c.nome||'?')[0])}</div><span><b>${esc(c.nome)}</b> <span class="tag tg-${c.tag[1]}">${c.tag[0]}</span><br><span class=mu>${c.n} visita(s) · ${brl(c.tot)} · última: ${c.ult?fd(c.ult):'—'}</span></span></span><button class="btn s o" data-a=cperfil data-k=${c.k}>Ver perfil</button></div>`).join(''):'<p class=mu>Nenhum cliente encontrado. Envie o link do salão ou crie um agendamento.</p>'}
+acts.cperfil=async b=>{
+  CL=clientes();const m=CL.find(x=>x.k==b.dataset.k);if(!m)return;let nt={};try{nt=(await getDoc(doc(db,'saloes',U.uid,'notas',m.k))).data()||{}}catch(e){}
+  openM(`<div style="display:flex;gap:12px;align-items:center"><div class=av style="margin:0;flex-shrink:0">${esc((m.nome||'?')[0])}</div><div><h2 style="margin:0">${esc(m.nome)}</h2><span class="tag tg-${m.tag[1]}">${m.tag[0]}</span></div></div>
+  <p style="margin:12px 0 6px">📱 ${esc(m.tel)}${m.email?`<br>✉️ ${esc(m.email)}`:''}</p><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn s" style="text-decoration:none" target=_blank href="${wa(m.tel)}">WhatsApp</a><a class="btn s o" style="text-decoration:none" href="tel:+${(m.k.length<=11?'55':'')+m.k}">Ligar</a><button class="btn s o" data-a=cpnum data-t="${esc(m.tel)}">Copiar número</button></div>
+  <div class=kp style="margin:14px 0">${[['Visitas',m.n],['Total gasto',brl(m.tot)],['Ticket médio',brl(m.tk)],['Frequência',m.freq?'a cada '+m.freq+' dias':'—'],['Faltas',m.faltas],['Cliente desde',fd(m.desde)]].map(k=>`<div><span>${k[0]}</span><b style="font-size:1.05rem">${k[1]}</b></div>`).join('')}</div>
+  <p class=mu>Serviço favorito: <b>${esc(m.fs)}</b> · Profissional preferido: <b>${esc(m.fp)}</b><br>Última visita: <b>${m.ult?fd(m.ult)+' (há '+m.dias+' dia(s))':'—'}</b> · Próximo: <b>${m.prox?fd(m.prox.data)+' às '+m.prox.hora:'nenhum'}</b></p>
+  <label>Observações (só você vê)</label><textarea id=nt rows=3 placeholder="Ex.: prefere degradê, alérgico a..., gosta de conversar">${esc(nt.nota)}</textarea><label>Aniversário</label><input id=nb type=date value="${esc(nt.aniv)}">
+  <button class=btn data-a=savenota data-k=${m.k}>Salvar observações</button><button class="btn o" data-a=novo2 data-k=${m.k}>Agendar para este cliente</button>
+  <h3 style="margin:18px 0 4px">Histórico</h3>${[...m.ag].reverse().map(a=>`<div class=row style="font-size:.85rem"><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)}</span></span>${stag(a)}</div>`).join('')}<button class="btn o" data-a=closem>Fechar</button>`);
+};
+acts.cpnum=b=>navigator.clipboard.writeText(b.dataset.t).then(()=>toast('Número copiado ✔'));
+acts.savenota=async b=>{try{await setDoc(doc(db,'saloes',U.uid,'notas',b.dataset.k),{nota:v('nt'),aniv:v('nb')});toast('Observações salvas ✔')}catch(e){alert('Erro ao salvar: '+(e.code||e.message)+'\nPublique as regras novas do Firestore.')}};
+acts.novo2=b=>{const m=clientes().find(x=>x.k==b.dataset.k);openNovo({data:DAYSEL,nome:m.nome,tel:m.tel})};
+
+/* ---- agendamento compartilhado (cliente e salão) ---- */
+async function freeSlots(uid,prof,sv,d){
+  if(!S.dias.includes(new Date(d+'T12:00').getDay()))return null;
+  const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',uid),where('data','==',d)));
+  const busy=new Set(q.docs.map(x=>x.data().prof+'_'+x.data().hora)),n=sv.min/30,now=new Date(),hoje=d==iso(now),out=[];
+  for(let t=tm(S.abre);t+n*30<=tm(S.fecha);t+=30){
+    if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
+    let ok=true;for(let k=0;k<n;k++){const b=t+k*30;if(busy.has(prof+'_'+hm(b))||(S.almI&&S.almF&&b>=tm(S.almI)&&b<tm(S.almF)))ok=false}
+    if(ok)out.push(hm(t));
+  }
+  return out;
+}
+async function commitAg(uid,pf,sv,d,h0,nome,tel,cuid,valor,email,por){
+  const w=writeBatch(db),blocos=[],n=sv.min/30;
+  for(let k=0;k<n;k++){const h=hm(tm(h0)+k*30),id=`${uid}_${pf.id}_${d}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid,prof:pf.id,data:d,hora:h,cuid})}
+  w.set(doc(collection(db,'saloes',uid,'agendamentos')),{nome,tel,email:email||'',servico:sv.nome,servId:sv.id,prof:pf.id,profNome:pf.nome,data:d,hora:h0,valor:+(+valor).toFixed(2),blocos,cuid,por:por||'cliente',criado:Date.now()});
+  await w.commit();
+}
+document.addEventListener('input',e=>{const i=e.target.id;if(i=='qs'){QS=e.target.value;$('#lst').innerHTML=listaRows()}if(i=='qc'){QC=e.target.value;$('#cl').innerHTML=cliRows()}});
+
 acts.preset=b=>{$('#p4').value=b.dataset.c;document.querySelectorAll('[data-a=preset]').forEach(x=>x.style.borderColor=x==b?'#000':'#fff');theme(b.dataset.c)};
 acts.dlogo=async()=>{S.logo='';await save();draw()};acts.dcapa=async()=>{S.capa='';await save();draw()};
-acts.tab=b=>{TAB=b.dataset.t;EDIT=null;TMP={};draw()};
 acts.sair=()=>signOut(auth);
-acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>alert('Link copiado!'));
-acts.zap=e=>{open('https://wa.me/?text='+encodeURIComponent('Agende seu horário no '+S.nome+': '+link()),'_blank')};
+acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>toast('Link copiado ✔'));
 acts.del=async b=>{if(!confirm('Excluir este item?'))return;EDIT=null;S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
 const put=(l,o)=>{if(EDIT&&EDIT.l==l){S[l][EDIT.i]={...S[l][EDIT.i],...o};EDIT=null}else S[l].push({id:rid(),...o})};
 acts.ed=b=>{TMP={};EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,document.body.scrollHeight)};
@@ -195,7 +373,6 @@ acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');const o={nome
 acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');put('promocoes',{titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();toast('Salvo ✔');draw()};
 acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.almI=v('h3');S.almF=v('h4');if(!S.almI||!S.almF)S.almI=S.almF='';S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
 acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6');S.cor=v('p4');await save();theme(S.cor);draw();toast('Perfil salvo ✔')};
-acts.cancel=async b=>{const a=AG[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',U.uid,'agendamentos',a.id));await w.commit();draw()};
 
 /* ============ PÁGINA PÚBLICA DO CLIENTE ============ */
 let B={},ouid='',step=1;
@@ -266,7 +443,7 @@ async function loadMeus(){
     const q=await getDocs(query(collection(db,'saloes',ouid,'agendamentos'),where('cuid','==',CU.uid)));
     MY=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
     const hoje=iso(new Date());
-    $('#ml').innerHTML=MY.length?MY.map((a,i)=>{const f=a.data>=hoje;return`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)} · ${f?'Agendado':'Concluído'}</span></span>${f?`<button class=x data-a=ccancel data-i=${i} title="Cancelar">✕</button>`:''}</div>`}).join(''):'<p class=mu>Você ainda não tem agendamentos neste salão.</p>';
+    $('#ml').innerHTML=MY.length?MY.map((a,i)=>{const f=a.data>=hoje;return`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)} · ${a.status=='concluido'?'Concluído':a.status=='faltou'?'Faltou':f?'Agendado':'Realizado'}</span></span>${f?`<button class=x data-a=ccancel data-i=${i} title="Cancelar">✕</button>`:''}</div>`}).join(''):'<p class=mu>Você ainda não tem agendamentos neste salão.</p>';
   }catch(e){$('#ml').innerHTML='<p class=mu>Não foi possível carregar seus agendamentos.</p>'}
 }
 acts.ccancel=async b=>{const a=MY[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',ouid,'agendamentos',a.id));try{await w.commit();toast('Agendamento cancelado');loadMeus()}catch(e){alert('Não foi possível cancelar.')}};
@@ -275,24 +452,15 @@ acts.n1=()=>{B.serv=$('#ss').value;if(!B.prof||!B.serv)return alert('Escolha o p
 acts.n2=()=>{step=3;bk()};
 async function loadSlots(){
   B.data=v('dt');B.hora='';$('#nx').disabled=true;const box=$('#sl');
-  if(!S.dias.includes(new Date(B.data+'T12:00').getDay())){box.innerHTML='<p class=mu style="grid-column:1/-1">O salão não atende neste dia.</p>';return}
   box.innerHTML='<p class=mu style="grid-column:1/-1">Carregando…</p>';
-  const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',ouid),where('data','==',B.data)));
-  const busy=new Set(q.docs.map(d=>d.data().prof+'_'+d.data().hora)),n=bsv().min/30,now=new Date(),hoje=B.data==iso(now),out=[];
-  for(let t=tm(S.abre);t+n*30<=tm(S.fecha);t+=30){
-    if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
-    let ok=true;for(let k=0;k<n;k++){const bt=t+k*30;if(busy.has(B.prof+'_'+hm(bt))||(S.almI&&S.almF&&bt>=tm(S.almI)&&bt<tm(S.almF)))ok=false}
-    if(ok)out.push(hm(t));
-  }
-  box.innerHTML=out.length?out.map(h=>`<button data-a=pick data-h=${h}>${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres nesta data.</p>';
+  const out=await freeSlots(ouid,B.prof,bsv(),B.data);
+  box.innerHTML=out==null?'<p class=mu style="grid-column:1/-1">O salão não atende neste dia.</p>':out.length?out.map(h=>`<button data-a=pick data-h=${h}>${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres nesta data.</p>';
 }
 acts.pick=b=>{B.hora=b.dataset.h;document.querySelectorAll('.slots button').forEach(x=>x.classList.toggle('on',x==b));$('#nx').disabled=false};
 acts.conf=async()=>{
   const nome=v('cn'),tel=v('ct');if(nome.length<3||tel.replace(/\D/g,'').length<10)return alert('Informe seu nome e WhatsApp com DDD.');
-  $('#cf').disabled=true;const s=bsv(),p=price(s,S.promocoes),n=s.min/30,w=writeBatch(db),blocos=[];
-  for(let k=0;k<n;k++){const h=hm(tm(B.hora)+k*30),id=`${ouid}_${B.prof}_${B.data}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid:ouid,prof:B.prof,data:B.data,hora:h,cuid:CU?CU.uid:''})}
-  w.set(doc(collection(db,'saloes',ouid,'agendamentos')),{nome,tel,servico:s.nome,servId:s.id,prof:B.prof,profNome:bpf().nome,data:B.data,hora:B.hora,valor:+p.final.toFixed(2),blocos,cuid:CU?CU.uid:'',criado:Date.now()});
-  try{await w.commit();B.nome=nome;B.done=true;step=4;bk()}
+  $('#cf').disabled=true;const sv=bsv(),p=price(sv,S.promocoes);
+  try{await commitAg(ouid,bpf(),sv,B.data,B.hora,nome,tel,CU?CU.uid:'',p.final,CU?CU.email:'','cliente');B.nome=nome;B.done=true;step=4;bk()}
   catch(e){alert('Esse horário acabou de ser ocupado. Escolha outro.');step=2;bk()}
 };
 </script>
