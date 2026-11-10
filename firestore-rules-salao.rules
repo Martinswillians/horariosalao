@@ -8,16 +8,31 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == uid;
 
       match /agendamentos/{id} {
-        // qualquer pessoa agenda; se informar cuid, tem que ser o próprio usuário logado
+        // qualquer pessoa agenda; se informar cuid, tem que ser o próprio usuário logado;
+        // ninguém cria um agendamento já "pago" nem com comprovante
         allow create: if request.resource.data.nome is string
                       && request.resource.data.nome.size() < 100
                       && (!('cuid' in request.resource.data)
                           || request.resource.data.cuid == ''
-                          || (request.auth != null && request.resource.data.cuid == request.auth.uid));
-        // dono do salão e o próprio cliente leem e cancelam; só o dono edita
+                          || (request.auth != null && request.resource.data.cuid == request.auth.uid))
+                      && (!('pstatus' in request.resource.data) || request.resource.data.pstatus == 'pendente')
+                      && !('comp' in request.resource.data);
+        // dono do salão e o próprio cliente leem e cancelam
         allow read, delete: if request.auth != null
                       && (request.auth.uid == uid || resource.data.get('cuid', '') == request.auth.uid);
+        // só o dono edita (status, pagamento, etc.)
         allow update: if request.auth != null && request.auth.uid == uid;
+        // quem agendou pode anexar o comprovante PIX (só os campos comp e pstatus='aguardando'), se ainda não estiver pago
+        allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comp', 'pstatus'])
+                      && request.resource.data.pstatus == 'aguardando'
+                      && resource.data.get('pstatus', 'pendente') != 'pago'
+                      && request.resource.data.comp is string
+                      && request.resource.data.comp.size() < 400000;
+      }
+
+      // Observações privadas do salão sobre cada cliente (só o dono)
+      match /notas/{id} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
       }
     }
 
