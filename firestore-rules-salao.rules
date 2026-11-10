@@ -16,7 +16,8 @@ service cloud.firestore {
                           || request.resource.data.cuid == ''
                           || (request.auth != null && request.resource.data.cuid == request.auth.uid))
                       && (!('pstatus' in request.resource.data) || request.resource.data.pstatus == 'pendente')
-                      && !('comp' in request.resource.data);
+                      && !('comp' in request.resource.data)
+                      && (!('foto' in request.resource.data) || request.resource.data.foto.size() < 60000);
         // dono do salão e o próprio cliente leem e cancelam
         allow read, delete: if request.auth != null
                       && (request.auth.uid == uid || resource.data.get('cuid', '') == request.auth.uid);

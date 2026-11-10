@@ -48,15 +48,15 @@ html{scroll-behavior:smooth}#wiz,#servicos,#agendamento{scroll-margin-top:70px}
 .av{width:64px;height:64px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 6px;background:var(--c);color:#fff;font-weight:700;font-size:1.5rem;line-height:64px;text-align:center}
 footer{text-align:center;padding:22px;background:#222;color:#fff;margin-top:40px;font-size:.9rem}
 textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;font:inherit}
-.app{display:flex;min-height:100vh}.main{flex:1;min-width:0}.pg{padding:16px;max-width:1100px;margin:0 auto}
+.app{display:flex;flex-direction:row-reverse;min-height:100vh}.main{flex:1;min-width:0}.pg{padding:16px;max-width:1100px;margin:0 auto}
 .ban{color:#fff;padding:20px 18px;display:flex;align-items:center;gap:12px}.ban h1{font-size:1.3rem}.ban p{opacity:.85;font-size:.9rem}
-.burger{display:none;margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:1.4rem;border-radius:8px;padding:6px 12px;cursor:pointer}
-.side{width:250px;background:#111827;color:#e5e7eb;display:flex;flex-direction:column;padding:14px 10px;position:sticky;top:0;height:100vh;overflow:auto;flex-shrink:0;text-align:right}
+.burger{display:none;order:-1;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:1.4rem;border-radius:8px;padding:6px 12px;cursor:pointer}
+.side{width:250px;background:#111827;color:#e5e7eb;display:flex;flex-direction:column;padding:14px 10px;position:sticky;top:0;height:100vh;overflow:auto;flex-shrink:0;text-align:left}
 .sb{font-weight:700;font-size:1.05rem;padding:8px 12px 14px;border-bottom:1px solid #374151;margin-bottom:8px}.side nav{flex:1}
-.nv{display:flex;flex-direction:row-reverse;justify-content:space-between;align-items:center;width:100%;background:none;border:0;color:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:.93rem;text-align:right;text-decoration:none;font-family:inherit}
-.nv:hover{background:#1f2937}.nv.on{background:var(--c);color:#fff}.nv.sub{padding-right:30px;font-size:.88rem;color:#cbd5e1;display:block}.nv.sub.on{color:#fff}
+.nv{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:0;color:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:.93rem;text-align:left;text-decoration:none;font-family:inherit}
+.nv:hover{background:#1f2937}.nv.on{background:var(--c);color:#fff}.nv.sub{padding-left:34px;font-size:.88rem;color:#cbd5e1;display:block}.nv.sub.on{color:#fff}
 .sf{border-top:1px solid #374151;padding-top:8px;margin-top:8px}.ov{display:none}
-@media(max-width:860px){.burger{display:block}.side{position:fixed;right:0;top:0;height:100%;transform:translateX(100%);transition:transform .25s;z-index:20}.side.open{transform:none}.side.open+.ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}.cal .d{min-height:52px}}
+@media(max-width:860px){.burger{display:block}.side{position:fixed;left:0;top:0;height:100%;transform:translateX(-100%);transition:transform .25s;z-index:20}.side.open{transform:none}.side.open+.ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}.cal .d{min-height:52px}}
 .kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.kp>div{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.kp b{display:block;font-size:1.35rem;margin-top:2px}.kp span{color:var(--mu);font-size:.8rem}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}.g2 .card{margin:0}
 .bars{display:flex;align-items:flex-end;gap:4px;height:100px}.bars i{flex:1;background:var(--c);border-radius:4px 4px 0 0}.bl{display:flex;gap:4px;margin-top:4px}.bl span{flex:1;text-align:center;font-size:.65rem;color:var(--mu)}
@@ -66,6 +66,8 @@ textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;fo
 .tl{display:grid;gap:3px;min-width:100%}.tl .t{font-size:.72rem;color:var(--mu);padding-top:4px}.tl .e{border:1px dashed var(--bd);border-radius:6px;background:#fff;cursor:pointer;color:#bbb}.tl .e:hover{background:#f3f4f6;color:var(--c)}
 .tl .ap{border-radius:8px;padding:4px 7px;font-size:.76rem;color:#fff;cursor:pointer;overflow:hidden;background:#2563eb}.ap.ok{background:#16a34a}.ap.no{background:#dc2626}.ap.ps{background:#6b7280}.tl .lun{background:#eee;border-radius:6px;font-size:.7rem;color:#888;text-align:center;padding-top:8px}
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;overflow:auto;padding:20px;display:flex}.md{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:560px;margin:auto}
+.acn{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}.cpv{height:70px;border-radius:10px;cursor:pointer;border:3px solid transparent;position:relative;overflow:hidden}.cpv.on{border-color:var(--c)}.cpv span{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-size:.72rem;padding:3px 6px}
 </style>
 </head>
 <body>
@@ -73,7 +75,7 @@ textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;fo
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where,writeBatch,onSnapshot} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const cfg={
   apiKey:"AIzaSyCiuo1YI9kfo7gm3ilovXDlN0gYQxq8Hns",
@@ -93,25 +95,38 @@ const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const tm=h=>{const [a,b]=h.split(':');return a*60+ +b},hm=m=>String(m/60|0).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 const iso=d=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const wa=(t,msg='')=>{const n=t.replace(/\D/g,'');return 'https://api.whatsapp.com/send?phone='+(n.length<=11?'55':'')+n+(msg?'&text='+encodeURIComponent(msg):'')};
-const price=(s,P)=>{const pct=(P||[]).filter(p=>!p.servId||p.servId===s.id).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
+const price=(s,P)=>{const pct=(P||[]).filter(p=>p.ativo!==false&&(!p.servId||p.servId===s.id)).reduce((m,p)=>Math.max(m,+p.pct),0);return{pct,final:s.preco*(1-pct/100)}};
 const theme=c=>document.documentElement.style.setProperty('--c',c||'#1f2a37');
 const acts={};
 const DEF='https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80';
-const cover=u=>`linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url('${u||DEF}') center/cover`;
+const CAPAS={
+ b1:{g:'b',n:'Barber clássico',css:'repeating-linear-gradient(115deg,#7f1d1d 0 22px,#f1f5f9 22px 44px,#1e3a8a 44px 66px,#f1f5f9 66px 88px)'},
+ b2:{g:'b',n:'Couro e madeira',css:'linear-gradient(135deg,#3b2417,#7c4a2d 50%,#2a170e)'},
+ b3:{g:'b',n:'Preto e dourado',css:'radial-gradient(circle at 80% 20%,rgba(184,134,11,.55),transparent 45%),linear-gradient(135deg,#0b0b0b,#2a2a2a)'},
+ b4:{g:'b',n:'Azul-marinho',css:'repeating-linear-gradient(45deg,#0f2742 0 14px,#12304f 14px 28px)'},
+ s1:{g:'s',n:'Rosé',css:'linear-gradient(135deg,#f4c7d0,#d98ca0 55%,#a85a74)'},
+ s2:{g:'s',n:'Lavanda',css:'linear-gradient(135deg,#c9b8f0,#8e7cc3 55%,#5b4b8a)'},
+ s3:{g:'s',n:'Champagne',css:'radial-gradient(circle at 20% 30%,#fff3d6,transparent 50%),linear-gradient(135deg,#d9b77e,#a8864f)'},
+ s4:{g:'s',n:'Verde sálvia',css:'linear-gradient(135deg,#bcd3c0,#7da287 55%,#4b6e58)'}};
+const cover=(u,k)=>`linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),${u?`url('${u}') center/cover`:CAPAS[k]?CAPAS[k].css:`url('${DEF}') center/cover`}`;
+const avc=(foto,nome,sz)=>foto?`<img class=av src="${foto}" alt="" style="width:${sz}px;height:${sz}px;margin:0;flex-shrink:0">`:`<div class=av style="width:${sz}px;height:${sz}px;line-height:${sz}px;font-size:${Math.round(sz/2.2)}px;margin:0;flex-shrink:0">${esc((nome||'?')[0])}</div>`;
 const av=p=>p.foto?`<img class=av src="${p.foto}" alt="">`:`<div class=av>${esc((p.nome||'?')[0])}</div>`;
 const img=(f,max,q,type='image/jpeg')=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL(type,q))};i.onerror=no;i.src=r.result};r.onerror=no;r.readAsDataURL(f)});
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
 document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;
+  if(t.id=='lpf'){LPF=t.value;draw();return}
+  if(t.classList.contains('pcustom')){$('#pf'+t.dataset.i).style.display=t.checked?'block':'none';return}
   if(t.id=='pm2'){PM=t.value||PM;draw();return}
   if(t.id=='mn'){const c=clientes().find(x=>x.nome==t.value);if(c)$('#mt').value=c.tel}
   if(t.id=='mp'){nvServ();nvSlots()}
-  if(t.id=='ms'){const sv=S.servicos.find(x=>x.id==t.value);$('#mv').value=sv?price(sv,S.promocoes).final.toFixed(2):'';nvSlots()}
+  if(t.id=='ms'){const sv=S.servicos.find(x=>x.id==t.value);$('#mv').value=sv?fmtM(price(sv,S.promocoes).final):'';nvSlots()}
   if(t.id=='md'){NV.pre='';nvSlots()}
   if(!u||!t.files[0])return;
   try{
+    if(u=='cfoto'||u=='mefoto'){const d=await img(t.files[0],160,.8);TMP[u]=d;const w=$(u=='cfoto'?'#cfpw':'#mfpw');if(w)w.innerHTML=avc(d,'?',64);return}
     if(u=='comp'){let d=await img(t.files[0],1000,.65);if(d.length>380000)d=await img(t.files[0],800,.5);if(d.length>380000)throw 0;
       await setDoc(doc(db,'saloes',ouid,'agendamentos',t.dataset.id),{comp:d,pstatus:'aguardando'},{merge:true});
-      const up=t.closest('.up');if(up)up.innerHTML='✅ Comprovante enviado! O salão vai conferir o pagamento.';toast('Comprovante enviado ✔');if(step=='M')loadMeus();return}
+      const up=t.closest('.up');if(up)up.innerHTML='✅ Comprovante enviado! O salão vai conferir o pagamento.<br><img src="'+d+'" style="max-width:180px;margin-top:8px;border-radius:8px;border:1px solid #ddd">';toast('Comprovante enviado ✔');if(step=='M')loadMeus();return}
     if(u=='foto'){TMP.foto=await img(t.files[0],160,.8);const f=$('#fp');f.src=TMP.foto;f.style.display='block'}
     else{
       if($('#p1')){S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6')}
@@ -133,7 +148,9 @@ if(slug){
   onAuthStateChanged(auth,async u=>{if(busy)return;CU=u;CP=null;if(u){try{CP=(await getDoc(doc(db,'clientes',u.uid))).data()||null}catch(e){}}
     if(S&&$('#wiz')){hdr();if(step!='L'&&step!='M')bk()}});
 }else onAuthStateChanged(auth,u=>{U=u;if(busy)return;u?panel():landing()});
-const hdr=()=>{const h=$('#hu');if(h)h.innerHTML=CU?'<a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>':'<a href="#agendamento" data-a=clogin>Entrar</a>'};
+const hdr=()=>{const h=$('#hu');if(h)h.innerHTML=CU?`<a href="#agendamento" data-a=meperfil>${CP&&CP.foto?`<img src="${CP.foto}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:''}Meu perfil</a><a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>`:'<a href="#agendamento" data-a=clogin>Entrar</a>'};
+acts.meperfil=()=>{TMP.mefoto=undefined;openM(`<h2>Meu perfil</h2><div style="text-align:center;margin:10px 0" id=mfpw>${avc(CP&&CP.foto,(CP&&CP.nome)||CU.email,84)}</div><label>Foto</label><input type=file accept="image/*" data-up=mefoto><label>Nome</label><input id=pn value="${esc(CP&&CP.nome)}"><label>WhatsApp</label><input id=pt type=tel value="${esc(CP&&CP.tel)}"><button class=btn data-a=mesave>Salvar</button><button class="btn o" data-a=closem>Fechar</button>`)};
+acts.mesave=async()=>{const o={nome:v('pn'),tel:v('pt'),email:CU.email,foto:TMP.mefoto!==undefined?TMP.mefoto:(CP&&CP.foto)||''};try{await setDoc(doc(db,'clientes',CU.uid),o,{merge:true});CP={...CP,...o};closeM();hdr();toast('Perfil salvo ✔');bk()}catch(e){alert('Erro: '+(e.code||e.message))}};
 
 /* ============ LANDING / LOGIN / CADASTRO ============ */
 function landing(mode='login'){
@@ -173,33 +190,64 @@ acts.criar=async()=>{
 
 /* ============ PAINEL DO SALÃO ============ */
 const save=()=>setDoc(doc(db,'saloes',U.uid),S);
+let FIRSTSNAP=true;
+function listen(){if(UNSUB)UNSUB();FIRSTSNAP=true;
+  UNSUB=onSnapshot(collection(db,'saloes',U.uid,'agendamentos'),snap=>{
+    AGALL=snap.docs.map(d=>({id:d.id,...d.data()}));LOADED=true;
+    if(!FIRSTSNAP)snap.docChanges().forEach(c=>{const x=c.doc.data();if(c.type=='added')toast('🔔 Novo agendamento: '+x.nome);if(c.type=='modified'&&x.pstatus=='aguardando')toast('🔔 Comprovante recebido de '+x.nome)});
+    FIRSTSNAP=false;
+    if(['dash','cal','lista','cli','pag'].includes(TAB)&&!$('#mo')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))draw();
+  },e=>console.log('listener',e.code))}
 async function panel(){
   S=(await getDoc(doc(db,'saloes',U.uid))).data();
   if(!S){theme();if((await getDoc(doc(db,'clientes',U.uid))).exists()){A.innerHTML='<div class=wrap><div class=card><h2>Conta de cliente</h2><p class=mu>Esta conta é de cliente. Para agendar ou acompanhar seus horários, acesse pelo link do seu salão.</p><button class=btn data-a=sair>Sair</button></div></div>';return}A.innerHTML=`<div class=top><h1>Quase lá!</h1><p>Finalize o cadastro do seu salão</p></div><div class=wrap><div class=card><label>Nome do salão</label><input id=nm><label>Endereço do link</label><input id=sg placeholder="ex.: barbearia-martins"><button class=btn data-a=criar>Criar meu salão</button><button class="btn o" data-a=sair>Sair</button></div></div>`;return}
-  theme(S.cor);draw();
+  theme(S.cor);try{const q=await getDocs(collection(db,'saloes',U.uid,'notas'));NOTAS={};q.docs.forEach(d=>NOTAS[d.id]=d.data())}catch(e){}listen();draw();
 }
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
-const row=(l,i,t)=>`<div class=row><span>${t}</span><span><button class=x style="color:#555" data-a=ed data-l=${l} data-i=${i} title=Editar>✎</button><button class=x data-a=del data-l=${l} data-i=${i} title=Excluir>✕</button></span></div>`;
-const sopts=sel=>S.servicos.map(s=>`<option value="${s.id}" ${sel==s.id?'selected':''}>${esc(s.nome)}</option>`).join('');
+const fmtM=n=>'R$ '+(+n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const parseM=x=>(+String(x==null?'':x).replace(/\D/g,''))/100;
+const act=x=>x.ativo!==false;
+const hrsOf=id=>{const p=S.profissionais.find(x=>x.id==id);return p&&p.hor?p.hor:S};
+const lrow=(l,i,t,on)=>`<div class=row style="align-items:flex-start;gap:10px;${on===false?'opacity:.6':''}"><span>${t} ${on===false?'<span class="tag tg-i">Inativo</span>':'<span class="tag tg-f">Ativo</span>'}</span><span class=acn><button class="btn s o" data-a=ed data-l=${l} data-i=${i}>Editar</button><button class="btn s o" data-a=tgl data-l=${l} data-i=${i}>${on===false?'Ativar':'Inativar'}</button><button class="btn s o" style="color:#c33;border-color:#c33" data-a=del data-l=${l} data-i=${i}>Excluir</button></span></div>`;
+const sopts=sel=>S.servicos.filter(act).map(s=>`<option value="${s.id}" ${sel==s.id?'selected':''}>${esc(s.nome)}</option>`).join('');
+const syncPerfil=()=>{if($('#p1')){S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6')}};
+const profHor=(p,i)=>{const h=p.hor,x=h||S;return `<div style="border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:12px"><div style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,36)}<span><b>${esc(p.nome)}</b> <span class=mu>${esc(p.funcao||'')}</span>${act(p)?'':' <span class="tag tg-i">Inativo</span>'}</span></div>
+  <div class=dias style="margin:10px 0"><label><input type=checkbox class=pcustom data-i=${i} ${h?'checked':''}> Usar horário próprio (senão vale o horário do salão)</label></div>
+  <div id=pf${i} style="display:${h?'block':'none'}"><div style="display:flex;gap:8px"><div style="flex:1"><label>Abre</label><input id=ph${i}a type=time value="${x.abre}"></div><div style="flex:1"><label>Fecha</label><input id=ph${i}b type=time value="${x.fecha}"></div></div>
+  <label>Pausa de almoço (opcional)</label><div style="display:flex;gap:8px"><input id=ph${i}c type=time value="${x.almI||''}"><input id=ph${i}d type=time value="${x.almF||''}"></div>
+  <label>Dias de atendimento (os desmarcados são folga)</label><div class=dias>${DIAS.map((d,k)=>`<label><input type=checkbox class=pdia${i} value=${k} ${x.dias.includes(k)?'checked':''}>${d}</label>`).join('')}</div></div>
+  <button class="btn s" style="margin-top:12px" data-a=salph data-i=${i}>Salvar agenda de ${esc(p.nome)}</button></div>`};
 function cadPage(){
-  let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Adicionar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar</button>':''}`;
-  if(TAB=='serv')c=`<h2>Serviços e valores</h2>`+S.servicos.map((s,i)=>row('servicos',i,`<b>${esc(s.nome)}</b> · ${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome do serviço" value="${esc(es?.nome)}"><input id=a2 type=number step=.01 placeholder="Valor (R$)" value="${es?.preco??''}"><input id=a3 type=number step=30 min=30 placeholder="Duração (min)" value="${es?.min||30}"><input id=a4 placeholder="Categoria (opcional)" value="${esc(es?.cat)}"><input id=a5 placeholder="Descrição (opcional)" value="${esc(es?.desc)}">${bt(es,'addserv')}</div>`;
-  if(TAB=='prof')c=`<h2>Profissionais</h2>`+S.profissionais.map((p,i)=>row('profissionais',i,`${p.foto?`<img src="${p.foto}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px">`:''}<b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}</span>`)).join('')+
-   `<div class=add><input id=a1 placeholder="Nome" value="${esc(ep?.nome)}"><input id=a2 placeholder="Função (ex.: Barbeiro)" value="${esc(ep?.funcao)}"><label>Foto (opcional)</label><input type=file accept="image/*" data-up=foto><img id=fp src="${ep?.foto||''}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:${ep?.foto?'block':'none'}"><label>Serviços que realiza <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.servicos.map(x=>`<label><input type=checkbox class=ps value="${x.id}" ${ep?.servs?.includes(x.id)?'checked':''}>${esc(x.nome)}</label>`).join('')||'<span class=mu>Cadastre serviços primeiro.</span>'}</div>${bt(ep,'addprof')}</div>`;
-  if(TAB=='hor')c=`<h2>Horário de funcionamento</h2><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}"><label>Pausa de almoço <span class=mu>(opcional — sem atendimento neste intervalo)</span></label><div style="display:flex;gap:8px"><input id=h3 type=time value="${S.almI||''}"><input id=h4 type=time value="${S.almF||''}"></div>
-   <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários</button>`;
-  if(TAB=='promo')c=`<h2>Promoções</h2>`+S.promocoes.map((p,i)=>row('promocoes',i,`<b>${esc(p.titulo)}</b> · ${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}`)).join('')+
-   `<div class=add><input id=a1 placeholder="Título (ex.: Terça do Corte)" value="${esc(eo?.titulo)}"><input id=a2 type=number min=1 max=90 placeholder="Desconto (%)" value="${eo?.pct??''}"><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}</div>`;
-  if(TAB=='perfil')c=`<h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Título da capa</label><input id=p5 value="${esc(S.titulo)}" placeholder="Ex.: Estilo e tradição"><label>Subtítulo da capa</label><input id=p6 value="${esc(S.sub)}" placeholder="Ex.: Agende seu horário em poucos cliques."><label>Logo</label>${S.logo?`<img src="${S.logo}" style="height:50px;display:block;margin-bottom:6px;background:#ddd;padding:4px;border-radius:6px">`:''}<input type=file accept="image/*" data-up=logo>${S.logo?'<button class="btn s o" style="margin-top:6px" data-a=dlogo>Remover logo</button>':''}<label>Imagem da capa</label><input type=file accept="image/*" data-up=capa>${S.capa?'<button class="btn s o" style="margin-top:6px" data-a=dcapa>Voltar à capa padrão</button>':''}<label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar</button>`;
+  let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Cadastrar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar edição</button>':''}`;
+  const two=(t,sub,ed,form,tl,items)=>`<div class=card><h2>${t}</h2><p class=mu>${sub}</p><h3 style="margin:16px 0 2px">${ed}</h3><div class=add>${form}</div></div><div class=card><h3>${tl} (${items.length})</h3>${items.join('')||'<p class=mu style="margin-top:8px">Nenhum cadastro ainda.</p>'}</div>`;
+  if(TAB=='serv')return two('Serviços','Gerencie os serviços e valores oferecidos pelo salão. Serviços inativos não aparecem para o cliente.',es?'Editar serviço':'Cadastrar novo serviço',
+    `<label>Nome do serviço</label><input id=a1 value="${esc(es?.nome)}"><label>Valor</label><input id=a2 data-money inputmode=numeric placeholder="R$ 0,00" value="${es?fmtM(es.preco):''}"><label>Duração</label><select id=a3>${[30,60,90,120,150,180].map(m=>`<option value=${m} ${(es?.min||30)==m?'selected':''}>${m} min</option>`).join('')}</select><label>Categoria (opcional)</label><input id=a4 value="${esc(es?.cat)}"><label>Descrição (opcional)</label><input id=a5 value="${esc(es?.desc)}">${bt(es,'addserv')}`,
+    'Serviços cadastrados',S.servicos.map((s,i)=>lrow('servicos',i,`<b>${esc(s.nome)}</b><br><span class=mu>${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}</span>`,s.ativo)));
+  if(TAB=='prof')return two('Profissionais','Gerencie a equipe. Profissionais inativos não aparecem para o cliente.',ep?'Editar profissional':'Cadastrar novo profissional',
+    `<label>Nome</label><input id=a1 value="${esc(ep?.nome)}"><label>Função</label><input id=a2 placeholder="Ex.: Barbeiro" value="${esc(ep?.funcao)}"><label>Foto (opcional)</label><input type=file accept="image/*" data-up=foto><img id=fp src="${ep?.foto||''}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:${ep?.foto?'block':'none'}"><label>Serviços que realiza <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.servicos.map(x=>`<label><input type=checkbox class=ps value="${x.id}" ${ep?.servs?.includes(x.id)?'checked':''}>${esc(x.nome)}</label>`).join('')||'<span class=mu>Cadastre serviços primeiro.</span>'}</div>${bt(ep,'addprof')}`,
+    'Profissionais cadastrados',S.profissionais.map((p,i)=>lrow('profissionais',i,`<span style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,40)}<span><b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}${p.hor?' · horário próprio':''}</span></span></span>`,p.ativo)));
+  if(TAB=='promo')return two('Promoções','Crie descontos por serviço. Promoções inativas não são aplicadas.',eo?'Editar promoção':'Cadastrar nova promoção',
+    `<label>Título</label><input id=a1 placeholder="Ex.: Terça do Corte" value="${esc(eo?.titulo)}"><label>Desconto (%)</label><input id=a2 type=number min=1 max=90 value="${eo?.pct??''}"><label>Vale para</label><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}`,
+    'Promoções cadastradas',S.promocoes.map((p,i)=>lrow('promocoes',i,`<b>${esc(p.titulo)}</b><br><span class=mu>${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}</span>`,p.ativo)));
+  if(TAB=='hor')return `<div class=card><h2>Horário de funcionamento</h2><p class=mu>Horário geral do salão.</p><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}"><label>Pausa de almoço <span class=mu>(opcional)</span></label><div style="display:flex;gap:8px"><input id=h3 type=time value="${S.almI||''}"><input id=h4 type=time value="${S.almF||''}"></div>
+   <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários do salão</button></div>
+   <div class=card><h2>Agenda de cada profissional</h2><p class=mu>Defina horário e folgas por profissional. Quem não tiver horário próprio segue o horário do salão.</p>${S.profissionais.map(profHor).join('')||'<p class=mu>Cadastre profissionais primeiro.</p>'}</div>`;
+  if(TAB=='perfil'){
+    const grp=(g,t)=>`<p class=mu style="margin:12px 0 4px"><b>${t}</b></p><div class=pgrid>${Object.keys(CAPAS).filter(k=>CAPAS[k].g==g).map(k=>`<div class="cpv ${!S.capa&&S.capaK==k?'on':''}" data-a=capak data-k=${k} style="background:${CAPAS[k].css}"><span>${CAPAS[k].n}</span></div>`).join('')}</div>`;
+    return `<div class=card><h2>Dados do salão</h2><label>Nome</label><input id=p1 value="${esc(S.nome)}"><label>WhatsApp (com DDD)</label><input id=p2 value="${esc(S.whats)}" placeholder="61999999999"><label>Endereço</label><input id=p3 value="${esc(S.end)}"><label>Título da capa</label><input id=p5 value="${esc(S.titulo)}" placeholder="Ex.: Estilo e tradição"><label>Subtítulo da capa</label><input id=p6 value="${esc(S.sub)}" placeholder="Ex.: Agende seu horário em poucos cliques."><label>Cor do app</label><div class=dias>${PAL.map(c=>`<button type=button data-a=preset data-c=${c} style="width:38px;height:38px;border-radius:50%;border:3px solid ${c==S.cor?'#000':'#fff'};background:${c};box-shadow:0 0 0 1px #ccc;cursor:pointer"></button>`).join('')}</div><input id=p4 type=color value="${S.cor}" style="margin-top:10px;height:42px"><button class=btn data-a=salperfil>Salvar dados</button></div>
+    <div class=card><h2>Capa da página</h2><p class=mu>Escolha uma capa pronta ou envie a sua imagem.</p>
+    <div class=pgrid style="margin-top:8px"><div class="cpv ${!S.capa&&!S.capaK?'on':''}" data-a=capak data-k="" style="background:url('${DEF}') center/cover"><span>Foto padrão</span></div></div>${grp('b','Estilo barbearia')}${grp('s','Estilo salão de beleza')}
+    <label style="margin-top:14px">Enviar minha imagem ${S.capa?'<span class=mu>(em uso)</span>':''}</label><input type=file accept="image/*" data-up=capa>${S.capa?'<button class="btn s o" style="margin-top:6px" data-a=dcapa>Remover minha imagem</button>':''}
+    <label>Logo</label>${S.logo?`<img src="${S.logo}" style="height:50px;display:block;margin-bottom:6px;background:#ddd;padding:4px;border-radius:6px">`:''}<input type=file accept="image/*" data-up=logo>${S.logo?'<button class="btn s o" style="margin-top:6px" data-a=dlogo>Remover logo</button>':''}</div>`;
+  }
   if(TAB=='pix')c=`<h2>Receber por PIX</h2><p class=mu>Cadastre a chave PIX do salão. No agendamento, o cliente poderá escolher pagar por PIX (QR code e copia e cola) e enviar o comprovante. A chave aparece para quem for pagar.</p>
    <div class=dias style="margin-top:10px"><label><input type=checkbox id=x0 ${S.pixOn?'checked':''}> Aceitar pagamento por PIX no agendamento</label></div>
    <label>Tipo da chave</label><select id=x1>${[['cpf','CPF'],['cnpj','CNPJ'],['tel','Celular'],['email','E-mail'],['rand','Chave aleatória']].map(x=>`<option value=${x[0]} ${(S.pixTipo||'cpf')==x[0]?'selected':''}>${x[1]}</option>`).join('')}</select>
    <label>Chave PIX</label><input id=x2 value="${esc(S.pixChave)}"><label>Nome do beneficiário <span class=mu>(como no banco, até 25 letras)</span></label><input id=x3 maxlength=25 value="${esc(S.pixNome||S.nome)}"><label>Cidade <span class=mu>(até 15 letras)</span></label><input id=x4 maxlength=15 value="${esc(S.pixCidade||'Brasilia')}"><button class=btn data-a=salpix>Salvar PIX</button>
    ${S.pixChave?'<h3 style="margin:20px 0 6px">Teste (R$ 1,00)</h3><p class=mu>Pague R$ 1,00 pelo seu banco para conferir se está tudo certo.</p><div id=pxv></div>':''}`;
-  return c}
+  return `<div class=card>${c}</div>`}
 /* ====== PAINEL: layout, dashboard, agenda, clientes ====== */
-let AGALL=[],LOADED=false,SIDE=false,DAYSEL=iso(new Date()),CAL={y:new Date().getFullYear(),m:new Date().getMonth()},LF='prox',QS='',QC='',CL=[],NV={},AGSEL=null,OPEN={agenda:true};
+let AGALL=[],NOTAS={},UNSUB=null,LOADED=false,SIDE=false,DAYSEL=iso(new Date()),CAL={y:new Date().getFullYear(),m:new Date().getMonth()},QS='',QC='',CL=[],NV={},AGSEL=null,OPEN={agenda:true};
 const MENU=[{k:'dash',t:'Dashboard',i:'📊'},{k:'agenda',t:'Agenda',i:'📅',sub:[['cal','Calendário'],['lista','Lista'],['novo','＋ Novo agendamento']]},{k:'cli',t:'Clientes',i:'👥'},{k:'fin',t:'Financeiro',i:'💰',sub:[['pag','Pagamentos'],['pix','Chave PIX']]},{k:'cad',t:'Cadastros',i:'🗂️',sub:[['serv','Serviços'],['prof','Profissionais'],['promo','Promoções']]},{k:'cfg',t:'Configurações',i:'⚙️',sub:[['hor','Horários'],['perfil','Perfil e capa']]}];
 const TITLES={dash:'Dashboard',cal:'Agenda · Calendário',lista:'Agenda · Lista',cli:'Clientes',pag:'Financeiro · Pagamentos',pix:'Financeiro · Chave PIX',serv:'Serviços',prof:'Profissionais',promo:'Promoções',hor:'Horários',perfil:'Perfil e capa'};
 const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -212,10 +260,10 @@ async function loadAll(){if(LOADED)return;const q=await getDocs(collection(db,'s
 
 async function draw(){
   if(['dash','cal','lista','cli','pag'].includes(TAB)){try{await loadAll()}catch(e){alert('Não foi possível carregar a agenda: '+(e.code||e.message))}}
-  const c=TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():`<div class=card>${cadPage()}</div>`;
+  const c=TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():cadPage();
   const g=MENU.find(m=>m.sub&&m.sub.some(x=>x[0]==TAB));if(g)OPEN[g.k]=true;
-  const nav=MENU.map(m=>m.sub?`<button class=nv data-a=tog data-k=${m.k}><span>${m.i} ${m.t}</span><span>${OPEN[m.k]?'▾':'◂'}</span></button>${OPEN[m.k]?m.sub.map(x=>`<button class="nv sub ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}>${x[1]}</button>`).join(''):''}`:`<button class="nv ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k}><span>${m.i} ${m.t}</span></button>`).join('');
-  A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${TITLES[TAB]}</p></div><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
+  const nav=MENU.map(m=>m.sub?`<button class=nv data-a=tog data-k=${m.k}><span>${m.i} ${m.t}</span><span>${OPEN[m.k]?'▾':'▸'}</span></button>${OPEN[m.k]?m.sub.map(x=>`<button class="nv sub ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}>${x[1]}</button>`).join(''):''}`:`<button class="nv ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k}><span>${m.i} ${m.t}</span></button>`).join('');
+  A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa,S.capaK)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${TITLES[TAB]}</p></div><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
   <aside class="side ${SIDE?'open':''}" id=side><div class=sb>${esc(S.nome)}</div><nav>${nav}</nav><div class=sf><button class=nv data-a=copy><span>🔗 Copiar link</span></button><a class=nv href="${link()}" target=_blank><span>👁 Ver página do cliente</span></a><button class=nv data-a=sair><span>⎋ Sair</span></button></div></aside><div class=ov data-a=menu></div></div>`;
   if(TAB=='pix'&&S.pixChave)showPix($('#pxv'),1,'TESTE',false);
 }
@@ -250,14 +298,17 @@ function cal(){
   <div class=card id=dayc><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2 style="margin:0">${fd(DAYSEL)} · ${DIAS[new Date(DAYSEL+'T12:00').getDay()]}</h2><button class="btn s" data-a=novoday>＋ Agendar neste dia</button></div><p class=mu style="margin:6px 0 10px">Clique em um horário vazio (＋) para agendar, ou em um agendamento para ver os detalhes.</p><div style="overflow:auto">${dayGrid(DAYSEL)}</div></div>`;
 }
 function dayGrid(d){
-  if(!S.dias.includes(new Date(d+'T12:00').getDay()))return '<p class=mu>O salão não atende neste dia (veja Configurações › Horários).</p>';
-  const P=S.profissionais.length?S.profissionais:[{id:'',nome:'Geral'}],t0=tm(S.abre),rows=Math.max(1,Math.round((tm(S.fecha)-t0)/30)),ags=AGALL.filter(a=>a.data==d);
+  const wd=new Date(d+'T12:00').getDay(),P=(S.profissionais.filter(act).length?S.profissionais.filter(act):[{id:'',nome:'Geral'}]);
+  const H=P.map(p=>p.id?hrsOf(p.id):S),t0=Math.min(...H.map(h=>tm(h.abre))),t1=Math.max(...H.map(h=>tm(h.fecha)));
+  if(!H.some(h=>h.dias.includes(wd)))return '<p class=mu>Ninguém atende neste dia (veja Configurações › Horários).</p>';
+  const rows=Math.max(1,Math.round((t1-t0)/30)),ags=AGALL.filter(a=>a.data==d);
   let h=`<div class=tl style="grid-template-columns:52px repeat(${P.length},minmax(120px,1fr));grid-template-rows:auto repeat(${rows},38px)"><div></div>${P.map(p=>`<div style="text-align:center;font-weight:600;font-size:.85rem;padding-bottom:4px">${esc(p.nome)}</div>`).join('')}`;
   for(let r=0;r<rows;r++)h+=`<div class=t style="grid-row:${r+2};grid-column:1">${hm(t0+r*30)}</div>`;
-  P.forEach((p,ci)=>{const cov={};
+  P.forEach((p,ci)=>{const cov={},x=H[ci];
     ags.filter(a=>a.prof==p.id).forEach(a=>{const r0=Math.round((tm(a.hora)-t0)/30),n=Math.max(1,(a.blocos||[1]).length);if(r0<0||r0>=rows)return;
       h+=`<div class="ap ${{ag:'',concluido:'ok',faltou:'no',ps:'ps'}[stOf(a)]}" style="grid-row:${r0+2}/span ${n};grid-column:${ci+2}" data-a=agd data-id=${a.id}><b>${a.hora}</b> ${esc(a.nome)}<br>${esc(a.servico)}</div>`;for(let k=0;k<n;k++)cov[r0+k]=1});
-    for(let r=0;r<rows;r++){if(cov[r])continue;const t=t0+r*30;h+=S.almI&&S.almF&&t>=tm(S.almI)&&t<tm(S.almF)?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2}">almoço</div>`:`<button class=e style="grid-row:${r+2};grid-column:${ci+2}" data-a=slotnew data-p="${p.id}" data-h="${hm(t)}">＋</button>`}});
+    for(let r=0;r<rows;r++){if(cov[r])continue;const t=t0+r*30,off=!x.dias.includes(wd)||t<tm(x.abre)||t>=tm(x.fecha),lun=x.almI&&x.almF&&t>=tm(x.almI)&&t<tm(x.almF);
+      h+=off?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2};background:#f3f3f3;color:#bbb">${!x.dias.includes(wd)&&r==0?'folga':''}</div>`:lun?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2}">almoço</div>`:`<button class=e style="grid-row:${r+2};grid-column:${ci+2}" data-a=slotnew data-p="${p.id}" data-h="${hm(t)}">＋</button>`}});
   return h+'</div>';
 }
 acts.pday=async b=>{DAYSEL=b.dataset.d;await draw();$('#dayc').scrollIntoView({behavior:'smooth'})};
@@ -267,18 +318,37 @@ acts.novoday=()=>openNovo({data:DAYSEL});
 acts.slotnew=b=>openNovo({data:DAYSEL,prof:b.dataset.p,hora:b.dataset.h});
 
 /* ---- Lista ---- */
-function lista(){return `<div class=card style="margin-top:0"><div class=tabs>${[['prox','Próximos'],['hoje','Hoje'],['pass','Passados'],['todos','Todos']].map(x=>`<button class="${LF==x[0]?'on':''}" data-a=lf data-f=${x[0]}>${x[1]}</button>`).join('')}</div><input id=qs placeholder="Buscar cliente, serviço ou profissional" value="${esc(QS)}" style="margin:10px 0"><div id=lst>${listaRows()}</div></div>`}
+let LP='dia',LR=iso(new Date()),LPF='';
+function lrange(){const d=new Date(LR+'T12:00'),y=d.getFullYear(),m=d.getMonth(),p=n=>String(n).padStart(2,'0'),f=(yy,mm,dd)=>`${yy}-${p(mm+1)}-${p(dd)}`,last=new Date(y,m+1,0).getDate();
+  if(LP=='dia')return[LR,LR,fd(LR)+' · '+DIAS[d.getDay()]];
+  if(LP=='quinz'){const a=d.getDate()<=15;return[f(y,m,a?1:16),f(y,m,a?15:last),(a?'1ª':'2ª')+' quinzena de '+MES[m]+' '+y]}
+  if(LP=='mes')return[f(y,m,1),f(y,m,last),MES[m]+' '+y];
+  return[f(y,0,1),f(y,11,31),String(y)]}
+function lista(){
+  return `<div class=card style="margin-top:0"><div class=tabs>${[['dia','Dia'],['quinz','Quinzena'],['mes','Mês'],['ano','Ano']].map(x=>`<button class="${LP==x[0]?'on':''}" data-a=lp data-f=${x[0]}>${x[1]}</button>`).join('')}</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0"><button class="btn s o" data-a=lnav data-n=-1>‹</button><b style="text-align:center">${lrange()[2]}</b><button class="btn s o" data-a=lnav data-n=1>›</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn s o" data-a=lhoje>Hoje</button><select id=lpf style="width:auto;flex:1;min-width:150px"><option value="">Todos os profissionais</option>${S.profissionais.map(p=>`<option value="${p.id}" ${LPF==p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></div>
+  <input id=qs placeholder="Buscar cliente, serviço ou profissional" value="${esc(QS)}" style="margin:10px 0"><div id=lst>${listaRows()}</div></div>`;
+}
 function listaRows(){
-  const hoje=iso(new Date()),q=QS.toLowerCase();
-  let L=AGALL.filter(a=>LF=='todos'||(LF=='hoje'&&a.data==hoje)||(LF=='prox'&&a.data>=hoje)||(LF=='pass'&&a.data<hoje));
+  const [a0,a1]=lrange(),q=QS.toLowerCase();
+  let L=AGALL.filter(a=>a.data>=a0&&a.data<=a1&&(!LPF||a.prof==LPF));
   if(q)L=L.filter(a=>(a.nome+' '+a.servico+' '+a.profNome+' '+a.tel).toLowerCase().includes(q));
-  L.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));if(LF=='pass')L.reverse();
-  if(!L.length)return '<p class=mu>Nenhum agendamento.</p>';
-  let last='',h='';L.forEach(a=>{if(a.data!=last){last=a.data;h+=`<div style="font-weight:700;margin:14px 0 4px;color:var(--c)">${fd(a.data)} · ${DIAS[new Date(a.data+'T12:00').getDay()]}</div>`}
+  L.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+  const ok=L.filter(a=>a.status!='faltou'),tot=ok.reduce((t,a)=>t+(a.valor||0),0),rec=L.filter(a=>pOf(a)=='pago').reduce((t,a)=>t+(a.pvalor||0),0);
+  let h=`<p class=mu style="margin:4px 0 8px"><b>${L.length}</b> agendamento(s) · previsto <b>${brl(tot)}</b> · recebido <b>${brl(rec)}</b></p>`;
+  if(!L.length)return h+'<p class=mu>Nenhum agendamento neste período.</p>';
+  let last='';L.forEach(a=>{if(a.data!=last){last=a.data;h+=`<div style="font-weight:700;margin:14px 0 4px;color:var(--c)">${fd(a.data)} · ${DIAS[new Date(a.data+'T12:00').getDay()]}</div>`}
     h+=`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} com ${esc(a.profNome)} · ${brl(a.valor)}</span></span><span style="text-align:right">${stag(a)}<br>${ptag(a)}</span></div>`});
   return h;
 }
-acts.lf=b=>{LF=b.dataset.f;draw()};
+acts.lp=b=>{LP=b.dataset.f;draw()};
+acts.lhoje=()=>{LR=iso(new Date());draw()};
+acts.lnav=b=>{const n=+b.dataset.n,d=new Date(LR+'T12:00');
+  if(LP=='dia')d.setDate(d.getDate()+n);
+  else if(LP=='quinz'){if(n>0){if(d.getDate()<=15)d.setDate(16);else d.setMonth(d.getMonth()+1,1)}else{if(d.getDate()>15)d.setDate(1);else d.setMonth(d.getMonth()-1,16)}}
+  else if(LP=='mes')d.setMonth(d.getMonth()+n,1);else d.setFullYear(d.getFullYear()+n);
+  LR=iso(d);draw()};
 
 /* ---- Detalhe do agendamento ---- */
 acts.agd=b=>{const a=AGALL.find(x=>x.id==b.dataset.id);if(!a)return;AGSEL=a;const k=(a.tel||'').replace(/\D/g,''),ps=pOf(a);
@@ -286,7 +356,7 @@ acts.agd=b=>{const a=AGALL.find(x=>x.id==b.dataset.id);if(!a)return;AGSEL=a;cons
   <div style="background:#f6f7f9;border-radius:10px;padding:12px;margin-top:12px"><b>💳 Pagamento</b> ${ptag(a)}<br><span class=mu>O cliente escolheu: ${a.forma=='pix'?'PIX':'pagar no salão'}</span>
   ${ps=='pago'?`<p class=mu style="margin-top:6px">Recebido <b>${brl(a.pvalor)}</b> em ${mLabel[a.pmetodo]||'—'}${a.pquando?' · '+new Date(a.pquando).toLocaleString('pt-BR'):''}</p>`:''}
   ${a.comp?`<p style="margin:8px 0 4px">Comprovante enviado (toque para ampliar):</p><a href="${a.comp}" target=_blank><img src="${a.comp}" style="max-width:100%;max-height:240px;border-radius:8px;border:1px solid #ddd"></a>`:''}
-  ${ps!='pago'?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center"><select id=pm style="width:auto"><option value=pix ${a.forma=='pix'?'selected':''}>PIX</option><option value=dinheiro ${a.forma!='pix'?'selected':''}>Dinheiro</option><option value=debito>Cartão débito</option><option value=credito>Cartão crédito</option></select><input id=pv type=number step=.01 value="${a.valor}" style="width:110px"><button class="btn s" data-a=pagar>${a.comp?'Confirmar pagamento':'Registrar pagamento'}</button></div>
+  ${ps!='pago'?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center"><select id=pm style="width:auto"><option value=pix ${a.forma=='pix'?'selected':''}>PIX</option><option value=dinheiro ${a.forma!='pix'?'selected':''}>Dinheiro</option><option value=debito>Cartão débito</option><option value=credito>Cartão crédito</option></select><input id=pv data-money inputmode=numeric value="${fmtM(a.valor)}" style="width:130px"><button class="btn s" data-a=pagar>${a.comp?'Confirmar pagamento':'Registrar pagamento'}</button></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${a.comp?'<button class="btn s o" data-a=recusar>Recusar comprovante</button>':''}${S.pixOn&&S.pixChave?'<button class="btn s o" data-a=cobrar>Cobrar via PIX (QR)</button>':''}</div>`:'<button class="btn s o" style="margin-top:8px" data-a=estornar>Estornar pagamento</button>'}</div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><button class="btn s" data-a=stset data-s=concluido>✔ Concluído</button><button class="btn s o" data-a=stset data-s=faltou>Faltou</button>${a.status?'<button class="btn s o" data-a=stset data-s="">Reabrir</button>':''}<a class="btn s o" style="text-decoration:none" target=_blank href="${wa(a.tel)}">WhatsApp</a><button class="btn s o" data-a=cperfil data-k=${k}>Ver cliente</button><button class="btn s o" style="color:#c33;border-color:#c33" data-a=acancel>Cancelar agendamento</button></div><button class="btn o" data-a=closem>Fechar</button>`)};
 acts.closem=closeM;
@@ -298,12 +368,12 @@ function openNovo(pre={}){
   if(!S.profissionais.length||!S.servicos.length)return alert('Cadastre ao menos um serviço e um profissional antes de agendar.');
   NV={hora:'',pre:pre.hora||''};const cl=clientes();
   openM(`<h2>Novo agendamento</h2><label>Cliente</label><input id=mn list=mcl placeholder="Nome (ou escolha um cliente)" value="${esc(pre.nome)}" autocomplete=off><datalist id=mcl>${cl.map(c=>`<option value="${esc(c.nome)}">${esc(c.tel)}</option>`).join('')}</datalist>
-  <label>WhatsApp</label><input id=mt type=tel placeholder="(61) 99999-9999" value="${esc(pre.tel)}"><label>Profissional</label><select id=mp><option value="">Selecione</option>${S.profissionais.map(p=>`<option value="${p.id}" ${pre.prof==p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
-  <label>Serviço</label><select id=ms></select><label>Data</label><input id=md type=date value="${pre.data||iso(new Date())}"><label>Horário</label><div class=slots id=msl></div><label>Valor (R$)</label><input id=mv type=number step=.01>
+  <label>WhatsApp</label><input id=mt type=tel placeholder="(61) 99999-9999" value="${esc(pre.tel)}"><label>Profissional</label><select id=mp><option value="">Selecione</option>${S.profissionais.filter(act).map(p=>`<option value="${p.id}" ${pre.prof==p.id?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
+  <label>Serviço</label><select id=ms></select><label>Data</label><input id=md type=date value="${pre.data||iso(new Date())}"><label>Horário</label><div class=slots id=msl></div><label>Valor</label><input id=mv data-money inputmode=numeric placeholder="R$ 0,00">
   <button class=btn data-a=nvok>Agendar</button><button class="btn o" data-a=closem>Cancelar</button>`);
   nvServ();nvSlots();
 }
-function nvServ(){const pf=S.profissionais.find(p=>p.id==$('#mp').value),cur=$('#ms').value,L=S.servicos.filter(x=>!pf||!(pf.servs&&pf.servs.length)||pf.servs.includes(x.id));
+function nvServ(){const pf=S.profissionais.find(p=>p.id==$('#mp').value),cur=$('#ms').value,L=S.servicos.filter(x=>act(x)&&(!pf||!(pf.servs&&pf.servs.length)||pf.servs.includes(x.id)));
   $('#ms').innerHTML='<option value="">Selecione</option>'+L.map(x=>`<option value="${x.id}" ${cur==x.id?'selected':''}>${esc(x.nome)} — ${brl(price(x,S.promocoes).final)} (${x.min}min)</option>`).join('')}
 async function nvSlots(){
   const pf=$('#mp').value,sv=S.servicos.find(x=>x.id==$('#ms').value),d=$('#md').value,box=$('#msl');NV.hora='';
@@ -316,7 +386,7 @@ acts.nvpick=b=>{NV.hora=b.dataset.h;NV.pre='';document.querySelectorAll('#msl bu
 acts.nvok=async()=>{
   const nome=v('mn'),tel=v('mt'),pf=S.profissionais.find(p=>p.id==v('mp')),sv=S.servicos.find(x=>x.id==v('ms')),d=v('md');
   if(nome.length<2||tel.replace(/\D/g,'').length<10)return alert('Informe o nome e o WhatsApp com DDD.');if(!pf||!sv||!NV.hora)return alert('Escolha profissional, serviço e horário.');
-  try{await commitAg(U.uid,pf,sv,d,NV.hora,nome,tel,'',+v('mv')||0,'','salao');LOADED=false;DAYSEL=d;CAL={y:+d.slice(0,4),m:+d.slice(5,7)-1};closeM();toast('Agendado ✔');if(!['cal','lista'].includes(TAB))TAB='cal';draw()}
+  try{await commitAg(U.uid,pf,sv,d,NV.hora,nome,tel,'',parseM(v('mv')),'','salao');LOADED=false;DAYSEL=d;CAL={y:+d.slice(0,4),m:+d.slice(5,7)-1};closeM();toast('Agendado ✔');if(!['cal','lista'].includes(TAB))TAB='cal';draw()}
   catch(e){alert('Não foi possível agendar (horário ocupado?).')}
 };
 
@@ -327,7 +397,7 @@ function clientes(){
   return Object.values(M).map(m=>{
     m.ag.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
     const ok=m.ag.filter(a=>a.status!='faltou'),ps=ok.filter(a=>a.data<=hoje);
-    m.nome=m.ag[m.ag.length-1].nome;m.email=[...m.ag].reverse().map(a=>a.email).find(Boolean)||'';
+    m.nome=m.ag[m.ag.length-1].nome;m.foto=[...m.ag].reverse().map(a=>a.foto).find(Boolean)||'';m.email=[...m.ag].reverse().map(a=>a.email).find(Boolean)||'';
     m.n=m.ag.length;m.faltas=m.n-ok.length;m.tot=ok.reduce((t,a)=>t+(a.valor||0),0);m.tk=ok.length?m.tot/ok.length:0;
     m.ult=ps.length?ps[ps.length-1].data:'';m.prox=m.ag.find(a=>a.data>=hoje&&!a.status);m.desde=m.ag[0].data;
     const ds=ps.map(a=>new Date(a.data+'T12:00').getTime()),g=[];for(let i=1;i<ds.length;i++)g.push((ds[i]-ds[i-1])/864e5);m.freq=g.length?Math.round(g.reduce((a,b)=>a+b,0)/g.length):0;
@@ -340,19 +410,19 @@ function cliPage(){CL=clientes();const mes=iso(new Date()).slice(0,7);
   return `<div class=kp style="margin-bottom:14px">${[['Total de clientes',CL.length],['Novos no mês',CL.filter(c=>c.desde.startsWith(mes)).length],['Fiéis (5+ visitas)',CL.filter(c=>c.tag[1]=='f').length],['Inativos (45+ dias)',CL.filter(c=>c.tag[1]=='i').length]].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
   <div class=card style="margin-top:0"><input id=qc placeholder="Buscar por nome ou telefone" value="${esc(QC)}"><div id=cl style="margin-top:8px">${cliRows()}</div></div>`}
 function cliRows(){const q=QC.toLowerCase(),L=CL.filter(c=>!q||(c.nome+' '+c.tel).toLowerCase().includes(q));
-  return L.length?L.map(c=>`<div class=row><span style="display:flex;gap:10px;align-items:center"><div class=av style="width:40px;height:40px;line-height:40px;font-size:1rem;margin:0;flex-shrink:0">${esc((c.nome||'?')[0])}</div><span><b>${esc(c.nome)}</b> <span class="tag tg-${c.tag[1]}">${c.tag[0]}</span><br><span class=mu>${c.n} visita(s) · ${brl(c.tot)} · última: ${c.ult?fd(c.ult):'—'}</span></span></span><button class="btn s o" data-a=cperfil data-k=${c.k}>Ver perfil</button></div>`).join(''):'<p class=mu>Nenhum cliente encontrado. Envie o link do salão ou crie um agendamento.</p>'}
+  return L.length?L.map(c=>`<div class=row><span style="display:flex;gap:10px;align-items:center">${avc((NOTAS[c.k]||{}).foto||c.foto,c.nome,40)}<span><b>${esc(c.nome)}</b> <span class="tag tg-${c.tag[1]}">${c.tag[0]}</span><br><span class=mu>${c.n} visita(s) · ${brl(c.tot)} · última: ${c.ult?fd(c.ult):'—'}</span></span></span><button class="btn s o" data-a=cperfil data-k=${c.k}>Ver perfil</button></div>`).join(''):'<p class=mu>Nenhum cliente encontrado. Envie o link do salão ou crie um agendamento.</p>'}
 acts.cperfil=async b=>{
-  CL=clientes();const m=CL.find(x=>x.k==b.dataset.k);if(!m)return;let nt={};try{nt=(await getDoc(doc(db,'saloes',U.uid,'notas',m.k))).data()||{}}catch(e){}
-  openM(`<div style="display:flex;gap:12px;align-items:center"><div class=av style="margin:0;flex-shrink:0">${esc((m.nome||'?')[0])}</div><div><h2 style="margin:0">${esc(m.nome)}</h2><span class="tag tg-${m.tag[1]}">${m.tag[0]}</span></div></div>
+  CL=clientes();const m=CL.find(x=>x.k==b.dataset.k);if(!m)return;TMP.cfoto=undefined;let nt={};try{nt=(await getDoc(doc(db,'saloes',U.uid,'notas',m.k))).data()||{}}catch(e){}
+  openM(`<div style="display:flex;gap:12px;align-items:center"><span id=cfpw>${avc(nt.foto||m.foto,m.nome,64)}</span><div><h2 style="margin:0">${esc(m.nome)}</h2><span class="tag tg-${m.tag[1]}">${m.tag[0]}</span></div></div>
   <p style="margin:12px 0 6px">📱 ${esc(m.tel)}${m.email?`<br>✉️ ${esc(m.email)}`:''}</p><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn s" style="text-decoration:none" target=_blank href="${wa(m.tel)}">WhatsApp</a><a class="btn s o" style="text-decoration:none" href="tel:+${(m.k.length<=11?'55':'')+m.k}">Ligar</a><button class="btn s o" data-a=cpnum data-t="${esc(m.tel)}">Copiar número</button></div>
   <div class=kp style="margin:14px 0">${[['Visitas',m.n],['Total gasto',brl(m.tot)],['Ticket médio',brl(m.tk)],['Frequência',m.freq?'a cada '+m.freq+' dias':'—'],['Faltas',m.faltas],['Cliente desde',fd(m.desde)]].map(k=>`<div><span>${k[0]}</span><b style="font-size:1.05rem">${k[1]}</b></div>`).join('')}</div>
   <p class=mu>Serviço favorito: <b>${esc(m.fs)}</b> · Profissional preferido: <b>${esc(m.fp)}</b><br>Última visita: <b>${m.ult?fd(m.ult)+' (há '+m.dias+' dia(s))':'—'}</b> · Próximo: <b>${m.prox?fd(m.prox.data)+' às '+m.prox.hora:'nenhum'}</b></p>
-  <label>Observações (só você vê)</label><textarea id=nt rows=3 placeholder="Ex.: prefere degradê, alérgico a..., gosta de conversar">${esc(nt.nota)}</textarea><label>Aniversário</label><input id=nb type=date value="${esc(nt.aniv)}">
+  <label>Foto do cliente (só você vê)</label><input type=file accept="image/*" data-up=cfoto><label>Observações (só você vê)</label><textarea id=nt rows=3 placeholder="Ex.: prefere degradê, alérgico a..., gosta de conversar">${esc(nt.nota)}</textarea><label>Aniversário</label><input id=nb type=date value="${esc(nt.aniv)}">
   <button class=btn data-a=savenota data-k=${m.k}>Salvar observações</button><button class="btn o" data-a=novo2 data-k=${m.k}>Agendar para este cliente</button>
   <h3 style="margin:18px 0 4px">Histórico</h3>${[...m.ag].reverse().map(a=>`<div class=row style="font-size:.85rem"><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)}</span></span>${stag(a)}</div>`).join('')}<button class="btn o" data-a=closem>Fechar</button>`);
 };
 acts.cpnum=b=>navigator.clipboard.writeText(b.dataset.t).then(()=>toast('Número copiado ✔'));
-acts.savenota=async b=>{try{await setDoc(doc(db,'saloes',U.uid,'notas',b.dataset.k),{nota:v('nt'),aniv:v('nb')});toast('Observações salvas ✔')}catch(e){alert('Erro ao salvar: '+(e.code||e.message)+'\nPublique as regras novas do Firestore.')}};
+acts.savenota=async b=>{const k=b.dataset.k,o={nota:v('nt'),aniv:v('nb'),foto:TMP.cfoto!==undefined?TMP.cfoto:(NOTAS[k]||{}).foto||''};try{await setDoc(doc(db,'saloes',U.uid,'notas',k),o);NOTAS[k]=o;toast('Dados do cliente salvos ✔');draw()}catch(e){alert('Erro ao salvar: '+(e.code||e.message)+'\nPublique as regras novas do Firestore.')}};
 acts.novo2=b=>{const m=clientes().find(x=>x.k==b.dataset.k);openNovo({data:DAYSEL,nome:m.nome,tel:m.tel})};
 
 /* ====== PAGAMENTOS / PIX ====== */
@@ -383,10 +453,11 @@ async function showPix(box,valor,id,up){
   box.innerHTML=`<div class=pixbx style="text-align:center">${svg}<p style="margin:8px 0"><b>${brl(valor)}</b> · ${esc(S.pixNome||S.nome)}</p><textarea readonly rows=3 style="font-size:.72rem" onclick="this.select()">${code}</textarea><button class="btn s" style="margin-top:6px" data-a=cpix data-c="${code}">Copiar PIX copia e cola</button>${up?`<div class=up style="margin-top:14px;text-align:left"><label>Já pagou? Envie o comprovante (foto ou print)</label><input type=file accept="image/*" data-up=comp data-id=${id}></div>`:''}</div>`;
 }
 acts.cpix=b=>navigator.clipboard.writeText(b.dataset.c).then(()=>toast('Código PIX copiado ✔'));
+acts.vcomp=b=>{const a=MY[+b.dataset.i];openM('<h2>Comprovante enviado</h2><img src="'+a.comp+'" style="max-width:100%;border-radius:8px"><button class="btn o" data-a=closem>Fechar</button>')};
 acts.cpay=b=>{const a=MY[+b.dataset.i];openM('<h2>Pagamento via PIX</h2><div id=pbx></div><button class="btn o" data-a=closem>Fechar</button>');showPix($('#pbx'),a.valor,a.id,true)};
 acts.cobrar=()=>{const a=AGSEL;openM('<h2>Cobrar via PIX</h2><p class=mu>Mostre este QR code ao cliente.</p><div id=pbx></div><button class="btn o" data-a=closem>Fechar</button>');showPix($('#pbx'),a.valor,a.id,false)};
 const pagSet=async(o,msg)=>{const a=AGSEL;try{await setDoc(doc(db,'saloes',U.uid,'agendamentos',a.id),o,{merge:true});Object.assign(a,o);closeM();toast(msg);draw()}catch(e){alert('Erro: '+(e.code||e.message))}};
-acts.pagar=()=>pagSet({pstatus:'pago',pmetodo:v('pm'),pvalor:+v('pv')||0,pquando:Date.now()},'Pagamento registrado ✔');
+acts.pagar=()=>pagSet({pstatus:'pago',pmetodo:v('pm'),pvalor:parseM(v('pv')),pquando:Date.now()},'Pagamento registrado ✔');
 acts.recusar=()=>{if(confirm('Recusar este comprovante?'))pagSet({pstatus:'pendente',comp:''},'Comprovante recusado')};
 acts.estornar=()=>{if(confirm('Estornar o pagamento registrado?'))pagSet({pstatus:'pendente',pmetodo:'',pvalor:0,pquando:0},'Pagamento estornado')};
 acts.salpix=async()=>{
@@ -415,34 +486,39 @@ acts.csv=()=>{const q=x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"',n=x=>(+
 
 /* ---- agendamento compartilhado (cliente e salão) ---- */
 async function freeSlots(uid,prof,sv,d){
-  if(!S.dias.includes(new Date(d+'T12:00').getDay()))return null;
+  const H=hrsOf(prof);if(!H.dias.includes(new Date(d+'T12:00').getDay()))return null;
   const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',uid),where('data','==',d)));
   const busy=new Set(q.docs.map(x=>x.data().prof+'_'+x.data().hora)),n=sv.min/30,now=new Date(),hoje=d==iso(now),out=[];
-  for(let t=tm(S.abre);t+n*30<=tm(S.fecha);t+=30){
+  for(let t=tm(H.abre);t+n*30<=tm(H.fecha);t+=30){
     if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
-    let ok=true;for(let k=0;k<n;k++){const b=t+k*30;if(busy.has(prof+'_'+hm(b))||(S.almI&&S.almF&&b>=tm(S.almI)&&b<tm(S.almF)))ok=false}
+    let ok=true;for(let k=0;k<n;k++){const b=t+k*30;if(busy.has(prof+'_'+hm(b))||(H.almI&&H.almF&&b>=tm(H.almI)&&b<tm(H.almF)))ok=false}
     if(ok)out.push(hm(t));
   }
   return out;
 }
-async function commitAg(uid,pf,sv,d,h0,nome,tel,cuid,valor,email,por,forma){
+async function commitAg(uid,pf,sv,d,h0,nome,tel,cuid,valor,email,por,forma,foto){
   const w=writeBatch(db),blocos=[],n=sv.min/30;
   for(let k=0;k<n;k++){const h=hm(tm(h0)+k*30),id=`${uid}_${pf.id}_${d}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid,prof:pf.id,data:d,hora:h,cuid})}
   const ref=doc(collection(db,'saloes',uid,'agendamentos'));
-  w.set(ref,{forma:forma||'local',pstatus:'pendente',nome,tel,email:email||'',servico:sv.nome,servId:sv.id,prof:pf.id,profNome:pf.nome,data:d,hora:h0,valor:+(+valor).toFixed(2),blocos,cuid,por:por||'cliente',criado:Date.now()});
+  w.set(ref,{...(foto?{foto}:{}),forma:forma||'local',pstatus:'pendente',nome,tel,email:email||'',servico:sv.nome,servId:sv.id,prof:pf.id,profNome:pf.nome,data:d,hora:h0,valor:+(+valor).toFixed(2),blocos,cuid,por:por||'cliente',criado:Date.now()});
   await w.commit();return ref.id;
 }
-document.addEventListener('input',e=>{const i=e.target.id;if(i=='qs'){QS=e.target.value;$('#lst').innerHTML=listaRows()}if(i=='qc'){QC=e.target.value;$('#cl').innerHTML=cliRows()}});
+document.addEventListener('input',e=>{const t=e.target,i=t.id;if(t.dataset.money!=null)t.value=fmtM(parseM(t.value));if(i=='qs'){QS=t.value;$('#lst').innerHTML=listaRows()}if(i=='qc'){QC=t.value;$('#cl').innerHTML=cliRows()}});
 
 acts.preset=b=>{$('#p4').value=b.dataset.c;document.querySelectorAll('[data-a=preset]').forEach(x=>x.style.borderColor=x==b?'#000':'#fff');theme(b.dataset.c)};
-acts.dlogo=async()=>{S.logo='';await save();draw()};acts.dcapa=async()=>{S.capa='';await save();draw()};
-acts.sair=()=>signOut(auth);
+acts.salph=async b=>{const i=+b.dataset.i,p=S.profissionais[i];
+  if(document.querySelector('.pcustom[data-i="'+i+'"]').checked){const dias=[...document.querySelectorAll('.pdia'+i+':checked')].map(x=>+x.value),al=v('ph'+i+'c'),af=v('ph'+i+'d');p.hor={abre:v('ph'+i+'a'),fecha:v('ph'+i+'b'),almI:al&&af?al:'',almF:al&&af?af:'',dias}}else delete p.hor;
+  await save();toast('Agenda de '+p.nome+' salva ✔');draw()};
+acts.capak=async b=>{syncPerfil();S.capaK=b.dataset.k;S.capa='';await save();toast('Capa alterada ✔');draw()};
+acts.dlogo=async()=>{syncPerfil();S.logo='';await save();draw()};acts.dcapa=async()=>{syncPerfil();S.capa='';await save();draw()};
+acts.sair=()=>{if(UNSUB)UNSUB();UNSUB=null;signOut(auth)};
 acts.copy=()=>navigator.clipboard.writeText(link()).then(()=>toast('Link copiado ✔'));
 acts.del=async b=>{if(!confirm('Excluir este item?'))return;EDIT=null;S[b.dataset.l].splice(+b.dataset.i,1);await save();draw()};
-const put=(l,o)=>{if(EDIT&&EDIT.l==l){S[l][EDIT.i]={...S[l][EDIT.i],...o};EDIT=null}else S[l].push({id:rid(),...o})};
-acts.ed=b=>{TMP={};EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,document.body.scrollHeight)};
+const put=(l,o)=>{if(EDIT&&EDIT.l==l){S[l][EDIT.i]={...S[l][EDIT.i],...o};EDIT=null}else S[l].push({id:rid(),ativo:true,...o})};
+acts.tgl=async b=>{const x=S[b.dataset.l][+b.dataset.i];x.ativo=x.ativo===false;await save();draw()};
+acts.ed=b=>{TMP={};EDIT={l:b.dataset.l,i:+b.dataset.i};draw();scrollTo(0,0)};
 acts.noed=()=>{TMP={};EDIT=null;draw()};
-acts.addserv=async()=>{if(!v('a1')||v('a2')==='')return alert('Informe nome e valor.');put('servicos',{nome:v('a1'),preco:+v('a2'),min:Math.max(30,Math.ceil((+v('a3')||30)/30)*30),cat:v('a4'),desc:v('a5')});await save();toast('Salvo ✔');draw()};
+acts.addserv=async()=>{if(!v('a1')||!(parseM(v('a2'))>0))return alert('Informe o nome e o valor do serviço.');put('servicos',{nome:v('a1'),preco:parseM(v('a2')),min:+v('a3')||30,cat:v('a4'),desc:v('a5')});await save();toast('Salvo ✔');draw()};
 acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');const o={nome:v('a1'),funcao:v('a2'),servs:[...document.querySelectorAll('.ps:checked')].map(x=>x.value)};if(TMP.foto)o.foto=TMP.foto;put('profissionais',o);TMP={};await save();toast('Salvo ✔');draw()};
 acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');put('promocoes',{titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();toast('Salvo ✔');draw()};
 acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.almI=v('h3');S.almF=v('h4');if(!S.almI||!S.almF)S.almI=S.almF='';S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
@@ -454,10 +530,10 @@ async function booking(sg){
   const sl=await getDoc(doc(db,'slugs',sg));
   if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
   ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();theme(S.cor);document.title=S.nome+' | Agendamento';B={};step=1;
-  const cards=S.servicos.map(x=>{const p=price(x,S.promocoes);return`<div class=card><h3>${esc(x.nome)}</h3>${x.desc?`<p class=mu>${esc(x.desc)}</p>`:''}<div class=pr>${p.pct?`<span class=old>${brl(x.preco)}</span>`:''}${brl(p.final)} · ${x.min}min</div></div>`}).join('')||'<p class=mu style="text-align:center">Em breve.</p>';
+  const cards=S.servicos.filter(act).map(x=>{const p=price(x,S.promocoes);return`<div class=card><h3>${esc(x.nome)}</h3>${x.desc?`<p class=mu>${esc(x.desc)}</p>`:''}<div class=pr>${p.pct?`<span class=old>${brl(x.preco)}</span>`:''}${brl(p.final)} · ${x.min}min</div></div>`}).join('')||'<p class=mu style="text-align:center">Em breve.</p>';
   A.innerHTML=`<div class=hd>${S.logo?`<img src="${S.logo}" alt="${esc(S.nome)}">`:`<b>${esc(S.nome)}</b>`}<nav><a href="#servicos">Serviços</a><a href="#agendamento">Agendar</a><span id=hu></span></nav></div>
-  <div class=hero style="background:${cover(S.capa)}"><h1>${esc(S.titulo||S.nome)}</h1><p>${esc(S.sub||'Agende seu horário em poucos cliques.')}</p><a class=cta href="#agendamento">Agendar agora</a></div>
-  ${S.promocoes.length?`<div class=sec>${S.promocoes.map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}</div>`:''}
+  <div class=hero style="background:${cover(S.capa,S.capaK)}"><h1>${esc(S.titulo||S.nome)}</h1><p>${esc(S.sub||'Agende seu horário em poucos cliques.')}</p><a class=cta href="#agendamento">Agendar agora</a></div>
+  ${S.promocoes.filter(act).length?`<div class=sec>${S.promocoes.filter(act).map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}</div>`:''}
   <div class=sec id=servicos><h2 style="text-align:center;margin:30px 0 16px">Nossos serviços</h2><div class=sv>${cards}</div></div>
   <div class=wrap id=agendamento><h2 style="text-align:center;margin:30px 0 0">Faça seu agendamento</h2><div class=card id=wiz></div></div>
   <footer>© ${new Date().getFullYear()} ${esc(S.nome)}${S.end?' · '+esc(S.end):''}</footer>`;
@@ -473,8 +549,8 @@ function bk(){
   }
   if(step=='M')c=`<h2>Meus agendamentos</h2><div id=ml><p class=mu>Carregando…</p></div><button class="btn o" data-a=novo>Novo agendamento</button>`;
   if(step==1){
-    const sel=bpf(),L=S.servicos.filter(x=>!sel||!(sel.servs&&sel.servs.length)||sel.servs.includes(x.id)),cats=[...new Set(L.map(x=>x.cat||'Serviços'))];
-    c=`${bar}<h2>Escolha o profissional</h2><div class=pfs>${S.profissionais.map(p=>`<button data-a=pickprof data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span></button>`).join('')||'<p class=mu>Nenhum profissional cadastrado.</p>'}</div>
+    const sel=bpf(),L=S.servicos.filter(x=>act(x)&&(!sel||!(sel.servs&&sel.servs.length)||sel.servs.includes(x.id))),cats=[...new Set(L.map(x=>x.cat||'Serviços'))];
+    c=`${bar}<h2>Escolha o profissional</h2><div class=pfs>${S.profissionais.filter(act).map(p=>`<button data-a=pickprof data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span></button>`).join('')||'<p class=mu>Nenhum profissional cadastrado.</p>'}</div>
     <label>Serviço</label><select id=ss ${sel?'':'disabled'}><option value="">${sel?'Selecione':'Escolha o profissional primeiro'}</option>${cats.map(k=>`<optgroup label="${esc(k)}">${L.filter(x=>(x.cat||'Serviços')==k).map(x=>{const p=price(x,S.promocoes);return`<option value="${x.id}" ${B.serv==x.id?'selected':''}>${esc(x.nome)} — ${brl(p.final)} (${x.min}min)</option>`}).join('')}</optgroup>`).join('')}</select>
     <button class=btn data-a=n1>Continuar</button>`;
   }
@@ -517,7 +593,7 @@ async function loadMeus(){
     const q=await getDocs(query(collection(db,'saloes',ouid,'agendamentos'),where('cuid','==',CU.uid)));
     MY=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
     const hoje=iso(new Date());
-    $('#ml').innerHTML=MY.length?MY.map((a,i)=>{const f=a.data>=hoje;return`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)} · ${a.status=='concluido'?'Concluído':a.status=='faltou'?'Faltou':f?'Agendado':'Realizado'}</span><br>${ptag(a)}${a.forma=='pix'&&pOf(a)!='pago'&&S.pixChave?`<br><button class="btn s" style="margin-top:6px" data-a=cpay data-i=${i}>Pagar com PIX / enviar comprovante</button>`:''}</span>${f?`<button class=x data-a=ccancel data-i=${i} title="Cancelar">✕</button>`:''}</div>`}).join(''):'<p class=mu>Você ainda não tem agendamentos neste salão.</p>';
+    $('#ml').innerHTML=MY.length?MY.map((a,i)=>{const f=a.data>=hoje;return`<div class=row><span><b>${a.data.split('-').reverse().join('/')} ${a.hora}</b> · ${esc(a.servico)} com ${esc(a.profNome)}<br><span class=mu>${brl(a.valor)} · ${a.status=='concluido'?'Concluído':a.status=='faltou'?'Faltou':f?'Agendado':'Realizado'}</span><br>${ptag(a)}${a.comp?`<br><button class="btn s o" style="margin-top:6px" data-a=vcomp data-i=${i}>Ver comprovante</button>`:''}${a.forma=='pix'&&pOf(a)!='pago'&&S.pixChave?`<br><button class="btn s" style="margin-top:6px" data-a=cpay data-i=${i}>Pagar com PIX / enviar comprovante</button>`:''}</span>${f?`<button class=x data-a=ccancel data-i=${i} title="Cancelar">✕</button>`:''}</div>`}).join(''):'<p class=mu>Você ainda não tem agendamentos neste salão.</p>';
   }catch(e){$('#ml').innerHTML='<p class=mu>Não foi possível carregar seus agendamentos.</p>'}
 }
 acts.ccancel=async b=>{const a=MY[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',ouid,'agendamentos',a.id));try{await w.commit();toast('Agendamento cancelado');loadMeus()}catch(e){alert('Não foi possível cancelar.')}};
@@ -535,7 +611,7 @@ acts.conf=async()=>{
   const nome=v('cn'),tel=v('ct');if(nome.length<3||tel.replace(/\D/g,'').length<10)return alert('Informe seu nome e WhatsApp com DDD.');
   $('#cf').disabled=true;const sv=bsv(),p=price(sv,S.promocoes);
   const forma=(document.querySelector('input[name=fp]:checked')||{}).value||'local';
-  try{B.agId=await commitAg(ouid,bpf(),sv,B.data,B.hora,nome,tel,CU?CU.uid:'',p.final,CU?CU.email:'','cliente',forma);B.forma=forma;B.valor=p.final;B.nome=nome;B.done=true;step=4;bk()}
+  try{B.agId=await commitAg(ouid,bpf(),sv,B.data,B.hora,nome,tel,CU?CU.uid:'',p.final,CU?CU.email:'','cliente',forma,(CP&&CP.foto)||'');B.forma=forma;B.valor=p.final;B.nome=nome;B.done=true;step=4;bk()}
   catch(e){alert('Esse horário acabou de ser ocupado. Escolha outro.');step=2;bk()}
 };
 </script>
