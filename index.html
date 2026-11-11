@@ -68,6 +68,16 @@ textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;fo
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;overflow:auto;padding:20px;display:flex}.md{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:560px;margin:auto}
 .acn{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}.cpv{height:70px;border-radius:10px;cursor:pointer;border:3px solid transparent;position:relative;overflow:hidden}.cpv.on{border-color:var(--c)}.cpv span{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-size:.72rem;padding:3px 6px}
+.cal2{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal2 .h{text-align:center;font-weight:600;font-size:.8rem;color:var(--mu)}
+.cd{border:1px solid var(--bd);background:#f3f4f6;color:#bbb;border-radius:8px;padding:10px 0;font-size:.9rem}.cd.ok{background:#fff;color:var(--tx);cursor:pointer;font-weight:700;border-color:var(--c)}.cd.on{background:var(--c);color:#fff}
+.stp{display:flex;gap:6px;margin-bottom:12px}.stp button{flex:1;display:flex;align-items:center;gap:6px;justify-content:center;border:0;background:#f3f4f6;color:#9ca3af;border-radius:10px;padding:8px 4px;font-size:.8rem;font-family:inherit}
+.stp i{font-style:normal;width:20px;height:20px;border-radius:50%;background:#d1d5db;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.stp .cur{background:var(--c);color:#fff}.stp .cur i{background:#fff;color:var(--c)}.stp .done{background:#dcfce7;color:#166534;cursor:pointer}.stp .done i{background:#16a34a}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.chips span{background:#f3f4f6;border-radius:16px;padding:4px 10px;font-size:.8rem}
+.foot{display:flex;gap:10px;position:sticky;bottom:0;background:#fff;padding:12px 0 2px;margin-top:14px}.foot .btn{margin-top:0;flex:1}
+.quick{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff7ed;border:1px dashed #f59e0b;border-radius:10px;padding:8px 12px;margin:8px 0;font-size:.88rem}
+.cnav{display:flex;gap:6px;margin:10px 0 8px}.cnav select{flex:1;padding:8px}.cnav .btn{width:auto;padding:6px 14px}
+.cd.hj{outline:2px solid #f59e0b}#slh,#pfx{scroll-margin-top:80px}.slots{grid-template-columns:repeat(2,1fr)}
 </style>
 </head>
 <body>
@@ -114,6 +124,7 @@ const av=p=>p.foto?`<img class=av src="${p.foto}" alt="">`:`<div class=av>${esc(
 const img=(f,max,q,type='image/jpeg')=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL(type,q))};i.onerror=no;i.src=r.result};r.onerror=no;r.readAsDataURL(f)});
 const PAL=['#1f2a37','#0f3d3e','#7c2d12','#1e3a8a','#3f3f46','#6b21a8','#9d174d','#b45309'];
 document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;
+  if(t.id=='cm'||t.id=='cy'){let y=+$('#cy').value,m=+$('#cm').value;const n=new Date();if(y==n.getFullYear()&&m<n.getMonth())m=n.getMonth();CALC={y,m};drawStep2();return}
   if(t.id=='lpf'){LPF=t.value;draw();return}
   if(t.classList.contains('pcustom')){$('#pf'+t.dataset.i).style.display=t.checked?'block':'none';return}
   if(t.id=='pm2'){PM=t.value||PM;draw();return}
@@ -137,7 +148,7 @@ document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;
   }catch(x){alert('Não foi possível usar essa imagem.')}
 });
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='dash',AG=[],busy=false,EDIT=null,TMP={};
+let BUSY=new Set(),BUSYKEY='',LS=null,CALC={y:new Date().getFullYear(),m:new Date().getMonth()},CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='dash',AG=[],busy=false,EDIT=null,TMP={};
 const E=l=>EDIT&&EDIT.l==l?S[l][EDIT.i]:null;
 const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:24px;z-index:9;font-size:.95rem';document.body.append(d);setTimeout(()=>d.remove(),2200)};
 
@@ -207,12 +218,13 @@ const link=()=>location.origin+location.pathname+'?s='+S.slug;
 const fmtM=n=>'R$ '+(+n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const parseM=x=>(+String(x==null?'':x).replace(/\D/g,''))/100;
 const act=x=>x.ativo!==false;
+const resumo=h=>h.dias.map(d=>DIAS[d]).join(', ')+' · '+h.abre+'–'+h.fecha+(h.almI&&h.almF?' · almoço '+h.almI+'–'+h.almF:' · sem pausa');
 const hrsOf=id=>{const p=S.profissionais.find(x=>x.id==id);return p&&p.hor?p.hor:S};
 const lrow=(l,i,t,on)=>`<div class=row style="align-items:flex-start;gap:10px;${on===false?'opacity:.6':''}"><span>${t} ${on===false?'<span class="tag tg-i">Inativo</span>':'<span class="tag tg-f">Ativo</span>'}</span><span class=acn><button class="btn s o" data-a=ed data-l=${l} data-i=${i}>Editar</button><button class="btn s o" data-a=tgl data-l=${l} data-i=${i}>${on===false?'Ativar':'Inativar'}</button><button class="btn s o" style="color:#c33;border-color:#c33" data-a=del data-l=${l} data-i=${i}>Excluir</button></span></div>`;
 const sopts=sel=>S.servicos.filter(act).map(s=>`<option value="${s.id}" ${sel==s.id?'selected':''}>${esc(s.nome)}</option>`).join('');
 const syncPerfil=()=>{if($('#p1')){S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6')}};
-const profHor=(p,i)=>{const h=p.hor,x=h||S;return `<div style="border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:12px"><div style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,36)}<span><b>${esc(p.nome)}</b> <span class=mu>${esc(p.funcao||'')}</span>${act(p)?'':' <span class="tag tg-i">Inativo</span>'}</span></div>
-  <div class=dias style="margin:10px 0"><label><input type=checkbox class=pcustom data-i=${i} ${h?'checked':''}> Usar horário próprio (senão vale o horário do salão)</label></div>
+const profHor=(p,i)=>{const h=p.hor,x=h||S;return `<div style="border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:12px"><div style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,36)}<span><b>${esc(p.nome)}</b> <span class=mu>${esc(p.funcao||'')}</span>${act(p)?'':' <span class="tag tg-i">Inativo</span>'}<br><span class=mu>${resumo(hrsOf(p.id))}</span></span></div>
+  <div class=dias style="margin:10px 0"><label><input type=checkbox class=pcustom data-i=${i} ${h?'checked':''}> Usar horário próprio (substitui o horário e a pausa do salão)</label></div>
   <div id=pf${i} style="display:${h?'block':'none'}"><div style="display:flex;gap:8px"><div style="flex:1"><label>Abre</label><input id=ph${i}a type=time value="${x.abre}"></div><div style="flex:1"><label>Fecha</label><input id=ph${i}b type=time value="${x.fecha}"></div></div>
   <label>Pausa de almoço (opcional)</label><div style="display:flex;gap:8px"><input id=ph${i}c type=time value="${x.almI||''}"><input id=ph${i}d type=time value="${x.almF||''}"></div>
   <label>Dias de atendimento (os desmarcados são folga)</label><div class=dias>${DIAS.map((d,k)=>`<label><input type=checkbox class=pdia${i} value=${k} ${x.dias.includes(k)?'checked':''}>${d}</label>`).join('')}</div></div>
@@ -221,15 +233,15 @@ function cadPage(){
   let c='';const es=E('servicos'),ep=E('profissionais'),eo=E('promocoes'),bt=(e,a)=>`<button class="btn s" data-a=${a}>${e?'Salvar alterações':'Cadastrar'}</button>${e?'<button class="btn s o" data-a=noed>Cancelar edição</button>':''}`;
   const two=(t,sub,ed,form,tl,items)=>`<div class=card><h2>${t}</h2><p class=mu>${sub}</p><h3 style="margin:16px 0 2px">${ed}</h3><div class=add>${form}</div></div><div class=card><h3>${tl} (${items.length})</h3>${items.join('')||'<p class=mu style="margin-top:8px">Nenhum cadastro ainda.</p>'}</div>`;
   if(TAB=='serv')return two('Serviços','Gerencie os serviços e valores oferecidos pelo salão. Serviços inativos não aparecem para o cliente.',es?'Editar serviço':'Cadastrar novo serviço',
-    `<label>Nome do serviço</label><input id=a1 value="${esc(es?.nome)}"><label>Valor</label><input id=a2 data-money inputmode=numeric placeholder="R$ 0,00" value="${es?fmtM(es.preco):''}"><label>Duração</label><select id=a3>${[30,60,90,120,150,180].map(m=>`<option value=${m} ${(es?.min||30)==m?'selected':''}>${m} min</option>`).join('')}</select><label>Categoria (opcional)</label><input id=a4 value="${esc(es?.cat)}"><label>Descrição (opcional)</label><input id=a5 value="${esc(es?.desc)}">${bt(es,'addserv')}`,
+    `<label>Nome do serviço</label><input id=a1 value="${esc(es?.nome)}"><label>Valor</label><input id=a2 data-money inputmode=numeric placeholder="R$ 0,00" value="${es?fmtM(es.preco):''}"><label>Duração</label><select id=a3>${[15,30,45,60,75,90,105,120,150,180,240].map(m=>`<option value=${m} ${(es?.min||30)==m?'selected':''}>${m} min</option>`).join('')}</select><label>Categoria (opcional)</label><input id=a4 value="${esc(es?.cat)}"><label>Descrição (opcional)</label><input id=a5 value="${esc(es?.desc)}">${bt(es,'addserv')}`,
     'Serviços cadastrados',S.servicos.map((s,i)=>lrow('servicos',i,`<b>${esc(s.nome)}</b><br><span class=mu>${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}</span>`,s.ativo)));
   if(TAB=='prof')return two('Profissionais','Gerencie a equipe. Profissionais inativos não aparecem para o cliente.',ep?'Editar profissional':'Cadastrar novo profissional',
     `<label>Nome</label><input id=a1 value="${esc(ep?.nome)}"><label>Função</label><input id=a2 placeholder="Ex.: Barbeiro" value="${esc(ep?.funcao)}"><label>Foto (opcional)</label><input type=file accept="image/*" data-up=foto><img id=fp src="${ep?.foto||''}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:${ep?.foto?'block':'none'}"><label>Serviços que realiza <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.servicos.map(x=>`<label><input type=checkbox class=ps value="${x.id}" ${ep?.servs?.includes(x.id)?'checked':''}>${esc(x.nome)}</label>`).join('')||'<span class=mu>Cadastre serviços primeiro.</span>'}</div>${bt(ep,'addprof')}`,
-    'Profissionais cadastrados',S.profissionais.map((p,i)=>lrow('profissionais',i,`<span style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,40)}<span><b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}${p.hor?' · horário próprio':''}</span></span></span>`,p.ativo)));
+    'Profissionais cadastrados',S.profissionais.map((p,i)=>lrow('profissionais',i,`<span style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,40)}<span><b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}${p.hor?' · horário próprio':''}<br>${resumo(hrsOf(p.id))}</span></span></span>`,p.ativo)));
   if(TAB=='promo')return two('Promoções','Crie descontos por serviço. Promoções inativas não são aplicadas.',eo?'Editar promoção':'Cadastrar nova promoção',
     `<label>Título</label><input id=a1 placeholder="Ex.: Terça do Corte" value="${esc(eo?.titulo)}"><label>Desconto (%)</label><input id=a2 type=number min=1 max=90 value="${eo?.pct??''}"><label>Vale para</label><select id=a3><option value="">Todos os serviços</option>${sopts(eo?.servId)}</select>${bt(eo,'addpromo')}`,
     'Promoções cadastradas',S.promocoes.map((p,i)=>lrow('promocoes',i,`<b>${esc(p.titulo)}</b><br><span class=mu>${p.pct}% off · ${p.servId?esc((S.servicos.find(s=>s.id==p.servId)||{}).nome||'serviço removido'):'todos os serviços'}</span>`,p.ativo)));
-  if(TAB=='hor')return `<div class=card><h2>Horário de funcionamento</h2><p class=mu>Horário geral do salão.</p><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}"><label>Pausa de almoço <span class=mu>(opcional)</span></label><div style="display:flex;gap:8px"><input id=h3 type=time value="${S.almI||''}"><input id=h4 type=time value="${S.almF||''}"></div>
+  if(TAB=='hor')return `<div class=card><h2>Horário de funcionamento</h2><p class=mu>Horário geral do salão: ${resumo(S)} · horários de ${S.passo||30} em ${S.passo||30} min</p><label>Abre</label><input id=h1 type=time value="${S.abre}"><label>Fecha</label><input id=h2 type=time value="${S.fecha}"><label>Intervalo entre horários <span class=mu>(de quanto em quanto tempo o cliente pode agendar)</span></label><select id=h5>${[15,30,45,60,90,120].map(m=>`<option value=${m} ${(S.passo||30)==m?'selected':''}>${m} minutos</option>`).join('')}</select><p class=mu style="margin-top:4px">Ex.: 45 minutos → 09:00, 09:45, 10:30… Serviços mais longos ocupam vários intervalos.</p><label>Pausa de almoço <span class=mu>(opcional)</span></label><div style="display:flex;gap:8px"><input id=h3 type=time value="${S.almI||''}"><input id=h4 type=time value="${S.almF||''}"></div>
    <label>Dias de atendimento</label><div class=dias>${DIAS.map((d,i)=>`<label><input type=checkbox class=dia value=${i} ${S.dias.includes(i)?'checked':''}>${d}</label>`).join('')}</div><button class=btn data-a=salhor>Salvar horários do salão</button></div>
    <div class=card><h2>Agenda de cada profissional</h2><p class=mu>Defina horário e folgas por profissional. Quem não tiver horário próprio segue o horário do salão.</p>${S.profissionais.map(profHor).join('')||'<p class=mu>Cadastre profissionais primeiro.</p>'}</div>`;
   if(TAB=='perfil'){
@@ -298,17 +310,17 @@ function cal(){
   <div class=card id=dayc><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2 style="margin:0">${fd(DAYSEL)} · ${DIAS[new Date(DAYSEL+'T12:00').getDay()]}</h2><button class="btn s" data-a=novoday>＋ Agendar neste dia</button></div><p class=mu style="margin:6px 0 10px">Clique em um horário vazio (＋) para agendar, ou em um agendamento para ver os detalhes.</p><div style="overflow:auto">${dayGrid(DAYSEL)}</div></div>`;
 }
 function dayGrid(d){
-  const wd=new Date(d+'T12:00').getDay(),P=(S.profissionais.filter(act).length?S.profissionais.filter(act):[{id:'',nome:'Geral'}]);
-  const H=P.map(p=>p.id?hrsOf(p.id):S),t0=Math.min(...H.map(h=>tm(h.abre))),t1=Math.max(...H.map(h=>tm(h.fecha)));
+  const wd=wdOf(d),P=(S.profissionais.filter(act).length?S.profissionais.filter(act):[{id:'',nome:'Geral'}]),H=P.map(p=>p.id?hrsOf(p.id):S);
+  const t0=Math.min(...H.map(h=>tm(h.abre))),t1=Math.max(...H.map(h=>tm(h.fecha))),ps=S.passo||30,rm=ps%30==0?30:15;
   if(!H.some(h=>h.dias.includes(wd)))return '<p class=mu>Ninguém atende neste dia (veja Configurações › Horários).</p>';
-  const rows=Math.max(1,Math.round((t1-t0)/30)),ags=AGALL.filter(a=>a.data==d);
-  let h=`<div class=tl style="grid-template-columns:52px repeat(${P.length},minmax(120px,1fr));grid-template-rows:auto repeat(${rows},38px)"><div></div>${P.map(p=>`<div style="text-align:center;font-weight:600;font-size:.85rem;padding-bottom:4px">${esc(p.nome)}</div>`).join('')}`;
-  for(let r=0;r<rows;r++)h+=`<div class=t style="grid-row:${r+2};grid-column:1">${hm(t0+r*30)}</div>`;
+  const rows=Math.max(1,Math.ceil((t1-t0)/rm)),ags=AGALL.filter(a=>a.data==d);
+  let h=`<div class=tl style="grid-template-columns:52px repeat(${P.length},minmax(120px,1fr));grid-template-rows:auto repeat(${rows},${rm==15?'26px':'38px'})"><div></div>${P.map(p=>`<div style="text-align:center;font-weight:600;font-size:.85rem;padding-bottom:4px">${esc(p.nome)}</div>`).join('')}`;
+  for(let r=0;r<rows;r++)h+=`<div class=t style="grid-row:${r+2};grid-column:1">${(r*rm)%30==0||rm==30?hm(t0+r*rm):''}</div>`;
   P.forEach((p,ci)=>{const cov={},x=H[ci];
-    ags.filter(a=>a.prof==p.id).forEach(a=>{const r0=Math.round((tm(a.hora)-t0)/30),n=Math.max(1,(a.blocos||[1]).length);if(r0<0||r0>=rows)return;
+    ags.filter(a=>a.prof==p.id).forEach(a=>{const r0=Math.round((tm(a.hora)-t0)/rm),n=Math.min(Math.max(1,Math.ceil(durOf(a)/rm)),rows-r0);if(r0<0||r0>=rows)return;
       h+=`<div class="ap ${{ag:'',concluido:'ok',faltou:'no',ps:'ps'}[stOf(a)]}" style="grid-row:${r0+2}/span ${n};grid-column:${ci+2}" data-a=agd data-id=${a.id}><b>${a.hora}</b> ${esc(a.nome)}<br>${esc(a.servico)}</div>`;for(let k=0;k<n;k++)cov[r0+k]=1});
-    for(let r=0;r<rows;r++){if(cov[r])continue;const t=t0+r*30,off=!x.dias.includes(wd)||t<tm(x.abre)||t>=tm(x.fecha),lun=x.almI&&x.almF&&t>=tm(x.almI)&&t<tm(x.almF);
-      h+=off?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2};background:#f3f3f3;color:#bbb">${!x.dias.includes(wd)&&r==0?'folga':''}</div>`:lun?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2}">almoço</div>`:`<button class=e style="grid-row:${r+2};grid-column:${ci+2}" data-a=slotnew data-p="${p.id}" data-h="${hm(t)}">＋</button>`}});
+    for(let r=0;r<rows;r++){if(cov[r])continue;const t=t0+r*rm,off=!x.dias.includes(wd)||t<tm(x.abre)||t>=tm(x.fecha),lun=x.almI&&x.almF&&t>=tm(x.almI)&&t<tm(x.almF);
+      h+=off?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2};background:#f3f3f3;color:#bbb">${!x.dias.includes(wd)&&r==0?'folga':''}</div>`:lun?`<div class=lun style="grid-row:${r+2};grid-column:${ci+2}">almoço</div>`:(t-tm(x.abre))%ps==0?`<button class=e style="grid-row:${r+2};grid-column:${ci+2}" data-a=slotnew data-p="${p.id}" data-h="${hm(t)}">＋</button>`:`<div style="grid-row:${r+2};grid-column:${ci+2}"></div>`}});
   return h+'</div>';
 }
 acts.pday=async b=>{DAYSEL=b.dataset.d;await draw();$('#dayc').scrollIntoView({behavior:'smooth'})};
@@ -485,22 +497,35 @@ acts.csv=()=>{const q=x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"',n=x=>(+
   const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}));l.download='pagamentos-'+PM+'.csv';l.click()};
 
 /* ---- agendamento compartilhado (cliente e salão) ---- */
-async function freeSlots(uid,prof,sv,d){
-  const H=hrsOf(prof);if(!H.dias.includes(new Date(d+'T12:00').getDay()))return null;
-  const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',uid),where('data','==',d)));
-  const busy=new Set(q.docs.map(x=>x.data().prof+'_'+x.data().hora)),n=sv.min/30,now=new Date(),hoje=d==iso(now),out=[];
-  for(let t=tm(H.abre);t+n*30<=tm(H.fecha);t+=30){
+const busyAdd=(set,o)=>{const n=(o.m||30)/15;for(let k=0;k<n;k++)set.add(o.prof+'_'+o.data+'_'+hm(tm(o.hora)+k*15))};
+const durOf=a=>a.dur||((a.blocos||[1]).length*30);
+const wdOf=d=>new Date(d+'T12:00').getDay();
+const elig=sv=>S.profissionais.filter(p=>act(p)&&(!(p.servs&&p.servs.length)||p.servs.includes(sv.id)));
+function slotsFor(prof,sv,d,busy){
+  const H=hrsOf(prof);if(!H.dias.includes(wdOf(d)))return[];
+  const st=S.passo||30,u=Math.ceil(sv.min/15),now=new Date(),hoje=d==iso(now),out=[];
+  for(let t=tm(H.abre);t+sv.min<=tm(H.fecha);t+=st){
     if(hoje&&t<=now.getHours()*60+now.getMinutes())continue;
-    let ok=true;for(let k=0;k<n;k++){const b=t+k*30;if(busy.has(prof+'_'+hm(b))||(H.almI&&H.almF&&b>=tm(H.almI)&&b<tm(H.almF)))ok=false}
+    let ok=true;for(let k=0;k<u;k++){const b=t+k*15;if(busy.has(prof+'_'+d+'_'+hm(b))||(H.almI&&H.almF&&b>=tm(H.almI)&&b<tm(H.almF)))ok=false}
     if(ok)out.push(hm(t));
   }
   return out;
 }
+async function freeSlots(uid,prof,sv,d){
+  if(!hrsOf(prof).dias.includes(wdOf(d)))return null;
+  const q=await getDocs(query(collection(db,'ocupados'),where('uid','==',uid),where('data','==',d))),bs=new Set();q.docs.forEach(x=>busyAdd(bs,x.data()));
+  return slotsFor(prof,sv,d,bs);
+}
+async function loadBusy(profId){
+  const key=(B.mode||'prof')+'|'+profId;if(BUSYKEY==key)return;
+  const q=profId?query(collection(db,'ocupados'),where('uid','==',ouid),where('prof','==',profId)):query(collection(db,'ocupados'),where('uid','==',ouid));
+  const r=await getDocs(q),bs=new Set();r.docs.forEach(x=>busyAdd(bs,x.data()));BUSY=bs;BUSYKEY=key;
+}
 async function commitAg(uid,pf,sv,d,h0,nome,tel,cuid,valor,email,por,forma,foto){
-  const w=writeBatch(db),blocos=[],n=sv.min/30;
-  for(let k=0;k<n;k++){const h=hm(tm(h0)+k*30),id=`${uid}_${pf.id}_${d}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid,prof:pf.id,data:d,hora:h,cuid})}
+  const w=writeBatch(db),blocos=[],n=Math.ceil(sv.min/15);
+  for(let k=0;k<n;k++){const h=hm(tm(h0)+k*15),id=`${uid}_${pf.id}_${d}_${h.replace(':','')}`;blocos.push(id);w.set(doc(db,'ocupados',id),{uid,prof:pf.id,data:d,hora:h,cuid,m:15})}
   const ref=doc(collection(db,'saloes',uid,'agendamentos'));
-  w.set(ref,{...(foto?{foto}:{}),forma:forma||'local',pstatus:'pendente',nome,tel,email:email||'',servico:sv.nome,servId:sv.id,prof:pf.id,profNome:pf.nome,data:d,hora:h0,valor:+(+valor).toFixed(2),blocos,cuid,por:por||'cliente',criado:Date.now()});
+  w.set(ref,{...(foto?{foto}:{}),forma:forma||'local',pstatus:'pendente',nome,tel,email:email||'',servico:sv.nome,servId:sv.id,prof:pf.id,profNome:pf.nome,data:d,hora:h0,valor:+(+valor).toFixed(2),dur:sv.min,blocos,cuid,por:por||'cliente',criado:Date.now()});
   await w.commit();return ref.id;
 }
 document.addEventListener('input',e=>{const t=e.target,i=t.id;if(t.dataset.money!=null)t.value=fmtM(parseM(t.value));if(i=='qs'){QS=t.value;$('#lst').innerHTML=listaRows()}if(i=='qc'){QC=t.value;$('#cl').innerHTML=cliRows()}});
@@ -521,11 +546,14 @@ acts.noed=()=>{TMP={};EDIT=null;draw()};
 acts.addserv=async()=>{if(!v('a1')||!(parseM(v('a2'))>0))return alert('Informe o nome e o valor do serviço.');put('servicos',{nome:v('a1'),preco:parseM(v('a2')),min:+v('a3')||30,cat:v('a4'),desc:v('a5')});await save();toast('Salvo ✔');draw()};
 acts.addprof=async()=>{if(!v('a1'))return alert('Informe o nome.');const o={nome:v('a1'),funcao:v('a2'),servs:[...document.querySelectorAll('.ps:checked')].map(x=>x.value)};if(TMP.foto)o.foto=TMP.foto;put('profissionais',o);TMP={};await save();toast('Salvo ✔');draw()};
 acts.addpromo=async()=>{if(!v('a1')||!(+v('a2')>0))return alert('Informe título e desconto.');put('promocoes',{titulo:v('a1'),pct:+v('a2'),servId:v('a3')});await save();toast('Salvo ✔');draw()};
-acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.almI=v('h3');S.almF=v('h4');if(!S.almI||!S.almF)S.almI=S.almF='';S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
+acts.salhor=async()=>{S.abre=v('h1');S.fecha=v('h2');S.passo=+v('h5')||30;S.almI=v('h3');S.almF=v('h4');if(!S.almI||!S.almF)S.almI=S.almF='';S.dias=[...document.querySelectorAll('.dia:checked')].map(x=>+x.value);await save();toast('Horários salvos ✔')};
 acts.salperfil=async()=>{S.nome=v('p1');S.whats=v('p2');S.end=v('p3');S.titulo=v('p5');S.sub=v('p6');S.cor=v('p4');await save();theme(S.cor);draw();toast('Perfil salvo ✔')};
 
 /* ============ PÁGINA PÚBLICA DO CLIENTE ============ */
-let B={},ouid='',step=1;
+let B={},ouid='',step=1,SCR='';
+const stepper=n=>`<div class=stp>${[['Serviço',1],['Data e hora',2],['Seus dados',3]].map(x=>`<button class="${n==x[1]?'cur':n>x[1]?'done':''}" ${n>x[1]?`data-a=gostep data-s=${x[1]}`:'disabled'}><i>${n>x[1]?'✓':x[1]}</i><span>${x[0]}</span></button>`).join('')}</div>`;
+const rng=(h,sv)=>h+' – '+hm(tm(h)+sv.min);
+const sumChips=()=>{const sv=bsv(),pf=bpf(),p=sv?price(sv,S.promocoes):null;return `<div class=chips>${sv?`<span>💈 ${esc(sv.nome)} · ${p.pct?`<s>${brl(sv.preco)}</s> `:''}<b>${brl(p.final)}</b> · ${sv.min} min</span>`:''}${pf?`<span>👤 ${esc(pf.nome)}</span>`:''}${B.data?`<span>📅 ${fd(B.data)}${B.hora?' às '+B.hora:''}</span>`:''}</div>`};
 async function booking(sg){
   const sl=await getDoc(doc(db,'slugs',sg));
   if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
@@ -541,7 +569,7 @@ async function booking(sg){
 }
 const bsv=()=>S.servicos.find(s=>s.id==B.serv),bpf=()=>S.profissionais.find(p=>p.id==B.prof);
 function bk(){
-  const bar=`<div class=steps>${[1,2,3].map(i=>`<i class="${step>=i?'on':''}"></i>`).join('')}</div>`;
+  const bar=stepper(step);
   let c='';
   if(step=='L'){
     const cad=CM=='cad';
@@ -549,27 +577,26 @@ function bk(){
   }
   if(step=='M')c=`<h2>Meus agendamentos</h2><div id=ml><p class=mu>Carregando…</p></div><button class="btn o" data-a=novo>Novo agendamento</button>`;
   if(step==1){
-    const sel=bpf(),L=S.servicos.filter(x=>act(x)&&(!sel||!(sel.servs&&sel.servs.length)||sel.servs.includes(x.id))),cats=[...new Set(L.map(x=>x.cat||'Serviços'))];
-    c=`${bar}<h2>Escolha o profissional</h2><div class=pfs>${S.profissionais.filter(act).map(p=>`<button data-a=pickprof data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span></button>`).join('')||'<p class=mu>Nenhum profissional cadastrado.</p>'}</div>
-    <label>Serviço</label><select id=ss ${sel?'':'disabled'}><option value="">${sel?'Selecione':'Escolha o profissional primeiro'}</option>${cats.map(k=>`<optgroup label="${esc(k)}">${L.filter(x=>(x.cat||'Serviços')==k).map(x=>{const p=price(x,S.promocoes);return`<option value="${x.id}" ${B.serv==x.id?'selected':''}>${esc(x.nome)} — ${brl(p.final)} (${x.min}min)</option>`}).join('')}</optgroup>`).join('')}</select>
-    <button class=btn data-a=n1>Continuar</button>`;
+    const md=B.mode=='data',sel=bpf(),tog=`<div class=tabs style="margin-bottom:12px"><button class="${md?'':'on'}" data-a=bmode data-m=prof>Escolher o profissional</button><button class="${md?'on':''}" data-a=bmode data-m=data>Escolher o dia e horário</button></div>`;
+    const L=S.servicos.filter(x=>act(x)&&(md||!sel||!(sel.servs&&sel.servs.length)||sel.servs.includes(x.id))),cats=[...new Set(L.map(x=>x.cat||'Serviços'))];
+    const opts=cats.map(k=>`<optgroup label="${esc(k)}">${L.filter(x=>(x.cat||'Serviços')==k).map(x=>{const p=price(x,S.promocoes);return`<option value="${x.id}" ${B.serv==x.id?'selected':''}>${esc(x.nome)} — ${brl(p.final)} (${x.min}min)</option>`}).join('')}</optgroup>`).join('');
+    c=md?`${bar}${tog}<h2>Escolha o serviço</h2><p class=mu>Depois você escolhe o dia e o horário e vê quais profissionais estão disponíveis.</p><label>Serviço</label><select id=ss><option value="">Selecione</option>${opts}</select><div class=foot><button class=btn data-a=n1>Continuar</button></div>`
+    :`${bar}${tog}<h2>Escolha o profissional</h2><div class=pfs>${S.profissionais.filter(act).map(p=>`<button data-a=pickprof data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span><br><span class=mu style="font-size:.7rem">${hrsOf(p.id).dias.map(d=>DIAS[d]).join(' · ')}</span></button>`).join('')||'<p class=mu>Nenhum profissional cadastrado.</p>'}</div>
+    <label>Serviço</label><select id=ss ${sel?'':'disabled'}><option value="">${sel?'Selecione':'Escolha o profissional primeiro'}</option>${opts}</select><div class=foot><button class=btn data-a=n1>Continuar</button></div>`;
   }
-  if(step==2){
-    c=`${bar}<h2>Data e horário</h2><label>Data</label><input id=dt type=date min="${iso(new Date())}" value="${B.data||''}"><div class=slots id=sl><p class=mu style="grid-column:1/-1">Escolha uma data.</p></div>
-    <button class=btn data-a=n2 id=nx disabled>Continuar</button><button class="btn o" data-a=back>Voltar</button>`;
-  }
+  if(step==2)c='<p class=mu>Carregando disponibilidade…</p>';
   if(step==3){
     const s=bsv(),p=price(s,S.promocoes);
-    c=`${bar}<h2>Seus dados</h2><p class=mu>${esc(s.nome)} com ${esc(bpf().nome)}<br>${B.data.split('-').reverse().join('/')} às ${B.hora} · ${p.pct?`<span class=old>${brl(s.preco)}</span>`:''}<b>${brl(p.final)}</b></p>
+    c=`${bar}<h2>Seus dados</h2>${sumChips()}
     ${CU?`<p class=mu>Agendando como ${esc(CU.email)}</p>`:'<p class=mu>Já tem conta? <a href="#agendamento" data-a=clogin>Entre</a> para acompanhar seus agendamentos.</p>'}<label>Nome completo</label><input id=cn autocomplete=name value="${esc(CP?.nome)}"><label>WhatsApp</label><input id=ct type=tel placeholder="(61) 99999-9999" autocomplete=tel value="${esc(CP?.tel)}"><label>Forma de pagamento</label><div class=dias><label><input type=radio name=fp value=local checked> Pagar no salão</label>${S.pixOn&&S.pixChave?'<label><input type=radio name=fp value=pix> PIX (QR code)</label>':''}</div>
-    <button class=btn data-a=conf id=cf>Confirmar agendamento</button><button class="btn o" data-a=back>Voltar</button>`;
+    <div class=foot><button class="btn o" data-a=back>Voltar</button><button class=btn data-a=conf id=cf>Confirmar agendamento</button></div>`;
   }
   if(step==4){
     c=`<div class=ok><div class=big>✅</div><h2>Agendamento confirmado!</h2><p>${esc(bsv().nome)} com ${esc(bpf().nome)}<br><b>${B.data.split('-').reverse().join('/')} às ${B.hora}</b></p>
     ${B.forma=='pix'?'<div id=pixbox style="margin:14px 0"></div>':'<p class=mu style="margin:8px 0">Pagamento no salão.</p>'}${S.whats?`<a class=btn style="display:block;text-decoration:none" target=_blank href="${wa(S.whats,'Olá! Agendei '+bsv().nome+' em '+B.data.split('-').reverse().join('/')+' às '+B.hora+' (nome: '+B.nome+').')}">Avisar no WhatsApp do salão</a>`:''}${CU?'<button class="btn o" data-a=meus>Ver meus agendamentos</button>':'<p class=mu style="margin-top:14px">Crie uma conta para acompanhar seus agendamentos: <a href="#agendamento" data-a=clogin>Entrar / Criar conta</a></p>'}<button class="btn o" data-a=novo>Novo agendamento</button></div>`;
   }
-  $('#wiz').innerHTML=c;if(step==4&&B.forma=='pix')showPix($('#pixbox'),B.valor,B.agId,true);if(step!=1)$('#wiz').scrollIntoView();if(step=='M')loadMeus();
-  if(step==2){$('#dt').onchange=loadSlots;if(B.data)loadSlots()}
+  $('#wiz').innerHTML=c;if(step==4&&B.forma=='pix')showPix($('#pixbox'),B.valor,B.agId,true);if(step!=1&&step!==LS)$('#wiz').scrollIntoView();LS=step;if(step=='M')loadMeus();
+  if(step==2)drawStep2();
 }
 acts.back=()=>{step--;bk()};
 acts.clogin=()=>{CM='login';step='L';bk()};
@@ -598,21 +625,48 @@ async function loadMeus(){
 }
 acts.ccancel=async b=>{const a=MY[+b.dataset.i];if(!confirm('Cancelar este agendamento?'))return;const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',ouid,'agendamentos',a.id));try{await w.commit();toast('Agendamento cancelado');loadMeus()}catch(e){alert('Não foi possível cancelar.')}};
 acts.pickprof=b=>{const x=$('#ss');if(x)B.serv=x.value;B.prof=b.dataset.p;const pf=bpf();if(pf.servs&&pf.servs.length&&!pf.servs.includes(B.serv))B.serv='';bk()};
-acts.n1=()=>{B.serv=$('#ss').value;if(!B.prof||!B.serv)return alert('Escolha o profissional e o serviço.');step=2;bk()};
+acts.bmode=b=>{const x=$('#ss');if(x)B.serv=x.value;B.mode=b.dataset.m;B.prof=B.mode=='data'?'':B.prof;bk()};
+acts.n1=()=>{B.serv=$('#ss').value;const md=B.mode=='data';if(!B.serv||(!md&&!B.prof))return alert(md?'Escolha o serviço.':'Escolha o profissional e o serviço.');if(md)B.prof='';BUSYKEY='';B.data='';B.hora='';CALC={y:new Date().getFullYear(),m:new Date().getMonth()};step=2;bk()};
 acts.n2=()=>{step=3;bk()};
-async function loadSlots(){
-  B.data=v('dt');B.hora='';$('#nx').disabled=true;const box=$('#sl');
-  box.innerHTML='<p class=mu style="grid-column:1/-1">Carregando…</p>';
-  const out=await freeSlots(ouid,B.prof,bsv(),B.data);
-  box.innerHTML=out==null?'<p class=mu style="grid-column:1/-1">O salão não atende neste dia.</p>':out.length?out.map(h=>`<button data-a=pick data-h=${h}>${h}</button>`).join(''):'<p class=mu style="grid-column:1/-1">Sem horários livres nesta data.</p>';
+acts.cday=b=>{B.data=b.dataset.d;B.hora='';if(B.mode=='data')B.prof='';SCR='slh';drawStep2()};
+acts.pick=b=>{B.hora=b.dataset.h;if(B.mode=='data'){B.prof='';SCR='pfx'}drawStep2()};
+acts.pickp2=b=>{B.prof=b.dataset.p;drawStep2()};
+acts.cnavm=b=>{let {y,m}=CALC;m+=+b.dataset.n;if(m<0){m=11;y--}if(m>11){m=0;y++}const n=new Date();if(y<n.getFullYear()||(y==n.getFullYear()&&m<n.getMonth()))return;CALC={y,m};drawStep2()};
+function nextFree(sv,md){const t=new Date();for(let i=0;i<120;i++){const d=iso(new Date(t.getFullYear(),t.getMonth(),t.getDate()+i));let best=null;
+  (md?elig(sv):[bpf()]).forEach(p=>{const L=slotsFor(p.id,sv,d,BUSY);if(L.length&&(!best||L[0]<best.h))best={d,h:L[0],p:p.id}});if(best)return best}return null}
+async function drawStep2(){
+  const sv=bsv(),md=B.mode=='data',pf=bpf(),wiz=$('#wiz');
+  wiz.innerHTML='<p class=mu>Carregando disponibilidade…</p>';
+  try{await loadBusy(md?'':B.prof)}catch(e){wiz.innerHTML='<p class=mu>Não foi possível carregar a disponibilidade. Tente de novo.</p><div class=foot><button class="btn o" data-a=back>Voltar</button></div>';return}
+  const {y,m}=CALC,now=new Date(),hoje=iso(now),start=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
+  const okDay=d=>md?elig(sv).some(p=>slotsFor(p.id,sv,d,BUSY).length>0):slotsFor(B.prof,sv,d,BUSY).length>0;
+  let cells=DIAS.map(d=>`<div class=h>${d}</div>`).join('')+'<div></div>'.repeat(start);
+  for(let d=1;d<=dim;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,ok=ds>=hoje&&okDay(ds);cells+=ok?`<button class="cd ok ${ds==B.data?'on':''} ${ds==hoje?'hj':''}" data-a=cday data-d=${ds}>${d}</button>`:`<button class="cd ${ds==hoje?'hj':''}" disabled>${d}</button>`}
+  const none='<p class=mu style="grid-column:1/-1">Sem horários livres neste dia.</p>',btn=h=>`<button data-a=pick data-h=${h} class="${h==B.hora?'on':''}">${rng(h,sv)}</button>`;let sl='',pfx='',done=false;
+  if(B.data){
+    if(!md){const L=slotsFor(B.prof,sv,B.data,BUSY);sl=L.length?L.map(btn).join(''):none;done=!!B.hora}
+    else{const mp={};elig(sv).forEach(p=>slotsFor(p.id,sv,B.data,BUSY).forEach(t=>(mp[t]=mp[t]||[]).push(p)));const ts=Object.keys(mp).sort();
+      sl=ts.length?ts.map(btn).join(''):none;
+      if(B.hora&&mp[B.hora]){const c2=mp[B.hora];if(c2.length==1)B.prof=c2[0].id;
+        pfx=`<h3 id=pfx style="margin:16px 0 6px">Profissionais disponíveis às ${B.hora}</h3><div class=pfs>${c2.map(p=>`<button data-a=pickp2 data-p=${p.id} class="${B.prof==p.id?'on':''}">${av(p)}<b>${esc(p.nome)}</b><br><span class=mu>${esc(p.funcao||'')}</span></button>`).join('')}</div>`;done=!!B.prof&&c2.some(p=>p.id==B.prof)}}
+  }
+  const q=nextFree(sv,md),yrs=[now.getFullYear(),now.getFullYear()+1,now.getFullYear()+2];
+  wiz.innerHTML=`${stepper(2)}${sumChips()}<h2>${md?'Escolha o dia e o horário':'Dia e horário de '+esc(pf.nome)}</h2>${!md&&pf?`<p class=mu style="margin:0 0 8px">${esc(pf.nome)} atende: ${resumo(hrsOf(pf.id))}</p>`:''}
+  ${q?`<div class=quick><span>⚡ Próximo horário livre: <b>${fd(q.d)} · ${DIAS[wdOf(q.d)]} às ${q.h}</b></span><button class="btn s" data-a=quick data-d=${q.d} data-h=${q.h} data-p=${q.p}>Escolher</button></div>`:'<p class=mu>Sem horários livres nos próximos meses.</p>'}
+  <div class=cnav><select id=cm>${MES.map((n,i)=>`<option value=${i} ${i==m?'selected':''} ${y==now.getFullYear()&&i<now.getMonth()?'disabled':''}>${n}</option>`).join('')}</select><select id=cy>${yrs.map(v=>`<option ${v==y?'selected':''}>${v}</option>`).join('')}</select><button class="btn s o" data-a=cnavm data-n=-1>‹</button><button class="btn s o" data-a=cnavm data-n=1>›</button></div>
+  <div class=cal2>${cells}</div><p class=mu style="margin:6px 0">Dias em destaque têm horários livres.</p>
+  ${B.data?`<h3 id=slh style="margin:12px 0 6px">${fd(B.data)} · ${DIAS[wdOf(B.data)]} — escolha o horário</h3><div class=slots>${sl}</div>`:''}${pfx}
+  <div class=foot><button class="btn o" data-a=back>Voltar</button><button class=btn data-a=n2 ${done?'':'disabled'}>Continuar</button></div>`;
+  if(SCR){const e=$('#'+SCR);SCR='';if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 }
-acts.pick=b=>{B.hora=b.dataset.h;document.querySelectorAll('.slots button').forEach(x=>x.classList.toggle('on',x==b));$('#nx').disabled=false};
+acts.gostep=b=>{const n=+b.dataset.s;if(n<step){step=n;bk()}};
+acts.quick=b=>{B.data=b.dataset.d;B.hora=b.dataset.h;if(B.mode=='data'){B.prof='';SCR='pfx'}CALC={y:+B.data.slice(0,4),m:+B.data.slice(5,7)-1};drawStep2()};
 acts.conf=async()=>{
   const nome=v('cn'),tel=v('ct');if(nome.length<3||tel.replace(/\D/g,'').length<10)return alert('Informe seu nome e WhatsApp com DDD.');
   $('#cf').disabled=true;const sv=bsv(),p=price(sv,S.promocoes);
   const forma=(document.querySelector('input[name=fp]:checked')||{}).value||'local';
   try{B.agId=await commitAg(ouid,bpf(),sv,B.data,B.hora,nome,tel,CU?CU.uid:'',p.final,CU?CU.email:'','cliente',forma,(CP&&CP.foto)||'');B.forma=forma;B.valor=p.final;B.nome=nome;B.done=true;step=4;bk()}
-  catch(e){alert('Esse horário acabou de ser ocupado. Escolha outro.');step=2;bk()}
+  catch(e){alert('Esse horário acabou de ser ocupado. Escolha outro.');BUSYKEY='';B.hora='';step=2;bk()}
 };
 </script>
 </body>
