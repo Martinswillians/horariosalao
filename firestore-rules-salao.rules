@@ -36,15 +36,22 @@ service cloud.firestore {
                       && (request.auth.uid == uid
                           || resource.data.get('cuid', '') == request.auth.uid
                           || (isProf(uid) && resource.data.prof == profIdOf(uid)));
-        // dono e o próprio cliente cancelam
+        // dono cancela quando quiser; o cliente só até 10 minutos antes do horário (campo ts)
         allow delete: if request.auth != null
-                      && (request.auth.uid == uid || resource.data.get('cuid', '') == request.auth.uid);
+                      && (request.auth.uid == uid
+                          || (resource.data.get('cuid', '') == request.auth.uid
+                              && request.time.toMillis() < resource.data.get('ts', 9007199254740991) - 600000));
         // dono edita tudo
         allow update: if request.auth != null && request.auth.uid == uid;
         // profissional só marca concluído/faltou nos próprios atendimentos
         allow update: if isProf(uid)
                       && resource.data.prof == profIdOf(uid)
                       && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+        // o cliente logado pode remarcar (só data, hora, blocos, dur, ts) até 10 minutos antes
+        allow update: if request.auth != null
+                      && resource.data.get('cuid', '') == request.auth.uid
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['data', 'hora', 'blocos', 'dur', 'ts'])
+                      && request.time.toMillis() < resource.data.get('ts', 9007199254740991) - 600000;
         // quem agendou pode anexar o comprovante PIX (só comp e pstatus='aguardando'), se ainda não estiver pago
         allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comp', 'pstatus'])
                       && request.resource.data.pstatus == 'aguardando'
@@ -55,6 +62,33 @@ service cloud.firestore {
 
       // Observações privadas do salão sobre cada cliente (só o dono)
       match /notas/{id} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // Lista de espera: qualquer pessoa entra; o cliente logado acompanha, aceita ou recusa ofertas do salão
+      match /espera/{id} {
+        allow create: if request.resource.data.nome is string
+                      && request.resource.data.nome.size() < 100
+                      && request.resource.data.status == 'aguardando'
+                      && !('oferta' in request.resource.data)
+                      && (!('cuid' in request.resource.data)
+                          || request.resource.data.cuid == ''
+                          || (request.auth != null && request.resource.data.cuid == request.auth.uid));
+        allow read: if request.auth != null
+                      && (request.auth.uid == uid || resource.data.get('cuid', '') == request.auth.uid);
+        allow update: if request.auth != null && request.auth.uid == uid;
+        allow update: if request.auth != null
+                      && resource.data.get('cuid', '') == request.auth.uid
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'oferta']);
+        allow delete: if request.auth != null
+                      && (request.auth.uid == uid || resource.data.get('cuid', '') == request.auth.uid);
+      }
+
+      // Dados privados do salão (ex.: % de comissão) e comissões pagas — só o dono
+      match /privado/{d} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+      match /comissoes/{id} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
 
