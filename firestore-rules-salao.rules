@@ -88,8 +88,18 @@ service cloud.firestore {
       match /privado/{d} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
+      // Comissões pagas: o dono gerencia; o profissional lê só as dele
       match /comissoes/{id} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
+        allow read: if request.auth != null
+                      && (request.auth.uid == uid || (isProf(uid) && resource.data.profId == profIdOf(uid)));
+        allow write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // % de comissão de cada profissional: o dono define; o profissional lê só a dele
+      match /comissaoPct/{pid} {
+        allow read: if request.auth != null
+                      && (request.auth.uid == uid || (isProf(uid) && profIdOf(uid) == pid));
+        allow write: if request.auth != null && request.auth.uid == uid;
       }
 
       // Agenda de cada profissional (horário próprio e folgas): público para o cliente ver a disponibilidade;

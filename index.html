@@ -108,6 +108,8 @@ textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;fo
 .agi{flex:1;min-width:0}.aca{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.hl{font-weight:700;margin:14px 0 6px;color:var(--c)}
 .wl{border:1px dashed var(--c);border-radius:10px;padding:12px;margin:14px 0}
 .fbars{display:flex;align-items:flex-end;gap:3px;height:110px}.fbars>div{flex:1;display:flex;align-items:flex-end;gap:1px;height:100%}.fbars i{flex:1;border-radius:3px 3px 0 0}.fbars i.f{background:var(--c)}.fbars i.r{background:#22c55e}.fbl{display:flex;gap:3px;margin-top:4px}.fbl span{flex:1;text-align:center;font-size:.6rem;color:var(--mu)}
+.bell{position:relative;margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:1.15rem;border-radius:50%;width:40px;height:40px;cursor:pointer}
+.bdgn{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-style:normal;font-size:.65rem;border-radius:10px;padding:1px 5px;min-width:18px;text-align:center}
 </style>
 </head>
 <body>
@@ -178,18 +180,21 @@ document.addEventListener('change',async e=>{const t=e.target,u=t.dataset.up;
   }catch(x){alert('Não foi possível usar essa imagem.')}
 });
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&acts[b.dataset.a])acts[b.dataset.a](b)});
-let ROLE='owner',ME='',OID='',ACC=[],BUSY=new Set(),BUSYKEY='',LS=null,CALC={y:new Date().getFullYear(),m:new Date().getMonth()},CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='dash',AG=[],busy=false,EDIT=null,TMP={};
+let STANDALONE=false,ENTERING=false,MYPCT=0,ROLE='owner',ME='',OID='',ACC=[],BUSY=new Set(),BUSYKEY='',LS=null,CALC={y:new Date().getFullYear(),m:new Date().getMonth()},CU=null,CP=null,CM='login',MY=[],U=null,S=null,TAB='dash',AG=[],busy=false,EDIT=null,TMP={};
 const E=l=>EDIT&&EDIT.l==l?S[l][EDIT.i]:null;
 const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:24px;z-index:9;font-size:.95rem';document.body.append(d);setTimeout(()=>d.remove(),2200)};
 
 /* ============ ROTEAMENTO ============ */
-const slug=new URLSearchParams(location.search).get('s');
+const params=new URLSearchParams(location.search),slug=params.get('s');
 if(slug){
-  booking(slug);
+  STANDALONE=params.get('acesso')=='prof';
+  if(STANDALONE)profPage(slug);else booking(slug);
   onAuthStateChanged(auth,async u=>{if(busy)return;CU=u;CP=null;if(u){try{CP=(await getDoc(doc(db,'clientes',u.uid))).data()||null}catch(e){}}
-    if(ROLE=='prof')return;wlListen();if(S&&$('#wiz')){hdr();if(step!='L'&&step!='M'&&step!='PL')bk()}});
+    if(ROLE=='prof')return;
+    if(STANDALONE){if(S&&u&&u.emailVerified&&!ENTERING&&!busy)profEnter();return}
+    wlListen();if(S&&$('#wiz')){hdr();if(step!='L'&&step!='M'&&step!='PL')bk()}});
 }else onAuthStateChanged(auth,u=>{U=u;if(busy)return;u?panel():landing()});
-const hdr=()=>{const h=$('#hu');if(h)h.innerHTML='<a href="#agendamento" data-a=plogin>Painel profissional</a>'+(CU?`<a href="#agendamento" data-a=meperfil>${CP&&CP.foto?`<img src="${CP.foto}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:''}Meu perfil</a><a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>`:'<a href="#agendamento" data-a=clogin>Entrar</a>')};
+const hdr=()=>{const h=$('#hu');if(h)h.innerHTML='<a href="#agendamento" data-a=plogin>Painel profissional</a>'+(CU?`<a href="#agendamento" data-a=cbell>🔔${cbn()}</a><a href="#agendamento" data-a=meperfil>${CP&&CP.foto?`<img src="${CP.foto}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:''}Meu perfil</a><a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>`:'<a href="#agendamento" data-a=clogin>Entrar</a>')};
 acts.meperfil=()=>{TMP.mefoto=undefined;openM(`<h2>Meu perfil</h2><div style="text-align:center;margin:10px 0" id=mfpw>${avc(CP&&CP.foto,(CP&&CP.nome)||CU.email,84)}</div><label>Foto</label><input type=file accept="image/*" data-up=mefoto><label>Nome</label><input id=pn value="${esc(CP&&CP.nome)}"><label>WhatsApp</label><input id=pt type=tel value="${esc(CP&&CP.tel)}"><button class=btn data-a=mesave>Salvar</button><button class="btn o" data-a=closem>Fechar</button>`)};
 acts.mesave=async()=>{const o={nome:v('pn'),tel:v('pt'),email:CU.email,foto:TMP.mefoto!==undefined?TMP.mefoto:(CP&&CP.foto)||''};try{await setDoc(doc(db,'clientes',CU.uid),o,{merge:true});CP={...CP,...o};closeM();hdr();toast('Perfil salvo ✔');bk()}catch(e){alert('Erro: '+(e.code||e.message))}};
 
@@ -235,9 +240,9 @@ let FIRSTSNAP=true;
 function listen(){if(UNSUB)UNSUB();FIRSTSNAP=true;const c=collection(db,'saloes',OID,'agendamentos');
   UNSUB=onSnapshot(ROLE=='prof'?query(c,where('prof','==',ME)):c,snap=>{
     AGALL=snap.docs.map(d=>({id:d.id,...d.data()}));LOADED=true;
-    if(!FIRSTSNAP)snap.docChanges().forEach(x=>{const o=x.doc.data();if(x.type=='added')toast('🔔 Novo agendamento: '+o.nome);if(x.type=='modified'&&o.pstatus=='aguardando')toast('🔔 Comprovante recebido de '+o.nome);if(x.type=='removed'&&ROLE!='prof'){const n=ESP.filter(e=>e.data==o.data&&e.status=='aguardando').length;if(n)toast('🔔 Horário liberado: '+fd(o.data)+' às '+o.hora+' · '+n+' pessoa(s) na lista de espera neste dia')}});
+    if(!FIRSTSNAP)snap.docChanges().forEach(x=>{const o=x.doc.data();const w8=fd(o.data)+' às '+o.hora;if(x.type=='added')notify((ROLE=='prof'?'Novo agendamento para você: ':'Novo agendamento: ')+o.nome+' · '+w8,'lista');if(x.type=='modified'&&o.pstatus=='aguardando'&&ROLE!='prof')notify('Comprovante recebido de '+o.nome,'pag');if(x.type=='removed'){const n=ROLE=='prof'?0:ESP.filter(e=>e.data==o.data&&e.status=='aguardando').length;notify('Agendamento cancelado: '+o.nome+' · '+w8+(n?' — '+n+' na lista de espera nesse dia':' — horário liberado'),n?'esp':'lista')}});
     FIRSTSNAP=false;
-    if(['dash','cal','lista','cli','pag','pdash','fin'].includes(TAB)&&!$('#mo')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))draw();
+    if(['dash','cal','lista','cli','pag','pdash','fin','pgan'].includes(TAB)&&!$('#mo')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))draw();
   },e=>console.log('listener',e.code))}
 async function panel(){
   S=(await getDoc(doc(db,'saloes',U.uid))).data();
@@ -247,8 +252,9 @@ async function panel(){
   try{ACC=(await getDocs(collection(db,'saloes',OID,'acessos'))).docs.map(d=>({email:d.id,profId:d.data().profId}))}catch(e){ACC=[]}
   theme(S.cor);try{const q=await getDocs(collection(db,'saloes',U.uid,'notas'));NOTAS={};q.docs.forEach(d=>NOTAS[d.id]=d.data())}catch(e){}
   try{PRIV=(await getDoc(doc(db,'saloes',OID,'privado','comissoes'))).data()||{map:{}}}catch(e){PRIV={map:{}}}
+  try{const q=await getDocs(collection(db,'saloes',OID,'comissaoPct')),have={};q.docs.forEach(d=>{have[d.id]=1;PRIV.map=PRIV.map||{};PRIV.map[d.id]=+d.data().pct||0});for(const k of Object.keys(PRIV.map||{}))if(!have[k]){try{await setDoc(doc(db,'saloes',OID,'comissaoPct',k),{pct:+PRIV.map[k]||0})}catch(e){}}}catch(e){}
   try{COMP={};(await getDocs(collection(db,'saloes',OID,'comissoes'))).docs.forEach(d=>COMP[d.id]=d.data())}catch(e){}
-  applyTema(S.tema);listenEsp();listen();draw();
+  applyTema(S.tema);ntLoad();listenEsp();listen();draw();
 }
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
 const fmtM=n=>'R$ '+(+n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -271,7 +277,7 @@ function cadPage(){
   if(TAB=='serv')return two('Serviços','Gerencie os serviços e valores oferecidos pelo salão. Serviços inativos não aparecem para o cliente.',es?'Editar serviço':'Cadastrar novo serviço',
     `<label>Nome do serviço</label><input id=a1 value="${esc(es?.nome)}"><label>Valor</label><input id=a2 data-money inputmode=numeric placeholder="R$ 0,00" value="${es?fmtM(es.preco):''}"><label>Duração</label><select id=a3>${[15,30,45,60,75,90,105,120,150,180,240].map(m=>`<option value=${m} ${(es?.min||30)==m?'selected':''}>${m} min</option>`).join('')}</select><label>Categoria (opcional)</label><input id=a4 value="${esc(es?.cat)}"><label>Descrição (opcional)</label><input id=a5 value="${esc(es?.desc)}">${bt(es,'addserv')}`,
     'Serviços cadastrados',S.servicos.map((s,i)=>lrow('servicos',i,`<b>${esc(s.nome)}</b><br><span class=mu>${brl(s.preco)} · ${s.min}min${s.cat?' · '+esc(s.cat):''}</span>`,s.ativo)));
-  if(TAB=='prof')return two('Profissionais','Gerencie a equipe. Profissionais inativos não aparecem para o cliente.',ep?'Editar profissional':'Cadastrar novo profissional',
+  if(TAB=='prof')return profAcessoCard()+two('Profissionais','Gerencie a equipe. Profissionais inativos não aparecem para o cliente.',ep?'Editar profissional':'Cadastrar novo profissional',
     `<label>Nome</label><input id=a1 value="${esc(ep?.nome)}"><label>Função</label><input id=a2 placeholder="Ex.: Barbeiro" value="${esc(ep?.funcao)}"><label>Foto (opcional)</label><input type=file accept="image/*" data-up=foto><img id=fp src="${ep?.foto||''}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:${ep?.foto?'block':'none'}"><label>Serviços que realiza <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.servicos.map(x=>`<label><input type=checkbox class=ps value="${x.id}" ${ep?.servs?.includes(x.id)?'checked':''}>${esc(x.nome)}</label>`).join('')||'<span class=mu>Cadastre serviços primeiro.</span>'}</div>${S.locais.length?`<label>Locais de atendimento <span class=mu>(nenhum marcado = todos)</span></label><div class=dias>${S.locais.map(l=>`<label><input type=checkbox class=pl value="${l.id}" ${ep?.locais?.includes(l.id)?'checked':''}>${esc(l.nome)}</label>`).join('')}</div>`:''}<label>E-mail de acesso ao painel profissional <span class=mu>(opcional)</span></label><input id=a6 type=email placeholder="profissional@email.com" value="${esc(ep?accOf(ep.id):'')}"><p class=mu style="margin:0">O profissional cria a senha em "Painel profissional", na página do salão, usando este e-mail, e confirma o e-mail.</p><label>Comissão (%) <span class=mu>(opcional — só você vê)</span></label><input id=a7 type=number min=0 max=100 step=0.5 value="${ep?((PRIV.map||{})[ep.id]??''):''}">${bt(ep,'addprof')}`,
     'Profissionais cadastrados',S.profissionais.map((p,i)=>lrow('profissionais',i,`<span style="display:flex;gap:10px;align-items:center">${avc(p.foto,p.nome,40)}<span><b>${esc(p.nome)}</b> · ${esc(p.funcao||'')}<br><span class=mu>${p.servs&&p.servs.length?p.servs.length+' serviço(s)':'todos os serviços'}${p.hor?' · horário próprio':''}<br>${resumo(hrsOf(p.id))}${accOf(p.id)?'<br>🔑 '+esc(accOf(p.id)):''}${(PRIV.map||{})[p.id]?'<br>💰 comissão '+PRIV.map[p.id]+'%':''}</span></span></span>`,p.ativo)));
   if(TAB=='promo')return two('Promoções','Crie descontos por serviço. Promoções inativas não são aplicadas.',eo?'Editar promoção':'Cadastrar nova promoção',
@@ -299,8 +305,8 @@ function cadPage(){
   return `<div class=card>${c}</div>`}
 /* ====== PAINEL: layout, dashboard, agenda, clientes ====== */
 let AGALL=[],NOTAS={},UNSUB=null,LOADED=false,SIDE=false,DAYSEL=iso(new Date()),CAL={y:new Date().getFullYear(),m:new Date().getMonth()},QS='',QC='',CL=[],NV={},AGSEL=null,OPEN={agenda:true};
-const MENU=[{k:'dash',t:'Dashboard',i:'📊'},{k:'agenda',t:'Agenda',i:'📅',sub:[['cal','Calendário'],['lista','Lista'],['esp','Lista de espera'],['novo','＋ Novo agendamento']]},{k:'cli',t:'Clientes',i:'👥'},{k:'fin',t:'Financeiro',i:'💰',sub:[['fin','Resumo financeiro'],['pag','Pagamentos'],['pix','Chave PIX']]},{k:'cad',t:'Cadastros',i:'🗂️',sub:[['serv','Serviços'],['prof','Profissionais'],['promo','Promoções'],['cup','Cupons'],['loc','Unidades']]},{k:'cfg',t:'Configurações',i:'⚙️',sub:[['hor','Horários'],['perfil','Perfil e capa']]}];
-const TITLES={dash:'Dashboard',cal:'Agenda · Calendário',lista:'Agenda · Lista',cli:'Clientes',pag:'Financeiro · Pagamentos',pdash:'Meu painel de controle',fin:'Financeiro · Resumo',esp:'Agenda · Lista de espera',pcfg:'Minhas configurações',cup:'Cupons de desconto',loc:'Unidades',pix:'Financeiro · Chave PIX',serv:'Serviços',prof:'Profissionais',promo:'Promoções',hor:'Horários',perfil:'Perfil e capa'};
+const MENU=[{k:'dash',t:'Dashboard',i:'📊'},{k:'agenda',t:'Agenda',i:'📅',sub:[['cal','Calendário'],['lista','Lista'],['esp','Encaixe / lista de espera'],['novo','＋ Novo agendamento']]},{k:'cli',t:'Clientes',i:'👥'},{k:'fin',t:'Financeiro',i:'💰',sub:[['fin','Resumo financeiro'],['pag','Pagamentos'],['pix','Chave PIX']]},{k:'cad',t:'Cadastros',i:'🗂️',sub:[['serv','Serviços'],['prof','Profissionais'],['promo','Promoções'],['cup','Cupons'],['loc','Unidades']]},{k:'cfg',t:'Configurações',i:'⚙️',sub:[['hor','Horários'],['perfil','Perfil e capa']]}];
+const TITLES={dash:'Dashboard',cal:'Agenda · Calendário',lista:'Agenda · Lista',cli:'Clientes',pag:'Financeiro · Pagamentos',pdash:'Meu painel de controle',pgan:'Meus ganhos e pagamentos',fin:'Financeiro · Resumo',esp:'Agenda · Encaixe / lista de espera',pcfg:'Minhas configurações',cup:'Cupons de desconto',loc:'Unidades',pix:'Financeiro · Chave PIX',serv:'Serviços',prof:'Profissionais',promo:'Promoções',hor:'Horários',perfil:'Perfil e capa'};
 const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const fd=d=>d.split('-').reverse().join('/');
 const stOf=a=>a.status||((a.data+' '+a.hora)<(iso(new Date())+' '+hm(new Date().getHours()*60+new Date().getMinutes()))?'ps':'ag');
@@ -311,12 +317,12 @@ async function loadAll(){if(LOADED)return;const c=collection(db,'saloes',OID,'ag
 
 async function draw(){
   const P=ROLE=='prof';
-  if(['dash','cal','lista','cli','pag','pdash','fin','esp'].includes(TAB)){try{await loadAll();if(P&&TAB=='pdash')await loadBusyP();if(TAB=='esp')await loadEspSlots()}catch(e){alert('Não foi possível carregar a agenda: '+(e.code||e.message))}}
-  const c=P?(TAB=='pdash'?pdash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():pcfg()):(TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():TAB=='fin'?finPage():TAB=='esp'?espPage():cadPage());
+  if(['dash','cal','lista','cli','pag','pdash','fin','esp','pgan'].includes(TAB)){try{await loadAll();if(P&&TAB=='pdash')await loadBusyP();if(TAB=='esp')await loadEspSlots()}catch(e){alert('Não foi possível carregar a agenda: '+(e.code||e.message))}}
+  const c=P?(TAB=='pdash'?pdash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pgan'?ganPage():pcfg()):(TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():TAB=='fin'?finPage():TAB=='esp'?espPage():cadPage());
   const MN=P?MENUP:MENU,g=MN.find(m=>m.sub&&m.sub.some(x=>x[0]==TAB));if(g)OPEN[g.k]=true;
   const nav=MN.map(m=>m.sub?`<button class=nv data-a=tog data-k=${m.k}><span>${m.i} ${m.t}</span><span>${OPEN[m.k]?'▾':'▸'}</span></button>${OPEN[m.k]?m.sub.map(x=>`<button class="nv sub ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}>${x[1]}</button>`).join(''):''}`:`<button class="nv ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k}><span>${m.i} ${m.t}</span></button>`).join('');
   const me=P?S.profissionais.find(x=>x.id==ME):null;
-  A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa,S.capaK)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${P&&me?esc(me.nome)+' · ':''}${TITLES[TAB]}</p></div><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
+  A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa,S.capaK)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${P&&me?esc(me.nome)+' · ':''}${TITLES[TAB]}</p></div><button class=bell id=bell data-a=bell>${bellHtml()}</button><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
   <aside class="side ${SIDE?'open':''}" id=side><div class=sb>${P?'Painel do profissional':esc(S.nome)}</div><nav>${nav}</nav><div class=sf>${P?'<button class=nv data-a=pvolta><span>← Página do salão</span></button>':`<button class=nv data-a=copy><span>🔗 Copiar link</span></button><a class=nv href="${link()}" target=_blank><span>👁 Ver página do cliente</span></a>`}<button class=nv data-a=sair><span>⎋ Sair</span></button></div></aside><div class=ov data-a=menu></div></div>`;
   if(TAB=='pix'&&S.pixChave)showPix($('#pxv'),1,'TESTE',false);
 }
@@ -522,7 +528,7 @@ acts.csv=()=>{const q=x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"',n=x=>(+
   const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}));l.download='pagamentos-'+PM+'.csv';l.click()};
 
 /* ====== PAINEL PROFISSIONAL + acessos + desempenho ====== */
-const MENUP=[{k:'pdash',t:'Meu painel de controle',i:'📦'},{k:'cal',t:'Meu calendário',i:'📅'},{k:'lista',t:'Agendamentos',i:'📖'},{k:'cli',t:'Meus clientes',i:'👥'},{k:'pcfg',t:'Minhas configurações',i:'⚙️'}];
+const MENUP=[{k:'pdash',t:'Meu painel de controle',i:'📦'},{k:'cal',t:'Meu calendário',i:'📅'},{k:'lista',t:'Agendamentos',i:'📖'},{k:'cli',t:'Meus clientes',i:'👥'},{k:'pgan',t:'Meus ganhos',i:'💰'},{k:'pcfg',t:'Minhas configurações',i:'⚙️'}];
 let BUSYP=new Set();
 const accOf=id=>(ACC.find(a=>a.profId==id)||{}).email||'';
 async function setAcesso(profId,email){const w=writeBatch(db);ACC.filter(a=>a.profId==profId&&a.email!=email).forEach(a=>w.delete(doc(db,'saloes',OID,'acessos',a.email)));if(email)w.set(doc(db,'saloes',OID,'acessos',email),{profId});await w.commit();ACC=ACC.filter(a=>a.profId!=profId&&a.email!=email);if(email)ACC.push({email,profId})}
@@ -547,12 +553,20 @@ function pdash(){
   const hoje=iso(new Date()),dH=AGALL.filter(a=>a.data==hoje&&a.status!='faltou').sort((a,b)=>a.hora.localeCompare(b.hora));
   return desemp(AGALL).replace('<div class=card>','<div class=card style="margin-top:0">')+`<div class=card><h2>Agenda de hoje</h2>${dH.map(a=>`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)}</span></span>${stag(a)}</div>`).join('')||'<p class=mu>Nenhum agendamento hoje.</p>'}</div>`+disp();
 }
+function ganPage(){
+  const [f0,f1,lb]=frange(),hoje=iso(new Date()),real=a=>a.status!='faltou'&&(a.data<=hoje||a.status=='concluido');
+  const L=AGALL.filter(a=>a.data>=f0&&a.data<=f1&&a.status!='faltou').sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora)),R=L.filter(real),fat=R.reduce((t,a)=>t+(a.valor||0),0),dev=+(fat*MYPCT/100).toFixed(2),pg=COMP[`${ME}_${FP}_${f0}`];
+  return `<div class=card style="margin-top:0"><div class=tabs>${perTabs(FP,'fp')}</div>${perNav('fnav',lb)}<div style="text-align:center;margin-top:6px"><button class="btn s o" data-a=fhoje>Hoje</button></div></div>
+  <div class=kp>${[['Atendimentos realizados',R.length],['Faturado nos meus atendimentos',brl(fat)],['Minha comissão'+(MYPCT?' ('+MYPCT+'%)':''),MYPCT?brl(dev):'—'],['Situação da comissão',pg?'Paga em '+new Date(pg.quando).toLocaleDateString('pt-BR'):MYPCT&&dev>0?'A receber':'—']].map(k=>`<div><span>${k[0]}</span><b style="font-size:1.1rem">${k[1]}</b></div>`).join('')}</div>
+  ${MYPCT?'':'<p class=mu style="margin:8px 4px">O salão ainda não informou sua % de comissão.</p>'}
+  <div class=card><h2>Meus atendimentos no período</h2>${L.map(a=>`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} · ${brl(a.valor)}</span></span><span style="text-align:right">${stag(a)}<br>${ptag(a)}</span></div>`).join('')||'<p class=mu>Nenhum atendimento no período.</p>'}</div>`;
+}
 function pcfg(){
   const i=S.profissionais.findIndex(x=>x.id==ME),p=S.profissionais[i];if(!p)return '<div class=card>Profissional não encontrado.</div>';
   return `<div class=card style="margin-top:0"><h2>Minha agenda</h2><p class=mu>Defina seus dias, horários e folgas. As mudanças valem na hora para quem for agendar com você.</p>${profHor(p,i)}</div>`;
 }
 function agdProf(a){AGSEL=a;const k=(a.tel||'').replace(/\D/g,'');
-  openM(`<h2>${esc(a.servico)}</h2><p><b>${fd(a.data)} às ${a.hora}</b> ${stag(a)}</p><p style="margin-top:8px">${esc(a.nome)} · ${esc(a.tel)}${a.obs?`<br>💬 ${esc(a.obs)}`:''}<br>Valor: <b>${brl(a.valor)}</b></p>
+  openM(`<h2>${esc(a.servico)}</h2><p><b>${fd(a.data)} às ${a.hora}</b> ${stag(a)}</p><p style="margin-top:8px">${esc(a.nome)} · ${esc(a.tel)}${a.obs?`<br>💬 ${esc(a.obs)}`:''}<br>Valor: <b>${brl(a.valor)}</b> ${ptag(a)}</p>
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><button class="btn s" data-a=stset data-s=concluido>✔ Concluído</button><button class="btn s o" data-a=stset data-s=faltou>Faltou</button>${a.status?'<button class="btn s o" data-a=stset data-s="">Reabrir</button>':''}<a class="btn s o" style="text-decoration:none" target=_blank href="${wa(a.tel)}">WhatsApp</a><button class="btn s o" data-a=cperfil data-k=${k}>Ver cliente</button></div><button class="btn o" data-a=closem>Fechar</button>`)}
 function perfilProf(m){
   openM(`<div style="display:flex;gap:12px;align-items:center">${avc(m.foto,m.nome,64)}<div><h2 style="margin:0">${esc(m.nome)}</h2><span class="tag tg-${m.tag[1]}">${m.tag[0]}</span></div></div>
@@ -560,6 +574,15 @@ function perfilProf(m){
   <div class=kp style="margin:14px 0">${[['Visitas',m.n],['Total gasto',brl(m.tot)],['Ticket médio',brl(m.tk)]].map(k=>`<div><span>${k[0]}</span><b style="font-size:1.05rem">${k[1]}</b></div>`).join('')}</div>
   <h3 style="margin:10px 0 4px">Histórico</h3>${[...m.ag].reverse().map(a=>`<div class=row style="font-size:.85rem"><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.servico)}<br><span class=mu>${brl(a.valor)}</span></span>${stag(a)}</div>`).join('')}<button class="btn o" data-a=closem>Fechar</button>`);
 }
+const profLink=()=>location.origin+location.pathname+'?s='+S.slug+'&acesso=prof';
+function profAcessoCard(){
+  const L=S.profissionais.filter(p=>accOf(p.id));
+  return `<div class=card style="margin-top:0"><h2>Acesso dos profissionais</h2><p class=mu>Cada profissional entra num painel próprio para informar a agenda e acompanhar agendamentos, clientes e ganhos.</p>
+  <div class=quick style="display:block"><b>🔑 Link de acesso dos profissionais</b><input readonly value="${profLink()}" onclick="this.select()" style="margin:8px 0"><div class=aca><button class="btn s" data-a=copyp>Copiar link</button></div>
+  <p class=mu style="margin:8px 0 0">1) Cadastre o e-mail do profissional no formulário abaixo (campo "E-mail de acesso"). 2) Envie este link a ele. 3) Ele toca em <b>Primeiro acesso (criar senha)</b>, usa o mesmo e-mail e confirma o e-mail que o sistema envia. 4) Depois é só entrar.</p></div>
+  ${L.map(p=>{const em=accOf(p.id),msg='Olá '+p.nome+'! Você foi cadastrado(a) no '+S.nome+'. Acesse '+profLink()+' , toque em "Primeiro acesso (criar senha)" e use este e-mail: '+em+'. Depois confirme o e-mail que o sistema enviar.';return `<div class=row><span><b>${esc(p.nome)}</b><br><span class=mu>🔑 ${esc(em)}</span></span><a class="btn s o" style="text-decoration:none" href="mailto:${esc(em)}?subject=${encodeURIComponent('Seu acesso ao painel do '+S.nome)}&body=${encodeURIComponent(msg)}">✉ Enviar convite</a></div>`}).join('')}</div>`;
+}
+acts.copyp=()=>navigator.clipboard.writeText(profLink()).then(()=>toast('Link do profissional copiado ✔'));
 acts.addcup=async()=>{const cd=v('a1').toUpperCase().replace(/\s/g,''),pc=+v('a2');if(!cd||!(pc>0&&pc<=90))return alert('Informe o código e um desconto entre 1 e 90%.');put('cupons',{codigo:cd,pct:pc});await save();toast('Salvo ✔');draw()};
 acts.addloc=async()=>{if(!v('a1'))return alert('Informe o nome da unidade.');put('locais',{nome:v('a1'),end:v('a2')});await save();toast('Salvo ✔');draw()};
 acts.salph=async b=>{const i=+b.dataset.i,p=S.profissionais[i];
@@ -589,59 +612,67 @@ acts.pgdel=async b=>{if(!confirm('Estornar este pagamento?'))return;const a=AGSE
 acts.recusar=()=>{if(confirm('Recusar este comprovante?'))pagSet({pstatus:(AGSEL.pvalor||0)>0?'parcial':'pendente',comp:''},'Comprovante recusado')};
 acts.cobrar=()=>{const a=AGSEL;openM('<h2>Cobrar via PIX</h2><p class=mu>Valor restante: <b>'+brl(Math.max(0,a.valor-(a.pvalor||0)))+'</b>. Mostre este QR code ao cliente.</p><div id=pbx></div><button class="btn o" data-a=closem>Fechar</button>');showPix($('#pbx'),Math.max(0,a.valor-(a.pvalor||0)),a.id,false)};
 /* ---- listas de pagamentos com parcial ---- */
-function pagList(){
-  return AGALL.filter(a=>a.data.startsWith(PM)&&a.status!='faltou'&&(PF=='todos'||(PF=='conf'&&pOf(a)=='aguardando')||(PF=='parc'&&pOf(a)=='parcial')||(PF=='pend'&&pOf(a)!='pago')||(PF=='pago'&&pOf(a)=='pago'))).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
+let PP='mes',PR=iso(new Date());
+function rangeOf(k,ref){const d=new Date(ref+'T12:00'),p=n=>String(n).padStart(2,'0');
+  if(k=='dia')return[ref,ref,fd(ref)+' · '+DIAS[d.getDay()]];
+  if(k=='sem'){const a=new Date(d);a.setDate(d.getDate()-((d.getDay()+6)%7));const b=new Date(a);b.setDate(a.getDate()+6);return[iso(a),iso(b),'Semana de '+fd(iso(a))+' a '+fd(iso(b))]}
+  if(k=='ano'){const y=d.getFullYear();return[y+'-01-01',y+'-12-31','Ano '+y]}
+  const y=d.getFullYear(),m=d.getMonth(),last=new Date(y,m+1,0).getDate();return[`${y}-${p(m+1)}-01`,`${y}-${p(m+1)}-${p(last)}`,MES[m]+' '+y]}
+const shiftRef=(k,ref,n)=>{const d=new Date(ref+'T12:00');if(k=='dia')d.setDate(d.getDate()+n);else if(k=='sem')d.setDate(d.getDate()+7*n);else if(k=='mes')d.setMonth(d.getMonth()+n,1);else d.setFullYear(d.getFullYear()+n,0,1);return iso(d)};
+const perTabs=(cur,ac)=>[['dia','Dia'],['sem','Semana'],['mes','Mês'],['ano','Ano']].map(x=>`<button class="${cur==x[0]?'on':''}" data-a=${ac} data-f=${x[0]}>${x[1]}</button>`).join('');
+const perNav=(ac,lb)=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 4px"><button class="btn s o" data-a=${ac} data-n=-1>‹</button><b style="text-align:center">${lb}</b><button class="btn s o" data-a=${ac} data-n=1>›</button></div>`;
+function pagList(){const [f0,f1]=rangeOf(PP,PR);
+  return AGALL.filter(a=>a.data>=f0&&a.data<=f1&&a.status!='faltou'&&(PF=='todos'||(PF=='conf'&&pOf(a)=='aguardando')||(PF=='parc'&&pOf(a)=='parcial')||(PF=='pend'&&pOf(a)!='pago')||(PF=='pago'&&pOf(a)=='pago'))).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
 }
 function pagPage(){
-  const base=AGALL.filter(a=>a.data.startsWith(PM)&&a.status!='faltou'),by={};
+  const [f0,f1,lb]=rangeOf(PP,PR),base=AGALL.filter(a=>a.data>=f0&&a.data<=f1&&a.status!='faltou'),by={};
   base.forEach(a=>pgsOf(a).forEach(x=>by[x.metodo]=(by[x.metodo]||0)+x.valor));
   const rec=base.reduce((t,a)=>t+(a.pvalor||0),0),aber=base.reduce((t,a)=>t+Math.max(0,(a.valor||0)-(a.pvalor||0)),0),conf=AGALL.filter(a=>a.pstatus=='aguardando').length,parc=base.filter(a=>pOf(a)=='parcial').length;
-  return `<div class=kp>${[['Recebido no mês',brl(rec)],['A receber no mês',brl(aber)],['Comprovantes a conferir',conf],['Pagamentos parciais',parc],...Object.keys(mLabel).map(k=>[mLabel[k],brl(by[k]||0)])].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
+  return `<div class=card style="margin-top:0"><div class=tabs>${perTabs(PP,'pp')}</div>${perNav('pnav',lb)}<div style="text-align:center;margin-top:6px"><button class="btn s o" data-a=phoje>Hoje</button></div></div>
+  <div class=kp>${[['Recebido no período',brl(rec)],['A receber no período',brl(aber)],['Comprovantes a conferir',conf],['Pagamentos parciais',parc],...Object.keys(mLabel).map(k=>[mLabel[k],brl(by[k]||0)])].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
   <div class=card><div class=tabs>${[['todos','Todos'],['conf','A conferir'],['parc','Parciais'],['pend','Pendentes'],['pago','Pagos']].map(x=>`<button class="${PF==x[0]?'on':''}" data-a=pf data-f=${x[0]}>${x[1]}</button>`).join('')}</div>
-  <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap"><input id=pm2 type=month value="${PM}" style="max-width:190px"><button class="btn s o" data-a=csv>Exportar CSV</button></div>
-  ${pagList().map(a=>`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} · ${brl(a.valor)}${(a.pvalor||0)>0&&pOf(a)!='pago'?' · recebido '+brl(a.pvalor):''} · ${a.forma=='pix'?'PIX':'No salão'} ${a.comp?'📎':''}</span></span>${ptag(a)}</div>`).join('')||'<p class=mu>Nenhum registro neste filtro.</p>'}</div>`;
+  <div style="margin:10px 0"><button class="btn s o" data-a=csv>Exportar CSV</button></div>
+  ${pagList().map(a=>`<div class=row style="cursor:pointer" data-a=agd data-id=${a.id}><span><b>${fd(a.data)} ${a.hora}</b> · ${esc(a.nome)}<br><span class=mu>${esc(a.servico)} · ${brl(a.valor)}${(a.pvalor||0)>0&&pOf(a)!='pago'?' · recebido '+brl(a.pvalor):''} · ${a.forma=='pix'?'PIX':'No salão'} ${a.comp?'📎':''}</span></span>${ptag(a)}</div>`).join('')||'<p class=mu>Nenhum registro neste período/filtro.</p>'}</div>`;
 }
+acts.pp=b=>{PP=b.dataset.f;draw()};acts.pnav=b=>{PR=shiftRef(PP,PR,+b.dataset.n);draw()};acts.phoje=()=>{PR=iso(new Date());draw()};
 acts.csv=()=>{const q=x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"',n=x=>(+x||0).toFixed(2).replace('.',',');
   const rows=[['Data','Hora','Cliente','Telefone','Serviço','Profissional','Valor','Forma escolhida','Situação','Recebido','Restante','Pagamentos']].concat(pagList().map(a=>[fd(a.data),a.hora,a.nome,a.tel,a.servico,a.profNome,n(a.valor),a.forma=='pix'?'PIX':'No salão',{pago:'Pago',parcial:'Parcial',aguardando:'Comprovante enviado',pendente:'Pendente'}[pOf(a)],n(a.pvalor),n(Math.max(0,a.valor-(a.pvalor||0))),pgsOf(a).map(x=>(mLabel[x.metodo]||x.metodo)+' '+n(x.valor)).join(' + ')]));
-  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}));l.download='pagamentos-'+PM+'.csv';l.click()};
+  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}));l.download='pagamentos-'+PP+'-'+rangeOf(PP,PR)[0]+'.csv';l.click()};
 /* ---- resumo financeiro + comissões ---- */
 let FP='mes',FR=iso(new Date()),COMP={},PRIV={map:{}};
-function frange(){const d=new Date(FR+'T12:00'),p=n=>String(n).padStart(2,'0');
-  if(FP=='dia')return[FR,FR,fd(FR)+' · '+DIAS[d.getDay()]];
-  if(FP=='sem'){const a=new Date(d);a.setDate(d.getDate()-((d.getDay()+6)%7));const b=new Date(a);b.setDate(a.getDate()+6);return[iso(a),iso(b),'Semana de '+fd(iso(a))+' a '+fd(iso(b))]}
-  const y=d.getFullYear(),m=d.getMonth(),last=new Date(y,m+1,0).getDate();return[`${y}-${p(m+1)}-01`,`${y}-${p(m+1)}-${p(last)}`,MES[m]+' '+y]}
+function frange(){return rangeOf(FP,FR)}
 function finPage(){
   const [f0,f1,lb]=frange(),hoje=iso(new Date()),real=a=>a.status!='faltou'&&(a.data<=hoje||a.status=='concluido');
   const L=AGALL.filter(a=>a.data>=f0&&a.data<=f1&&a.status!='faltou'),R=L.filter(real),fat=R.reduce((t,a)=>t+(a.valor||0),0);
   const pay=[];AGALL.forEach(a=>pgsOf(a).forEach(x=>{const dd=iso(new Date(x.quando||0));if(dd>=f0&&dd<=f1)pay.push({...x,a})}));
   const rec=pay.reduce((t,x)=>t+x.valor,0),aber=L.reduce((t,a)=>t+Math.max(0,(a.valor||0)-(a.pvalor||0)),0),by={};pay.forEach(x=>by[x.metodo]=(by[x.metodo]||0)+x.valor);
-  const days=[];for(let d=new Date(f0+'T12:00');iso(d)<=f1;d.setDate(d.getDate()+1))days.push(iso(d));
-  const ser=days.map(d=>({d,f:R.filter(a=>a.data==d).reduce((t,a)=>t+(a.valor||0),0),r:pay.filter(x=>iso(new Date(x.quando||0))==d).reduce((t,x)=>t+x.valor,0)})),mx=Math.max(1,...ser.map(x=>Math.max(x.f,x.r)));
+  const grp=FP=='ano',kf=d=>grp?d.slice(0,7):d,days=[];if(grp){for(let m=1;m<=12;m++)days.push(f0.slice(0,4)+'-'+String(m).padStart(2,'0'))}else for(let d=new Date(f0+'T12:00');iso(d)<=f1;d.setDate(d.getDate()+1))days.push(iso(d));
+  const ser=days.map(d=>({d,f:R.filter(a=>kf(a.data)==d).reduce((t,a)=>t+(a.valor||0),0),r:pay.filter(x=>kf(iso(new Date(x.quando||0)))==d).reduce((t,x)=>t+x.valor,0)})),mx=Math.max(1,...ser.map(x=>Math.max(x.f,x.r)));
   const svc={};R.forEach(a=>{svc[a.servico]=svc[a.servico]||{n:0,v:0};svc[a.servico].n++;svc[a.servico].v+=a.valor||0});
   const topS=Object.entries(svc).sort((a,b)=>b[1].v-a[1].v).slice(0,5);
   let totC=0;
   const prow=S.profissionais.map(p=>{const mine=R.filter(a=>a.prof==p.id),f=mine.reduce((t,a)=>t+(a.valor||0),0),pct=+((PRIV.map||{})[p.id]||0),dev=+(f*pct/100).toFixed(2),key=`${p.id}_${FP}_${f0}`,pg=COMP[key];totC+=pg?0:dev;
     return `<div class=row style="align-items:flex-start"><span><b>${esc(p.nome)}</b><br><span class=mu>${mine.length} atendimento(s) · faturado ${brl(f)} · comissão ${pct}% = <b>${brl(dev)}</b></span></span><span style="text-align:right">${pg?`<span class="tag tg-f">Paga em ${new Date(pg.quando).toLocaleDateString('pt-BR')}</span><br><button class="btn s o" style="margin-top:4px" data-a=compdel data-k=${key}>Estornar</button>`:dev>0?`<button class="btn s" data-a=compay data-p=${p.id}>Registrar pagamento</button>`:'<span class=mu>—</span>'}</span></div>`}).join('');
-  return `<div class=card style="margin-top:0"><div class=tabs>${[['dia','Dia'],['sem','Semana'],['mes','Mês']].map(x=>`<button class="${FP==x[0]?'on':''}" data-a=fp data-f=${x[0]}>${x[1]}</button>`).join('')}</div>
+  return `<div class=card style="margin-top:0"><div class=tabs>${perTabs(FP,'fp')}</div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px"><button class="btn s o" data-a=fnav data-n=-1>‹</button><b style="text-align:center">${lb}</b><button class="btn s o" data-a=fnav data-n=1>›</button></div><div style="text-align:center;margin-top:8px"><button class="btn s o" data-a=fhoje>Hoje</button></div></div>
   <div class=kp>${[['Faturado (serviços realizados)',brl(fat)],['Recebido no período',brl(rec)],['A receber',brl(aber)],['Atendimentos',R.length],['Ticket médio',brl(R.length?fat/R.length:0)],['Comissões a pagar',brl(totC)]].map(k=>`<div><span>${k[0]}</span><b>${k[1]}</b></div>`).join('')}</div>
-  <div class=g2><div class=card><h2>Faturamento por dia</h2><div class=fbars>${ser.map(x=>`<div title="${fd(x.d)}: faturado ${brl(x.f)} · recebido ${brl(x.r)}"><i class=f style="height:${Math.max(2,x.f/mx*100)}%"></i><i class=r style="height:${Math.max(2,x.r/mx*100)}%"></i></div>`).join('')}</div><div class=fbl>${ser.map(x=>`<span>${x.d.slice(8)}</span>`).join('')}</div><p class=mu style="margin-top:6px"><span style="color:var(--c)">■</span> faturado · <span style="color:#22c55e">■</span> recebido</p></div>
+  <div class=g2><div class=card><h2>Faturamento por dia</h2><div class=fbars>${ser.map(x=>`<div title="${grp?MES[+x.d.slice(5)-1]:fd(x.d)}: faturado ${brl(x.f)} · recebido ${brl(x.r)}"><i class=f style="height:${Math.max(2,x.f/mx*100)}%"></i><i class=r style="height:${Math.max(2,x.r/mx*100)}%"></i></div>`).join('')}</div><div class=fbl>${ser.map(x=>`<span>${grp?MES[+x.d.slice(5)-1].slice(0,3):x.d.slice(8)}</span>`).join('')}</div><p class=mu style="margin-top:6px"><span style="color:var(--c)">■</span> faturado · <span style="color:#22c55e">■</span> recebido</p></div>
   <div class=card><h2>Recebido por forma</h2>${Object.keys(mLabel).map(k=>`<div class=row><span>${mLabel[k]}</span><b>${brl(by[k]||0)}</b></div>`).join('')}</div>
   <div class=card style="grid-column:1/-1"><h2>Comissões dos profissionais</h2><p class=mu>Cálculo: % de comissão de cada profissional × valor faturado dos atendimentos realizados no período. Defina a % em Cadastros › Profissionais.</p>${prow||'<p class=mu>Cadastre profissionais.</p>'}</div>
   <div class=card style="grid-column:1/-1"><h2>Serviços que mais faturaram</h2>${topS.map(x=>`<div class=row><span>${esc(x[0])} <span class=mu>· ${x[1].n}x</span></span><b>${brl(x[1].v)}</b></div>`).join('')||'<p class=mu>Sem dados.</p>'}</div></div>`;
 }
 acts.fp=b=>{FP=b.dataset.f;draw()};acts.fhoje=()=>{FR=iso(new Date());draw()};
-acts.fnav=b=>{const n=+b.dataset.n,d=new Date(FR+'T12:00');if(FP=='dia')d.setDate(d.getDate()+n);else if(FP=='sem')d.setDate(d.getDate()+7*n);else d.setMonth(d.getMonth()+n,1);FR=iso(d);draw()};
+acts.fnav=b=>{FR=shiftRef(FP,FR,+b.dataset.n);draw()};
 acts.compay=async b=>{const [f0,f1]=frange(),hoje=iso(new Date()),pid=b.dataset.p,p=S.profissionais.find(x=>x.id==pid),pct=+((PRIV.map||{})[pid]||0),f=AGALL.filter(a=>a.prof==pid&&a.data>=f0&&a.data<=f1&&a.status!='faltou'&&(a.data<=hoje||a.status=='concluido')).reduce((t,a)=>t+(a.valor||0),0),dev=+(f*pct/100).toFixed(2),key=`${pid}_${FP}_${f0}`;
   if(!confirm('Registrar o pagamento de '+brl(dev)+' de comissão para '+p.nome+'?'))return;
   const o={profId:pid,periodo:FP,inicio:f0,fim:f1,valor:dev,pct,quando:Date.now()};try{await setDoc(doc(db,'saloes',OID,'comissoes',key),o);COMP[key]=o;toast('Comissão registrada ✔');draw()}catch(e){alert('Erro: '+(e.code||e.message)+'\nPublique as regras novas do Firestore.')}};
 acts.compdel=async b=>{if(!confirm('Estornar o registro desta comissão?'))return;const w=writeBatch(db);w.delete(doc(db,'saloes',OID,'comissoes',b.dataset.k));try{await w.commit();delete COMP[b.dataset.k];draw()}catch(e){alert('Erro: '+(e.code||e.message))}};
-async function setComissao(pid,pct){PRIV.map={...(PRIV.map||{}),[pid]:pct};await setDoc(doc(db,'saloes',OID,'privado','comissoes'),{map:PRIV.map})}
+async function setComissao(pid,pct){PRIV.map={...(PRIV.map||{}),[pid]:pct};await setDoc(doc(db,'saloes',OID,'comissaoPct',pid),{pct})}
 /* ---- lista de espera (salão) ---- */
 let ESP=[],ESPSL={},ESPUN=null,ESPFIRST=true;
 function listenEsp(){if(ESPUN)ESPUN();ESPFIRST=true;
   ESPUN=onSnapshot(collection(db,'saloes',OID,'espera'),snap=>{ESP=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!ESPFIRST)snap.docChanges().forEach(c=>{if(c.type=='added')toast('🔔 Lista de espera: '+c.doc.data().nome+' quer horário em '+fd(c.doc.data().data))});
+    if(!ESPFIRST)snap.docChanges().forEach(c=>{if(c.type=='added')notify('Encaixe/lista de espera: '+c.doc.data().nome+' quer horário em '+fd(c.doc.data().data),'esp')});
     ESPFIRST=false;if(TAB=='esp'&&!$('#mo')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))draw()},e=>console.log('espera',e.code))}
 async function loadEspSlots(){ESPSL={};const hoje=iso(new Date());
   for(const e of ESP.filter(x=>(x.status=='aguardando'||x.status=='ofertado')&&x.data>=hoje)){
@@ -650,7 +681,7 @@ async function loadEspSlots(){ESPSL={};const hoje=iso(new Date());
     out.sort((a,b)=>a.h.localeCompare(b.h));ESPSL[e.id]=out}}
 function espPage(){
   const hoje=iso(new Date()),L=ESP.filter(e=>e.status!='atendido'&&e.status!='cancelado'&&e.data>=hoje).sort((a,b)=>a.data.localeCompare(b.data)||(a.criado||0)-(b.criado||0));
-  return `<div class=card style="margin-top:0"><h2>Lista de espera</h2><p class=mu>Clientes que querem ser avisados se abrir horário no dia pedido. Quando um horário fica livre (cancelamento ou remarcação), ele aparece aqui. Ofereça ao cliente: ele recebe o aviso no app (se tiver conta) e no WhatsApp, e você também pode agendar direto.</p></div>`+
+  return `<div class=card style="margin-top:0"><h2>Encaixe / lista de espera</h2><p class=mu>Clientes que querem ser avisados se abrir horário no dia pedido. Quando um horário fica livre (cancelamento ou remarcação), ele aparece aqui. Ofereça ao cliente: ele recebe o aviso no app (se tiver conta) e no WhatsApp, e você também pode agendar direto.</p></div>`+
   (L.map(e=>{const sl=(ESPSL[e.id]||[]).slice(0,10);return `<div class=card><div class=row style="border:0;padding:0"><span><b>${esc(e.nome)}</b> <span class="tag ${e.status=='ofertado'?'tg-f':'tg-r'}">${e.status=='ofertado'?'Oferta enviada':'Aguardando'}</span><br><span class=mu>${esc(e.servico||'')} · ${e.profNome?esc(e.profNome):'qualquer profissional'} · <b>${fd(e.data)} · ${DIAS[wdOf(e.data)]}</b>${e.obs?' · 💬 '+esc(e.obs):''}</span></span><a class="btn s o" style="text-decoration:none" target=_blank href="${wa(e.tel)}">WhatsApp</a></div>
     ${e.status=='ofertado'&&e.oferta?`<p class=mu style="margin-top:6px">Oferta: ${fd(e.oferta.data)} às ${e.oferta.hora} com ${esc(e.oferta.profNome)} — aguardando resposta.</p>`:''}
     <p style="margin:10px 0 4px"><b>${sl.length?'✅ Horários livres neste dia agora:':'Sem horários livres neste dia ainda.'}</b></p><div class=aca>${sl.map(x=>`<button class="btn s o" data-a=wloffer data-id=${e.id} data-h=${x.h} data-p=${x.prof}>${x.h} · ${esc(x.profNome)}</button>`).join('')}</div>
@@ -668,6 +699,23 @@ acts.wlrm=b=>{if(confirm('Remover da lista de espera?'))espSet(b.dataset.id,{sta
 const TEMAS={padrao:['Padrão','#f3f4f6','#ffffff','#1f2a37'],escuro:['Escuro','#0f1218','#181c24','#3b82f6'],classico:['Clássico','#faf6ee','#fffdf8','#8a6d3b'],moderno:['Moderno','#eef2ff','#ffffff','#4f46e5'],suave:['Suave','#fdf2f8','#ffffff','#db2777']};
 const applyTema=t=>document.documentElement.setAttribute('data-tema',t&&TEMAS[t]?t:'padrao');
 acts.tema=async b=>{syncPerfil();S.tema=b.dataset.t;applyTema(S.tema);await save();toast('Estilo aplicado ✔');draw()};
+
+/* ====== NOTIFICAÇÕES (sininho) ====== */
+let NTS=[],NTREAD=0;
+const ntKey=()=>'hs_nt_'+OID+'_'+(ROLE=='prof'?ME:'o');
+function ntLoad(){try{const o=JSON.parse(localStorage.getItem(ntKey())||'{}');NTS=o.l||[];NTREAD=o.r||0}catch(e){NTS=[];NTREAD=0}}
+function ntSave(){try{localStorage.setItem(ntKey(),JSON.stringify({l:NTS.slice(0,40),r:NTREAD}))}catch(e){}}
+function pend(){const L=[],hoje=iso(new Date());
+  if(ROLE=='prof'){const n=AGALL.filter(a=>a.data==hoje&&a.status!='faltou'&&!a.status).length;if(n)L.push({txt:n+' atendimento(s) hoje',tab:'lista'})}
+  else{const c=AGALL.filter(a=>a.pstatus=='aguardando').length,e=ESP.filter(x=>x.status=='aguardando'&&x.data>=hoje).length;if(c)L.push({txt:c+' comprovante(s) a conferir',tab:'pag'});if(e)L.push({txt:e+' pessoa(s) no encaixe / lista de espera',tab:'esp'})}
+  return L}
+const bellN=()=>NTS.filter(n=>n.t>NTREAD).length+pend().length;
+const bellHtml=()=>{const n=bellN();return '🔔'+(n?`<i class=bdgn>${n>99?'99+':n}</i>`:'')};
+function updBell(){const b=$('#bell');if(b)b.innerHTML=bellHtml()}
+function notify(txt,tab){NTS.unshift({t:Date.now(),txt,tab});ntSave();toast('🔔 '+txt);updBell()}
+acts.bell=()=>{const P=pend();NTREAD=Date.now();ntSave();
+  openM(`<h2>🔔 Notificações</h2>${P.length?`<h3 style="margin:8px 0 4px">Pendências</h3>${P.map(x=>`<div class=row style="cursor:pointer" data-a=bnav data-t=${x.tab}><span>${esc(x.txt)}</span><span class=mu>›</span></div>`).join('')}`:''}<h3 style="margin:14px 0 4px">Novidades</h3>${NTS.length?NTS.slice(0,25).map(x=>`<div class=row ${x.tab?`style="cursor:pointer" data-a=bnav data-t=${x.tab}`:''}><span>${esc(x.txt)}<br><span class=mu style="font-size:.75rem">${new Date(x.t).toLocaleString('pt-BR')}</span></span></div>`).join(''):'<p class=mu>Sem novidades por enquanto.</p>'}<button class="btn o" data-a=closem>Fechar</button>`);updBell()};
+acts.bnav=b=>{closeM();TAB=b.dataset.t;draw()};
 
 /* ---- agendamento compartilhado (cliente e salão) ---- */
 const busyAdd=(set,o)=>{const n=(o.m||30)/15;for(let k=0;k<n;k++)set.add(o.prof+'_'+o.data+'_'+hm(tm(o.hora)+k*15))};
@@ -756,12 +804,7 @@ function bk(){
     const cad=CM=='cad';
     c=`<h2>${cad?'Criar conta':'Entrar'}</h2><p class=mu>Com uma conta você acompanha e cancela seus agendamentos.</p>${cad?'<label>Nome completo</label><input id=ln autocomplete=name><label>WhatsApp</label><input id=lt type=tel placeholder="(61) 99999-9999">':''}<label>E-mail</label><input id=le type=email autocomplete=email><label>Senha</label><input id=lp type=password placeholder="mínimo 6 caracteres"><button class=btn data-a=cgo>${cad?'Criar conta':'Entrar'}</button><button class="btn o" data-a=ctog>${cad?'Já tenho conta':'Criar conta'}</button><button class="btn o" data-a=home>Voltar</button>`;
   }
-  if(step=='PL'){
-    const cad=PLM=='cad';
-    c=`<h2>Painel profissional</h2><p class=mu>Acesso para os profissionais do salão informarem sua agenda e acompanharem seus agendamentos. Use o e-mail que o salão cadastrou para você.</p>
-    ${PLSTAGE=='verify'?`<div class=quick style="display:block"><b>Confirme seu e-mail</b><p class=mu style="margin:6px 0">${esc(PLMSG)}</p><button class="btn s" data-a=plconf>Já confirmei</button> <button class="btn s o" data-a=plresend>Reenviar e-mail</button></div>`:`${PLMSG?`<p class=mu style="color:#b45309">${esc(PLMSG)}</p>`:''}<label>E-mail</label><input id=pe type=email autocomplete=email><label>Senha</label><input id=pp type=password placeholder="mínimo 6 caracteres"><button class=btn data-a=plgo>${cad?'Criar meu acesso':'Entrar'}</button><button class="btn o" data-a=pltog>${cad?'Já tenho acesso':'Primeiro acesso (criar senha)'}</button>`}
-    <button class="btn o" data-a=home>Voltar à página do salão</button>`;
-  }
+  if(step=='PL')c=plHtml();
   if(step=='M')c=`<h2>Meus agendamentos</h2><div id=ml><p class=mu>Carregando…</p></div><button class="btn o" data-a=novo>Novo agendamento</button>`;
   if(step==0)c=`${bar}<h2>Selecione o local do salão</h2><div class=lcs>${locs().map(l=>`<button class="lc ${B.local==l.id?'on':''}" data-a=pickloc data-l=${l.id}><b>${esc(l.nome)}</b><br><span class=mu>${esc(l.end||'')}</span></button>`).join('')}</div>`;
   if(step==1){
@@ -840,8 +883,24 @@ acts.cgo=async()=>{
   busy=false;hdr();wlListen();step=(B.serv&&B.hora&&!B.done)?3:(needLocal()&&!B.local?0:1);bk();
 };
 /* ---- painel profissional: login ---- */
-acts.plogin=async()=>{PLM='login';PLMSG='';PLSTAGE='';if(CU&&auth.currentUser&&auth.currentUser.emailVerified){await profEnter();return}step='PL';bk()};
-acts.pltog=()=>{PLM=PLM=='cad'?'login':'cad';PLMSG='';bk()};
+const plRefresh=()=>{if(STANDALONE)plRender();else bk()};
+function plHtml(){
+  const cad=PLM=='cad',home=STANDALONE?`<a class="btn o" style="display:block;text-align:center;text-decoration:none" href="${location.pathname}?s=${esc(S.slug)}">Ir para a página de agendamento do salão</a>`:'<button class="btn o" data-a=home>Voltar à página do salão</button>';
+  return `<h2>Painel do profissional</h2><p class=mu>Aqui você informa sua agenda e acompanha seus agendamentos, clientes e ganhos. Entre com o e-mail que o salão cadastrou para você.</p>
+  ${PLSTAGE=='verify'?`<div class=quick style="display:block"><b>Confirme seu e-mail</b><p class=mu style="margin:6px 0">${esc(PLMSG)}</p><button class="btn s" data-a=plconf>Já confirmei</button> <button class="btn s o" data-a=plresend>Reenviar e-mail</button></div>`:`${PLMSG?`<p class=mu style="color:#b45309">${esc(PLMSG)}</p>`:''}<label>E-mail</label><input id=pe type=email autocomplete=email><label>Senha</label><input id=pp type=password placeholder="mínimo 6 caracteres"><button class=btn data-a=plgo>${cad?'Criar meu acesso':'Entrar'}</button><button class="btn o" data-a=pltog>${cad?'Já tenho acesso':'Primeiro acesso (criar senha)'}</button>`}
+  ${home}`;
+}
+function plRender(){A.innerHTML=`<div class="top hero" style="background:${cover(S.capa,S.capaK)};padding:40px 16px">${S.logo?`<img class=lg src="${S.logo}">`:''}<h1>${esc(S.nome)}</h1><p>Painel do profissional</p></div><div class=wrap><div class=card>${plHtml()}</div></div>`}
+async function profPage(sg){
+  const sl=await getDoc(doc(db,'slugs',sg));if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
+  ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();S.cupons=S.cupons||[];S.locais=S.locais||[];
+  try{(await getDocs(collection(db,'saloes',ouid,'agendas'))).docs.forEach(d=>{const p=S.profissionais.find(x=>x.id==d.id);if(p){p.hor=d.data().hor||undefined;p.folgas=d.data().folgas||[]}})}catch(e){}
+  theme(S.cor);applyTema(S.tema);document.title='Painel profissional | '+S.nome;
+  const u=auth.currentUser;if(u&&u.emailVerified&&!ENTERING){profEnter();return}
+  plRender();
+}
+acts.plogin=async()=>{PLM='login';PLMSG='';PLSTAGE='';if(CU&&auth.currentUser&&auth.currentUser.emailVerified){await profEnter();return}step='PL';plRefresh()};
+acts.pltog=()=>{PLM=PLM=='cad'?'login':'cad';PLMSG='';plRefresh()};
 acts.plgo=async()=>{
   const em=v('pe'),pw=v('pp');if(!em||pw.length<6)return alert('Informe e-mail e senha (mínimo 6 caracteres).');
   busy=true;
@@ -850,17 +909,20 @@ acts.plgo=async()=>{
     if(PLM=='cad'){u=(await createUserWithEmailAndPassword(auth,em,pw)).user;await sendEmailVerification(u);PLMSG='Enviamos um link de confirmação para '+em+'. Abra o e-mail, confirme e depois toque em "Já confirmei".'}
     else u=(await signInWithEmailAndPassword(auth,em,pw)).user;
     CU=u;busy=false;
-    if(!u.emailVerified){if(PLM!='cad')PLMSG='Seu e-mail ainda não foi confirmado. Confirme pelo link que enviamos e toque em "Já confirmei".';PLSTAGE='verify';bk();return}
+    if(!u.emailVerified){if(PLM!='cad')PLMSG='Seu e-mail ainda não foi confirmado. Confirme pelo link que enviamos e toque em "Já confirmei".';PLSTAGE='verify';plRefresh();return}
     await profEnter();
   }catch(e){busy=false;alert(['auth/invalid-credential','auth/wrong-password','auth/user-not-found'].includes(e.code)?'E-mail ou senha inválidos.':e.code=='auth/email-already-in-use'?'Este e-mail já tem conta. Use "Já tenho acesso".':(e.message||'Erro ao entrar.'))}
 };
 acts.plconf=async()=>{try{await auth.currentUser.reload();if(!auth.currentUser.emailVerified)return alert('Ainda não confirmado. Abra o link do e-mail e tente de novo.');PLSTAGE='';await profEnter()}catch(e){alert('Erro: '+(e.code||e.message))}};
 acts.plresend=async()=>{try{await sendEmailVerification(auth.currentUser);toast('E-mail reenviado ✔')}catch(e){alert('Erro: '+(e.code||e.message))}};
 async function profEnter(){
-  const u=auth.currentUser;await u.getIdToken(true);let r;
-  try{r=await getDoc(doc(db,'saloes',ouid,'acessos',u.email.toLowerCase()))}catch(e){PLMSG='Não foi possível verificar seu acesso ('+(e.code||'erro')+').';PLSTAGE='';step='PL';bk();return}
-  if(!r.exists()){PLMSG='O e-mail '+u.email+' ainda não foi autorizado por este salão. Peça ao responsável para cadastrá-lo em Profissionais.';PLSTAGE='';step='PL';bk();return}
-  ME=r.data().profId;ROLE='prof';OID=ouid;U=u;AGALL=[];LOADED=false;NOTAS={};TAB='pdash';LPF=ME;theme(S.cor);applyTema(S.tema);listen();draw();
+  ENTERING=true;const u=auth.currentUser;if(!u){ENTERING=false;return}await u.getIdToken(true);let r;
+  try{r=await getDoc(doc(db,'saloes',ouid,'acessos',u.email.toLowerCase()))}catch(e){PLMSG='Não foi possível verificar seu acesso ('+(e.code||'erro')+').';PLSTAGE='';ENTERING=false;step='PL';plRefresh();return}
+  if(!r.exists()){PLMSG='O e-mail '+u.email+' ainda não foi autorizado por este salão. Peça ao responsável para cadastrá-lo em Profissionais.';PLSTAGE='';ENTERING=false;step='PL';plRefresh();return}
+  ME=r.data().profId;ROLE='prof';OID=ouid;U=u;AGALL=[];LOADED=false;NOTAS={};TAB='pdash';LPF=ME;
+  try{MYPCT=+((await getDoc(doc(db,'saloes',ouid,'comissaoPct',ME))).data()||{}).pct||0}catch(e){MYPCT=0}
+  try{COMP={};(await getDocs(query(collection(db,'saloes',ouid,'comissoes'),where('profId','==',ME)))).docs.forEach(d=>COMP[d.id]=d.data())}catch(e){}
+  ntLoad();theme(S.cor);applyTema(S.tema);listen();draw();
 }
 acts.pvolta=()=>{if(UNSUB)UNSUB();location.href=location.pathname+'?s='+S.slug};
 /* ---- meus agendamentos / remarcar / cancelar / lista de espera (cliente) ---- */
@@ -885,7 +947,7 @@ async function loadMeus(){
     if(prox)h+=`<div class=hl>⏭ Próximo serviço · ${whenTxt(prox)}</div>${agCard(prox,MY.indexOf(prox),true)}`;
     if(!atual&&!prox)h+='<p class=mu>Você não tem agendamentos futuros.</p>';
     const outros=fut.slice(1);
-    h+=`<div class=tabs style="margin:16px 0 8px">${[['prox','Próximos ('+outros.length+')'],['hist','Histórico ('+hist.length+')'],['esp','Lista de espera ('+wl.length+')']].map(x=>`<button class="${MT==x[0]?'on':''}" data-a=mtab data-t=${x[0]}>${x[1]}</button>`).join('')}</div>`;
+    h+=`<div class=tabs style="margin:16px 0 8px">${[['prox','Próximos ('+outros.length+')'],['hist','Histórico ('+hist.length+')'],['esp','Encaixe / espera ('+wl.length+')']].map(x=>`<button class="${MT==x[0]?'on':''}" data-a=mtab data-t=${x[0]}>${x[1]}</button>`).join('')}</div>`;
     if(MT=='prox')h+=outros.map(a=>agCard(a,MY.indexOf(a))).join('')||'<p class=mu>Nenhum outro agendamento futuro.</p>';
     if(MT=='hist')h+=hist.map(a=>agCard(a,MY.indexOf(a))).join('')||'<p class=mu>Seu histórico aparece aqui.</p>';
     if(MT=='esp')h+=wl.map(e=>{const i=WL.indexOf(e);return `<div class=agc><div class=agd><b>${e.data.slice(8)}</b><span>${MES[+e.data.slice(5,7)-1].slice(0,3).toUpperCase()}</span></div><div class=agi><b>${esc(e.servico||'Serviço')}</b> <span class="tag ${e.status=='ofertado'?'tg-f':'tg-r'}">${e.status=='ofertado'?'Horário disponível':'Aguardando'}</span><br><span class=mu>${e.profNome?esc(e.profNome):'Qualquer profissional'}</span>
@@ -894,6 +956,8 @@ async function loadMeus(){
     box.innerHTML=h;
   }catch(e){box.innerHTML='<p class=mu>Não foi possível carregar seus agendamentos ('+esc(e.code||'erro')+').</p>'}
 }
+const cbn=()=>{const n=WL.filter(e=>e.status=='ofertado').length;return n?`<i class=bdgn style="position:static;display:inline-block;margin-left:2px">${n}</i>`:''};
+acts.cbell=()=>{MT='esp';step='M';bk()};
 acts.mtab=b=>{MT=b.dataset.t;loadMeus()};
 acts.ccancel=async b=>{const a=MY[+b.dataset.i];if(!canChange(a))return alert('O cancelamento só é possível até 10 minutos antes do horário.');if(!confirm('Cancelar este agendamento? O horário voltará a ficar disponível.'))return;
   const w=writeBatch(db);(a.blocos||[]).forEach(id=>w.delete(doc(db,'ocupados',id)));w.delete(doc(db,'saloes',ouid,'agendamentos',a.id));
@@ -915,7 +979,7 @@ acts.vcomp=b=>{const a=MY[+b.dataset.i];openM('<h2>Comprovante enviado</h2><img 
 acts.cpay=b=>{const a=MY[+b.dataset.i];openM('<h2>Pagamento via PIX</h2><p class=mu>Faltam <b>'+brl(Math.max(0,a.valor-(a.pvalor||0)))+'</b></p><div id=pbx></div><button class="btn o" data-a=closem>Fechar</button>');showPix($('#pbx'),Math.max(0,a.valor-(a.pvalor||0)),a.id,true)};
 /* lista de espera */
 acts.wlopen=()=>{const amanha=iso(new Date(Date.now()+864e5)),nm=(CP&&CP.nome)||((B.fn||'')+' '+(B.ln||'')).trim();
-  openM(`<h2>Lista de espera</h2><p class=mu>Se um horário abrir no dia que você quer, avisamos você e o salão para fecharem o agendamento.</p><label>Dia desejado</label><input id=wd type=date min="${iso(new Date())}" value="${B.data||amanha}"><label>Seu nome</label><input id=wn value="${esc(nm)}"><label>WhatsApp</label><input id=wt type=tel placeholder="(61) 99999-9999" value="${esc((CP&&CP.tel)||B.tel||'')}"><label>Observação (opcional)</label><input id=wo placeholder="Ex.: só à tarde"><button class=btn data-a=wlsave>Entrar na lista de espera</button><button class="btn o" data-a=closem>Cancelar</button>`)};
+  openM(`<h2>Encaixe / lista de espera</h2><p class=mu>Se um horário abrir no dia que você quer, avisamos você e o salão para fecharem o agendamento.</p><label>Dia desejado</label><input id=wd type=date min="${iso(new Date())}" value="${B.data||amanha}"><label>Seu nome</label><input id=wn value="${esc(nm)}"><label>WhatsApp</label><input id=wt type=tel placeholder="(61) 99999-9999" value="${esc((CP&&CP.tel)||B.tel||'')}"><label>Observação (opcional)</label><input id=wo placeholder="Ex.: só à tarde"><button class=btn data-a=wlsave>Entrar na lista de espera</button><button class="btn o" data-a=closem>Cancelar</button>`)};
 acts.wlsave=async()=>{const nome=v('wn'),tel=v('wt'),d=v('wd'),sv=bsv(),pf=B.mode=='prof'?bpf():null;
   if(!d||nome.length<2||tel.replace(/\D/g,'').length<10)return alert('Informe o dia, seu nome e o WhatsApp com DDD.');
   try{await setDoc(doc(collection(db,'saloes',ouid,'espera')),{nome,tel,email:CU?CU.email:'',cuid:CU?CU.uid:'',servId:sv.id,servico:sv.nome,min:sv.min,prof:pf?pf.id:'',profNome:pf?pf.nome:'',data:d,local:B.local||'',obs:v('wo'),status:'aguardando',criado:Date.now()});
@@ -930,7 +994,7 @@ acts.wlaccept=async b=>{const e=WL[+b.dataset.i],o=e.oferta,pf=S.profissionais.f
     await setDoc(doc(db,'saloes',ouid,'espera',e.id),{status:'atendido',oferta:null},{merge:true});toast('Agendamento confirmado ✔');MT='prox';loadMeus()}
   catch(x){alert('Não foi possível agendar: '+(x.code||x.message))}};
 function wlListen(){if(WLUNSUB){WLUNSUB();WLUNSUB=null}if(!CU||!ouid||ROLE=='prof')return;let first=true;
-  try{WLUNSUB=onSnapshot(query(collection(db,'saloes',ouid,'espera'),where('cuid','==',CU.uid)),snap=>{if(!first)snap.docChanges().forEach(c=>{if(c.type=='modified'&&c.doc.data().status=='ofertado')toast('🔔 Abriu um horário na sua lista de espera!')});first=false;if(step=='M')loadMeus()},()=>{})}catch(e){}}
+  try{WLUNSUB=onSnapshot(query(collection(db,'saloes',ouid,'espera'),where('cuid','==',CU.uid)),snap=>{if(!first)snap.docChanges().forEach(c=>{if(c.type=='modified'&&c.doc.data().status=='ofertado')toast('🔔 Abriu um horário na sua lista de espera!')});first=false;WL=snap.docs.map(d=>({id:d.id,...d.data()}));hdr();if(step=='M')loadMeus()},()=>{})}catch(e){}}
 
 /* ---- passo 2: data e horário ---- */
 const WK=['SEG','TER','QUA','QUI','SEX','SÁB','DOM'];
@@ -963,7 +1027,7 @@ async function drawStep2(){
   <div class=cnav><select id=cm>${MES.map((n,i)=>`<option value=${i} ${i==m?'selected':''} ${y==now.getFullYear()&&i<now.getMonth()?'disabled':''}>${n}</option>`).join('')}</select><select id=cy>${yrs.map(v=>`<option ${v==y?'selected':''}>${v}</option>`).join('')}</select><button class="btn s o" data-a=cnavm data-n=-1>‹</button><button class="btn s o" data-a=cnavm data-n=1>›</button></div>
   <div class=cal2>${cells}</div><p class=mu style="margin:6px 0">A barra verde mostra a disponibilidade de cada dia.</p>
   ${B.data?`<h3 id=slh style="margin:12px 0 6px">Escolha um tempo de agendamento para <span style="color:var(--c)">${fd(B.data)} · ${DIAS[wdOf(B.data)]}</span></h3><div class=slots>${sl}</div>`:''}${pfx}
-  ${B.resch?'':'<div class=wl><b>Não encontrou o horário que queria?</b><p class=mu style="margin:4px 0 8px">Entre na lista de espera: se abrir um horário no dia desejado, avisamos você e o salão.</p><button class="btn s o" data-a=wlopen>Entrar na lista de espera</button></div>'}<div class=foot>${B.resch?`<button class="btn o" data-a=rback>Cancelar</button><button class=btn data-a=rconf ${done?'':'disabled'}>Confirmar remarcação</button>`:`<button class="btn o" data-a=back>Voltar</button><button class=btn data-a=n2 ${done?'':'disabled'}>Continuar</button>`}</div>`;
+  ${B.resch?'':'<div class=wl><b>Não encontrou o horário que queria?</b><p class=mu style="margin:4px 0 8px">Entre na lista de espera: se abrir um horário no dia desejado, avisamos você e o salão.</p><button class="btn s o" data-a=wlopen>Entrar na lista de espera / encaixe</button></div>'}<div class=foot>${B.resch?`<button class="btn o" data-a=rback>Cancelar</button><button class=btn data-a=rconf ${done?'':'disabled'}>Confirmar remarcação</button>`:`<button class="btn o" data-a=back>Voltar</button><button class=btn data-a=n2 ${done?'':'disabled'}>Continuar</button>`}</div>`;
   if(SCR){const e=$('#'+SCR);SCR='';if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 }
 acts.quick=b=>{B.data=b.dataset.d;B.hora=b.dataset.h;if(B.mode=='data'&&!B.any){B.prof='';SCR='pfx'}CALC={y:+B.data.slice(0,4),m:+B.data.slice(5,7)-1};drawStep2()};
