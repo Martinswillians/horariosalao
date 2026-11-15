@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#1f2a37">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Horário Salão">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Horário Salão | Agendamento Online</title>
 <style>
 :root{--c:#1f2a37;--bg:#f3f4f6;--tx:#222;--mu:#777;--bd:#e2e2e2}
@@ -110,6 +117,15 @@ textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;fo
 .fbars{display:flex;align-items:flex-end;gap:3px;height:110px}.fbars>div{flex:1;display:flex;align-items:flex-end;gap:1px;height:100%}.fbars i{flex:1;border-radius:3px 3px 0 0}.fbars i.f{background:var(--c)}.fbars i.r{background:#22c55e}.fbl{display:flex;gap:3px;margin-top:4px}.fbl span{flex:1;text-align:center;font-size:.6rem;color:var(--mu)}
 .bell{position:relative;margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:1.15rem;border-radius:50%;width:40px;height:40px;cursor:pointer}
 .bdgn{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-style:normal;font-size:.65rem;border-radius:10px;padding:1px 5px;min-width:18px;text-align:center}
+.install-box{text-align:center}.install-ico{border-radius:20px;box-shadow:0 6px 22px rgba(0,0,0,.3);margin-bottom:.6rem}.install-sub{font-size:.85rem;color:var(--mu);line-height:1.5;margin-bottom:.8rem}
+.inst-steps{list-style:none;counter-reset:st;text-align:left;margin:.4rem 0 .6rem;padding:0}.inst-steps li{counter-increment:st;position:relative;padding:.6rem 0 .6rem 2.3rem;font-size:.9rem;line-height:1.5;border-top:1px solid var(--bd)}.inst-steps li:first-child{border-top:none}
+.inst-steps li::before{content:counter(st);position:absolute;left:0;top:.6rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--c);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.inst-note{font-size:.8rem;color:var(--mu);margin:.6rem 0;line-height:1.5;text-align:center}.install-link.ok{color:#16a34a}.nv.install-link.ok{color:#86efac}
+.install-banner{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:850;display:none;align-items:center;gap:.7rem;background:#162030;border:1px solid rgba(255,255,255,.18);padding:.6rem .7rem;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);color:#f8f5ef}
+.install-banner.show{display:flex}.install-banner img{border-radius:9px}.install-banner div{flex:1;display:flex;flex-direction:column;min-width:0}.install-banner b{font-size:.85rem}.install-banner span{font-size:.7rem;color:#aab3c0}
+.install-banner button{background:var(--c);color:#fff;border:0;padding:.5rem .9rem;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer}.install-banner .ib-x{background:none;color:#aab3c0;padding:.3rem;font-size:.95rem}
+html.is-app .install-banner,body.in-panel .install-banner{display:none!important}@media(min-width:700px){.install-banner{right:auto;max-width:380px;left:1.5rem}}
+@media print{.install-banner{display:none!important}}
 </style>
 </head>
 <body>
@@ -194,14 +210,75 @@ if(slug){
     if(STANDALONE){if(S&&u&&u.emailVerified&&!ENTERING&&!busy)profEnter();return}
     wlListen();if(S&&$('#wiz')){hdr();if(step!='L'&&step!='M'&&step!='PL')bk()}});
 }else onAuthStateChanged(auth,u=>{U=u;if(busy)return;u?panel():landing()});
-const hdr=()=>{const h=$('#hu');if(h)h.innerHTML='<a href="#agendamento" data-a=plogin>Painel profissional</a>'+(CU?`<a href="#agendamento" data-a=cbell>🔔${cbn()}</a><a href="#agendamento" data-a=meperfil>${CP&&CP.foto?`<img src="${CP.foto}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:''}Meu perfil</a><a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>`:'<a href="#agendamento" data-a=clogin>Entrar</a>')};
+const hdr=()=>{const h=$('#hu');if(h)h.innerHTML='<a href="#!" class=install-link data-short=1 data-a=install>📲 App</a><a href="#agendamento" data-a=plogin>Painel profissional</a>'+(CU?`<a href="#agendamento" data-a=cbell>🔔${cbn()}</a><a href="#agendamento" data-a=meperfil>${CP&&CP.foto?`<img src="${CP.foto}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:''}Meu perfil</a><a href="#agendamento" data-a=meus>Meus agendamentos</a><a href="#agendamento" data-a=csair>Sair</a>`:'<a href="#agendamento" data-a=clogin>Entrar</a>')};
 acts.meperfil=()=>{TMP.mefoto=undefined;openM(`<h2>Meu perfil</h2><div style="text-align:center;margin:10px 0" id=mfpw>${avc(CP&&CP.foto,(CP&&CP.nome)||CU.email,84)}</div><label>Foto</label><input type=file accept="image/*" data-up=mefoto><label>Nome</label><input id=pn value="${esc(CP&&CP.nome)}"><label>WhatsApp</label><input id=pt type=tel value="${esc(CP&&CP.tel)}"><button class=btn data-a=mesave>Salvar</button><button class="btn o" data-a=closem>Fechar</button>`)};
 acts.mesave=async()=>{const o={nome:v('pn'),tel:v('pt'),email:CU.email,foto:TMP.mefoto!==undefined?TMP.mefoto:(CP&&CP.foto)||''};try{await setDoc(doc(db,'clientes',CU.uid),o,{merge:true});CP={...CP,...o};closeM();hdr();toast('Perfil salvo ✔');bk()}catch(e){alert('Erro: '+(e.code||e.message))}};
+
+/* ====== INSTALAR COMO APP (PWA) — mesma lógica da webpage da Poliana ====== */
+const ICON96='data:image/png;base64,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';
+const instCtx=()=>slug?(STANDALONE?'p:'+slug:'c:'+slug):'o';
+const instKey=()=>'hs_i_'+instCtx(),instXKey=()=>'hs_ix_'+instCtx();
+const lsGet=k=>{try{return localStorage.getItem(k)}catch{return null}};
+const lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch{}};
+let deferredInstall=null,installedRelated=null;
+const isStandalone=()=>(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+if(isStandalone())document.documentElement.classList.add('is-app');
+const UA=navigator.userAgent,isIOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isAndroid=/Android/i.test(UA),isSafari=/^((?!chrome|crios|fxios|edgios|android).)*safari/i.test(UA);
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+/* estado: 'app' (aberto como app), 'installed' (já instalado neste aparelho) ou 'none' */
+function installState(){if(isStandalone())return 'app';return installedRelated||lsGet(instKey())?'installed':'none'}
+function updateInstallUI(){
+  const st=installState();
+  document.querySelectorAll('.install-link').forEach(b=>{
+    const sh=b.dataset.short,t=st=='app'?(sh?'✓ App':'✓ App instalado'):st=='installed'?(sh?'✓ App':'✓ App instalado · abrir'):(sh?'📲 App':'📲 Instalar app'),el=b.querySelector('span')||b;
+    if(el.textContent!==t)el.textContent=t;b.classList.toggle('ok',st!='none');
+  });
+}
+if(isStandalone())lsSet(instKey(),'1');
+if(navigator.getInstalledRelatedApps)navigator.getInstalledRelatedApps().then(a=>{installedRelated=a.length>0;if(installedRelated)lsSet(instKey(),'1');updateInstallUI()}).catch(()=>{});
+function ensureBanner(){let b=document.getElementById('installBanner');if(b)return b;b=document.createElement('div');b.id='installBanner';b.className='install-banner';
+  b.innerHTML=`<img src="${ICON96}" alt="" width=40 height=40><div><b>Instale o app</b><span>Acesso rápido na tela inicial</span></div><button data-a=install>Instalar</button><button class=ib-x data-a=installBannerClose aria-label="Dispensar">✕</button>`;document.body.append(b);return b}
+function showInstallBanner(){
+  const x=Number(lsGet(instXKey())||0); // dispensado: volta a aparecer depois de 7 dias
+  if(Date.now()-x<7*864e5||installState()!=='none')return;
+  setTimeout(()=>{if(installState()==='none')ensureBanner().classList.add('show')},3000);
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;installedRelated=false;lsSet(instKey(),null);updateInstallUI();showInstallBanner()});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;lsSet(instKey(),'1');installedRelated=true;const b=document.getElementById('installBanner');if(b)b.classList.remove('show');closeM();updateInstallUI();toast('App instalado! Procure o ícone na sua tela inicial.')});
+if(isIOS)showInstallBanner();
+new MutationObserver(()=>updateInstallUI()).observe(A,{childList:true,subtree:true});
+const ICON_SHARE='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>';
+async function openInstall(){
+  const bn=document.getElementById('installBanner');if(bn)bn.classList.remove('show');
+  const st=installState(),nome=(typeof S!=='undefined'&&S&&S.nome)||'Horário Salão';
+  const head=`<div class=install-box><img class=install-ico src="${ICON96}" alt="" width=84 height=84><h2>Instalar o app</h2><p class=install-sub>Acesse ${esc(nome)} direto da tela inicial, como um aplicativo.</p></div>`,
+        end='<button class="btn o" data-a=closem>Fechar</button>';
+  if(st!=='none'&&!deferredInstall){
+    openM(head+(st=='app'?'<p class=inst-note style="font-size:.9rem">✓ Você já está usando o app instalado.</p>':'<p class=inst-note style="font-size:.9rem">✓ O app já está instalado neste aparelho.</p><ol class=inst-steps><li>Abra pelo <b>ícone na tela inicial</b> ou na lista de aplicativos.</li><li>No computador, você também pode clicar em <b>Abrir no app</b> na barra de endereço do navegador.</li></ol>')+end);return}
+  if(deferredInstall){const d=deferredInstall;d.prompt();const r=await d.userChoice.catch(()=>null);deferredInstall=null;if(r&&r.outcome==='accepted')return}
+  let body;
+  if(isIOS)body=isSafari?`<ol class=inst-steps><li>Toque no botão <b>Compartilhar</b> ${ICON_SHARE} na barra do Safari.</li><li>Role e toque em <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>. O ícone aparece na sua tela.</li></ol>`:`<ol class=inst-steps><li>Abra este site no <b>Safari</b> (o iPhone só instala apps por ele).</li><li>Toque em <b>Compartilhar</b> ${ICON_SHARE} e depois em <b>Adicionar à Tela de Início</b>.</li></ol>`;
+  else if(isAndroid)body='<ol class=inst-steps><li>Toque no menu <b>⋮</b> (três pontinhos) do navegador.</li><li>Toque em <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.</li><li>Confirme em <b>Instalar</b>.</li></ol>';
+  else body='<ol class=inst-steps><li>No <b>Chrome</b> ou <b>Edge</b>, clique no ícone de instalar (⊕) no final da barra de endereço, ou abra o menu <b>⋮</b> e escolha <b>Instalar app</b>.</li><li>No <b>Safari (Mac)</b>: menu <b>Arquivo → Adicionar ao Dock</b>.</li></ol><p class=inst-note>O app abre em janela própria, sem barra do navegador.</p>';
+  openM(head+body+end);
+}
+acts.install=()=>openInstall();
+acts.installBannerClose=()=>{const b=document.getElementById('installBanner');if(b)b.classList.remove('show');lsSet(instXKey(),String(Date.now()))};
+/* manifesto próprio de cada tela (salão, profissional e cliente instalam como apps separados) */
+function setManifest(nome,suf){
+  const base=location.origin+location.pathname.replace(/[^/]*$/,''),url=location.origin+location.pathname+(slug?'?s='+encodeURIComponent(slug)+(STANDALONE?'&acesso=prof':''):''),cor=(typeof S!=='undefined'&&S&&S.cor)||'#1f2a37',n0=nome||'Horário Salão';
+  const man={id:url,name:n0+(suf?' · '+suf:''),short_name:n0.slice(0,12),start_url:url,scope:base,display:'standalone',background_color:'#ffffff',theme_color:cor,lang:'pt-BR',icons:[{src:base+'icons/icon-192.png',sizes:'192x192',type:'image/png'},{src:base+'icons/icon-512.png',sizes:'512x512',type:'image/png'},{src:base+'icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'maskable'}]};
+  document.querySelectorAll('link[rel=manifest]').forEach(l=>l.remove());
+  const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}));document.head.append(l);
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=cor;
+  const t=document.querySelector('meta[name=apple-mobile-web-app-title]');if(t)t.content=n0.slice(0,14);
+}
+if(!slug)setManifest();
 
 /* ============ LANDING / LOGIN / CADASTRO ============ */
 function landing(mode='login'){
   theme();
-  A.innerHTML=`<div class="top hero" style="background:${cover()}"><h1>Horário Salão</h1><p>Seu salão com agenda online. Cadastre-se e envie o link aos seus clientes.</p><a class=cta href="#acesso">Cadastrar meu salão</a></div>
+  A.innerHTML=`<div class="top hero" style="background:${cover()}"><h1>Horário Salão</h1><p>Seu salão com agenda online. Cadastre-se e envie o link aos seus clientes.</p><a class=cta href="#acesso">Cadastrar meu salão</a><br><a href="#!" class=install-link data-a=install style="color:#fff;font-size:.9rem;display:inline-block;margin-top:14px;text-decoration:underline">📲 Instalar app</a></div>
   <div class=wrap><div class=card id=acesso><div class=tabs>
   <button class="${mode=='login'?'on':''}" data-a=lg>Entrar</button><button class="${mode=='cad'?'on':''}" data-a=cd>Cadastrar salão</button></div>
   ${mode=='cad'?`<label>Nome do salão</label><input id=nm placeholder="Ex.: Beleza & Estilo">
@@ -254,7 +331,7 @@ async function panel(){
   try{PRIV=(await getDoc(doc(db,'saloes',OID,'privado','comissoes'))).data()||{map:{}}}catch(e){PRIV={map:{}}}
   try{const q=await getDocs(collection(db,'saloes',OID,'comissaoPct')),have={};q.docs.forEach(d=>{have[d.id]=1;PRIV.map=PRIV.map||{};PRIV.map[d.id]=+d.data().pct||0});for(const k of Object.keys(PRIV.map||{}))if(!have[k]){try{await setDoc(doc(db,'saloes',OID,'comissaoPct',k),{pct:+PRIV.map[k]||0})}catch(e){}}}catch(e){}
   try{COMP={};(await getDocs(collection(db,'saloes',OID,'comissoes'))).docs.forEach(d=>COMP[d.id]=d.data())}catch(e){}
-  applyTema(S.tema);ntLoad();listenEsp();listen();draw();
+  applyTema(S.tema);setManifest(S.nome,'Gestão');ntLoad();listenEsp();listen();draw();
 }
 const link=()=>location.origin+location.pathname+'?s='+S.slug;
 const fmtM=n=>'R$ '+(+n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -316,14 +393,14 @@ const closeM=()=>{const m=$('#mo');if(m)m.remove()};
 async function loadAll(){if(LOADED)return;const c=collection(db,'saloes',OID,'agendamentos'),q=await getDocs(ROLE=='prof'?query(c,where('prof','==',ME)):c);AGALL=q.docs.map(d=>({id:d.id,...d.data()}));LOADED=true}
 
 async function draw(){
-  const P=ROLE=='prof';
+  const P=ROLE=='prof';document.body.classList.add('in-panel');
   if(['dash','cal','lista','cli','pag','pdash','fin','esp','pgan'].includes(TAB)){try{await loadAll();if(P&&TAB=='pdash')await loadBusyP();if(TAB=='esp')await loadEspSlots()}catch(e){alert('Não foi possível carregar a agenda: '+(e.code||e.message))}}
   const c=P?(TAB=='pdash'?pdash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pgan'?ganPage():pcfg()):(TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():TAB=='fin'?finPage():TAB=='esp'?espPage():cadPage());
   const MN=P?MENUP:MENU,g=MN.find(m=>m.sub&&m.sub.some(x=>x[0]==TAB));if(g)OPEN[g.k]=true;
   const nav=MN.map(m=>m.sub?`<button class=nv data-a=tog data-k=${m.k}><span>${m.i} ${m.t}</span><span>${OPEN[m.k]?'▾':'▸'}</span></button>${OPEN[m.k]?m.sub.map(x=>`<button class="nv sub ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}>${x[1]}</button>`).join(''):''}`:`<button class="nv ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k}><span>${m.i} ${m.t}</span></button>`).join('');
   const me=P?S.profissionais.find(x=>x.id==ME):null;
   A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa,S.capaK)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${P&&me?esc(me.nome)+' · ':''}${TITLES[TAB]}</p></div><button class=bell id=bell data-a=bell>${bellHtml()}</button><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
-  <aside class="side ${SIDE?'open':''}" id=side><div class=sb>${P?'Painel do profissional':esc(S.nome)}</div><nav>${nav}</nav><div class=sf>${P?'<button class=nv data-a=pvolta><span>← Página do salão</span></button>':`<button class=nv data-a=copy><span>🔗 Copiar link</span></button><a class=nv href="${link()}" target=_blank><span>👁 Ver página do cliente</span></a>`}<button class=nv data-a=sair><span>⎋ Sair</span></button></div></aside><div class=ov data-a=menu></div></div>`;
+  <aside class="side ${SIDE?'open':''}" id=side><div class=sb>${P?'Painel do profissional':esc(S.nome)}</div><nav>${nav}</nav><div class=sf>${P?'<button class=nv data-a=pvolta><span>← Página do salão</span></button>':`<button class=nv data-a=copy><span>🔗 Copiar link</span></button><a class=nv href="${link()}" target=_blank><span>👁 Ver página do cliente</span></a>`}<button class="nv install-link" data-a=install><span>📲 Instalar app</span></button><button class=nv data-a=sair><span>⎋ Sair</span></button></div></aside><div class=ov data-a=menu></div></div>`;
   if(TAB=='pix'&&S.pixChave)showPix($('#pxv'),1,'TESTE',false);
 }
 acts.menu=()=>{SIDE=!SIDE;$('#side').classList.toggle('open',SIDE)};
@@ -788,14 +865,14 @@ async function booking(sg){
   if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
   ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();S.cupons=S.cupons||[];S.locais=S.locais||[];
   try{(await getDocs(collection(db,'saloes',ouid,'agendas'))).docs.forEach(d=>{const p=S.profissionais.find(x=>x.id==d.id);if(p){p.hor=d.data().hor||undefined;p.folgas=d.data().folgas||[]}})}catch(e){}
-  theme(S.cor);document.title=S.nome+' | Agendamento';newB();
+  theme(S.cor);document.title=S.nome+' | Agendamento';newB();setManifest(S.nome,'');
   const cards=S.servicos.filter(act).map(x=>{const p=price(x,S.promocoes);return`<div class=card><h3>${esc(x.nome)}</h3>${x.desc?`<p class=mu>${esc(x.desc)}</p>`:''}<div class=pr>${p.pct?`<span class=old>${brl(x.preco)}</span>`:''}${brl(p.final)} · ${x.min}min</div></div>`}).join('')||'<p class=mu style="text-align:center">Em breve.</p>';
   A.innerHTML=`<div class=hd>${S.logo?`<img src="${S.logo}" alt="${esc(S.nome)}">`:`<b>${esc(S.nome)}</b>`}<nav><a href="#servicos">Serviços</a><a href="#agendamento">Agendar</a><span id=hu></span></nav></div>
   <div class=hero style="background:${cover(S.capa,S.capaK)}"><h1>${esc(S.titulo||S.nome)}</h1><p>${esc(S.sub||'Agende seu horário em poucos cliques.')}</p><a class=cta href="#agendamento">Agendar agora</a></div>
   ${S.promocoes.filter(act).length?`<div class=sec>${S.promocoes.filter(act).map(p=>`<div class=promo>🎉 <b>${esc(p.titulo)}</b> — ${p.pct}% de desconto</div>`).join('')}</div>`:''}
   <div class=sec id=servicos><h2 style="text-align:center;margin:30px 0 16px">Nossos serviços</h2><div class=sv>${cards}</div></div>
   <div class=wrap id=agendamento><h2 style="text-align:center;margin:30px 0 0">Faça seu agendamento</h2><div class=card id=wiz></div></div>
-  <footer>© ${new Date().getFullYear()} ${esc(S.nome)}${S.end?' · '+esc(S.end):''}</footer>`;
+  <footer>© ${new Date().getFullYear()} ${esc(S.nome)}${S.end?' · '+esc(S.end):''}<br><a href="#!" class=install-link data-a=install style="color:#fff;text-decoration:underline">📲 Instalar app</a></footer>`;
   applyTema(S.tema);hdr();wlListen();bk();
 }
 function bk(){
@@ -890,12 +967,12 @@ function plHtml(){
   ${PLSTAGE=='verify'?`<div class=quick style="display:block"><b>Confirme seu e-mail</b><p class=mu style="margin:6px 0">${esc(PLMSG)}</p><button class="btn s" data-a=plconf>Já confirmei</button> <button class="btn s o" data-a=plresend>Reenviar e-mail</button></div>`:`${PLMSG?`<p class=mu style="color:#b45309">${esc(PLMSG)}</p>`:''}<label>E-mail</label><input id=pe type=email autocomplete=email><label>Senha</label><input id=pp type=password placeholder="mínimo 6 caracteres"><button class=btn data-a=plgo>${cad?'Criar meu acesso':'Entrar'}</button><button class="btn o" data-a=pltog>${cad?'Já tenho acesso':'Primeiro acesso (criar senha)'}</button>`}
   ${home}`;
 }
-function plRender(){A.innerHTML=`<div class="top hero" style="background:${cover(S.capa,S.capaK)};padding:40px 16px">${S.logo?`<img class=lg src="${S.logo}">`:''}<h1>${esc(S.nome)}</h1><p>Painel do profissional</p></div><div class=wrap><div class=card>${plHtml()}</div></div>`}
+function plRender(){A.innerHTML=`<div class="top hero" style="background:${cover(S.capa,S.capaK)};padding:40px 16px">${S.logo?`<img class=lg src="${S.logo}">`:''}<h1>${esc(S.nome)}</h1><p>Painel do profissional</p><a href="#!" class=install-link data-a=install style="color:#fff;font-size:.9rem;display:inline-block;margin-top:10px;text-decoration:underline">📲 Instalar app</a></div><div class=wrap><div class=card>${plHtml()}</div></div>`}
 async function profPage(sg){
   const sl=await getDoc(doc(db,'slugs',sg));if(!sl.exists()){A.innerHTML='<div class=wrap><div class=card><h2>Salão não encontrado</h2><p class=mu>Confira o link com o salão.</p></div></div>';return}
   ouid=sl.data().uid;S=(await getDoc(doc(db,'saloes',ouid))).data();S.cupons=S.cupons||[];S.locais=S.locais||[];
   try{(await getDocs(collection(db,'saloes',ouid,'agendas'))).docs.forEach(d=>{const p=S.profissionais.find(x=>x.id==d.id);if(p){p.hor=d.data().hor||undefined;p.folgas=d.data().folgas||[]}})}catch(e){}
-  theme(S.cor);applyTema(S.tema);document.title='Painel profissional | '+S.nome;
+  theme(S.cor);applyTema(S.tema);document.title='Painel profissional | '+S.nome;setManifest(S.nome,'Profissional');
   const u=auth.currentUser;if(u&&u.emailVerified&&!ENTERING){profEnter();return}
   plRender();
 }
