@@ -1,8 +1,8 @@
 /* Service worker do Horário Salão: rede primeiro, com cópia offline das páginas e ícones do próprio site */
-const V = 'hs-v1';
+const V = 'hs-v2';
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open(V).then(c => c.addAll(['./', 'icons/icon-192.png', 'icons/icon-512.png'])).catch(() => {}));
+  e.waitUntil(caches.open(V).then(c => Promise.all(['./', 'cliente.html', 'profissional.html', 'empresa.html', 'app.css', 'app.js'].map(u => c.add(u).catch(() => {})))));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim()));
