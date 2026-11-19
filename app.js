@@ -178,6 +178,12 @@ acts.signup=async()=>{
   }catch(e){busy=false;alert('Erro ao cadastrar: '+(e.code||'')+' — '+(e.message||''));if(U)panel();return}
   busy=false;panel();
 };
+async function semSalao(){
+  theme();let cl=false;try{cl=(await getDoc(doc(db,'clientes',U.uid))).exists()}catch(e){}
+  A.innerHTML=`<div class="top hero" style="background:${cover()};padding:40px 16px"><h1>Empresa</h1><p>Você está conectado como ${esc(U.email||'')}</p></div><div class=wrap><div class=card><h2>Esta conta não é de uma empresa</h2><p class=mu>${cl?'Ela foi criada como conta de <b>cliente</b>.':'Ela não tem nenhum salão cadastrado (pode ser uma conta de profissional ou de cliente).'} Para acessar o painel da empresa, saia e entre com a conta da empresa.</p><button class=btn data-a=trocar>Sair e entrar com a conta da empresa</button><button class="btn o" data-a=novosalao>Cadastrar um salão com esta conta</button><p class=mu style="text-align:center;margin-top:14px">Cliente ou profissional? <a href="index.html">Acesse por aqui</a></p></div></div>`;
+}
+acts.trocar=async()=>{try{await signOut(auth)}catch(e){}U=null;landing()};
+acts.novosalao=()=>{theme();A.innerHTML=`<div class="top hero" style="background:${cover()};padding:40px 16px"><h1>Quase lá!</h1><p>Cadastre o seu salão com a conta ${esc(U.email||'')}</p></div><div class=wrap><div class=card><label>Nome do salão</label><input id=nm><label>Endereço do link</label><input id=sg placeholder="ex.: barbearia-martins"><button class=btn data-a=criar>Criar meu salão</button><button class="btn o" data-a=trocar>Entrar com outra conta</button></div></div>`};
 acts.criar=async()=>{
   const nome=v('nm'),sg=slugify(v('sg')||nome);if(!nome||!sg)return alert('Informe o nome do salão.');
   try{if((await getDoc(doc(db,'slugs',sg))).exists())return alert('Esse endereço já está em uso. Escolha outro.');await mk(nome,sg);panel()}
@@ -196,7 +202,7 @@ function listen(){if(UNSUB)UNSUB();FIRSTSNAP=true;const c=collection(db,'saloes'
   },e=>console.log('listener',e.code))}
 async function panel(){
   S=(await getDoc(doc(db,'saloes',U.uid))).data();
-  if(!S){theme();if((await getDoc(doc(db,'clientes',U.uid))).exists()){A.innerHTML='<div class=wrap><div class=card><h2>Conta de cliente</h2><p class=mu>Esta conta é de cliente. Para agendar ou acompanhar seus horários, acesse pelo link do seu salão.</p><button class=btn data-a=sair>Sair</button></div></div>';return}A.innerHTML=`<div class=top><h1>Quase lá!</h1><p>Finalize o cadastro do seu salão</p></div><div class=wrap><div class=card><label>Nome do salão</label><input id=nm><label>Endereço do link</label><input id=sg placeholder="ex.: barbearia-martins"><button class=btn data-a=criar>Criar meu salão</button><button class="btn o" data-a=sair>Sair</button></div></div>`;return}
+  if(!S){await semSalao();return}
   S.cupons=S.cupons||[];S.locais=S.locais||[];OID=U.uid;ROLE='owner';
   try{(await getDocs(collection(db,'saloes',OID,'agendas'))).docs.forEach(d=>{const p=S.profissionais.find(x=>x.id==d.id);if(p){p.hor=d.data().hor||undefined;p.folgas=d.data().folgas||[]}})}catch(e){}
   try{ACC=(await getDocs(collection(db,'saloes',OID,'acessos'))).docs.map(d=>({email:d.id,profId:d.data().profId}))}catch(e){ACC=[]}
@@ -271,7 +277,7 @@ async function draw(){
   const c=P?(TAB=='pdash'?pdash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pgan'?ganPage():pcfg()):(TAB=='dash'?dash():TAB=='cal'?cal():TAB=='lista'?lista():TAB=='cli'?cliPage():TAB=='pag'?pagPage():TAB=='fin'?finPage():TAB=='esp'?espPage():cadPage());
   const MN=P?MENUP:MENU,gk=(MN.find(m=>m.sub&&m.sub.some(x=>x[0]==TAB))||{}).k||'',ni=k=>`<span class=ni>${ico(k)}</span>`;
   const nav=MN.map(m=>m.sub?`<div class="grp ${m.k==OPENG?'open':''} ${m.k==gk?'act':''}" data-g=${m.k}><button class="nv gh" data-a=tog data-k=${m.k} aria-expanded="${m.k==OPENG}" title="${m.t}">${ni(ICK[m.k])}<span class=nl>${m.t}</span><span class=chev>${ico('chev')}</span></button><div class=sub><div class=subin>${m.sub.map(x=>`<button class="nv si ${TAB==x[0]?'on':''}" data-a=nav data-k=${x[0]}><span class=dot></span><span class=nl>${x[1]}</span></button>`).join('')}</div></div></div>`:`<button class="nv top ${TAB==m.k?'on':''}" data-a=nav data-k=${m.k} title="${m.t}">${ni(ICK[m.k])}<span class=nl>${m.t}</span></button>`).join('');
-  const sf=(P?`<button class=nv data-a=pvolta title="Página do salão">${ni('home')}<span class=nl>Página do salão</span></button>`:`<button class=nv data-a=copy title="Copiar link do cliente">${ni('link')}<span class=nl>Copiar link do cliente</span></button><a class=nv href="${link()}" target=_blank title="Ver página do cliente">${ni('eye')}<span class=nl>Ver página do cliente</span></a>`)+`<button class="nv install-link" data-a=install title="Instalar app">${ni('down')}<span class=nl>Instalar app</span></button><button class=nv data-a=sair title="Sair">${ni('out')}<span class=nl>Sair</span></button><button class="nv mini-btn" data-a=mini title="Recolher menu">${ni('panel')}<span class=nl>Recolher menu</span></button>`;
+  const sf=(P?`<button class=nv data-a=pvolta title="Voltar ao início">${ni('home')}<span class=nl>Voltar ao início</span></button>`:`<button class=nv data-a=copy title="Copiar link do cliente">${ni('link')}<span class=nl>Copiar link do cliente</span></button><a class=nv href="${link()}" target=_blank title="Ver página do cliente">${ni('eye')}<span class=nl>Ver página do cliente</span></a><a class=nv href="${profLink()}" target=_blank title="Ver página do profissional">${ni('eye')}<span class=nl>Ver página do profissional</span></a>`)+`<button class="nv install-link" data-a=install title="Instalar app">${ni('down')}<span class=nl>Instalar app</span></button><button class=nv data-a=sair title="Sair">${ni('out')}<span class=nl>Sair</span></button><button class="nv mini-btn" data-a=mini title="Recolher menu">${ni('panel')}<span class=nl>Recolher menu</span></button>`;
   const me=P?S.profissionais.find(x=>x.id==ME):null;
   A.innerHTML=`<div class=app><main class=main><div class=ban style="background:${cover(S.capa,S.capaK)}">${S.logo?`<img class=lg src="${S.logo}" style="height:46px;margin:0">`:''}<div><h1>${esc(S.nome)}</h1><p>${P&&me?esc(me.nome)+' · ':''}${TITLES[TAB]}</p></div><button class=bell id=bell data-a=bell>${bellHtml()}</button><button class=burger data-a=menu>☰</button></div><div class=pg>${c}</div></main>
   <aside class="side ${SIDE?'open':''} ${SMINI?'mini':''}" id=side><div class=sb>${P?'Painel do profissional':esc(S.nome)}</div><nav>${nav}</nav><div class=sf>${sf}</div></aside><div class=ov data-a=menu></div></div>`;
@@ -858,8 +864,9 @@ acts.cgo=async()=>{
 /* ---- painel profissional: login ---- */
 const plRefresh=()=>{if(STANDALONE)plRender();else bk()};
 function plHtml(){
-  const cad=PLM=='cad',home=STANDALONE?`<a class="btn o" style="display:block;text-align:center;text-decoration:none" href="cliente.html?s=${esc(S.slug)}">Ir para a página de agendamento do salão</a>`:'<button class="btn o" data-a=home>Voltar à página do salão</button>';
+  const cad=PLM=='cad',home=STANDALONE?`<a class="btn o" style="display:block;text-align:center;text-decoration:none" href="index.html">Voltar ao início</a>`:'<button class="btn o" data-a=home>Voltar à página do salão</button>',cu=auth.currentUser;
   return `<h2>Painel do profissional</h2><p class=mu>Aqui você informa sua agenda e acompanha seus agendamentos, clientes e ganhos. Entre com o e-mail que o salão cadastrou para você.</p>
+  ${cu&&PLSTAGE!='verify'?`<p class=mu style="background:var(--bg);border-radius:8px;padding:8px 10px">Você está conectado como <b>${esc(cu.email||'')}</b>. Esta conta não tem acesso de profissional neste salão. <a href="#!" data-a=ptrocar>Entrar com outra conta</a></p>`:''}
   ${PLSTAGE=='verify'?`<div class=quick style="display:block"><b>Confirme seu e-mail</b><p class=mu style="margin:6px 0">${esc(PLMSG)}</p><button class="btn s" data-a=plconf>Já confirmei</button> <button class="btn s o" data-a=plresend>Reenviar e-mail</button></div>`:`${PLMSG?`<p class=mu style="color:#b45309">${esc(PLMSG)}</p>`:''}<label>E-mail</label><input id=pe type=email autocomplete=email><label>Senha</label><input id=pp type=password placeholder="mínimo 6 caracteres"><button class=btn data-a=plgo>${cad?'Criar meu acesso':'Entrar'}</button><button class="btn o" data-a=pltog>${cad?'Já tenho acesso':'Primeiro acesso (criar senha)'}</button>`}
   ${home}`;
 }
@@ -897,7 +904,8 @@ async function profEnter(){
   try{COMP={};(await getDocs(query(collection(db,'saloes',ouid,'comissoes'),where('profId','==',ME)))).docs.forEach(d=>COMP[d.id]=d.data())}catch(e){}
   ntLoad();theme(S.cor);applyTema(S.tema);listen();draw();
 }
-acts.pvolta=()=>{if(UNSUB)UNSUB();location.href=BASE+'cliente.html?s='+S.slug};
+acts.pvolta=()=>{if(UNSUB)UNSUB();location.href=BASE+'index.html'};
+acts.ptrocar=async()=>{try{await signOut(auth)}catch(e){}CU=null;PLMSG='';PLSTAGE='';ENTERING=false;if(ROLE=='prof'){location.href=location.pathname+'?s='+slug}else plRender()};
 /* ---- meus agendamentos / remarcar / cancelar / lista de espera (cliente) ---- */
 let MT='prox',WL=[],WLUNSUB=null;
 const canChange=a=>new Date(a.data+'T'+a.hora+':00').getTime()-Date.now()>10*60000;
